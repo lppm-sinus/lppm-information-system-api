@@ -18,7 +18,9 @@ class UserSeeder extends Seeder
             'name' => 'lppm sinus',
             'email' => 'lppm@sinus.ac.id',
             'password' => Hash::make('rahasia'),
-            'role' => 'superadmin',
         ]);
+
+        $user = User::find(1);
+        $user->assignRole('superadmin');
     }
 }

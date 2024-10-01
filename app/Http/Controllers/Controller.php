@@ -15,16 +15,5 @@ use Illuminate\Support\Facades\Auth;
 
 abstract class Controller
 {
-    public function checkIfSuperAdmin()
-    {
-        $currentUser = Auth::user();
-        if (!$currentUser || $currentUser->role !== 'superadmin') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized.'
-            ], 403);
-        }
-
-        return true;
-    }
+    //
 }

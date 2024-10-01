@@ -5,11 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Page;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Routing\Controller;
 
 class PageController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware(['role:superadmin'])->except(['getPagesMenu']);
+    }
+
     /**
      * @OA\Post(
      *     path="/api/pages",
@@ -53,7 +59,7 @@ class PageController extends Controller
      *         description="Validation Error",
      *         @OA\JsonContent(
      *              @OA\Property(property="success", type="boolean", example=false),
-     *              @OA\Property(property="message", type="string", example="The name field must be at least 3 characters"),
+     *              @OA\Property(property="message", type="string", example="The title field must be at least 3 characters"),
      *              @OA\Property(
      *                  property="errors", type="object",
      *                  @OA\Property(
@@ -84,11 +90,6 @@ class PageController extends Controller
      */
     public function create(Request $request)
     {
-        $authCheck = $this->checkIfSuperAdmin();
-        if ($authCheck !== true) {
-            return $authCheck;
-        }
-
         $validator = Validator::make($request->all(), [
             'title' => 'required|min:3|max:100|string',
             'parent_id' => 'nullable|integer|exists:pages,id',
@@ -208,11 +209,6 @@ class PageController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $authCheck = $this->checkIfSuperAdmin();
-        if ($authCheck !== true) {
-            return $authCheck;
-        }
-
         $page = Page::find($id);
         if (!$page) {
             return response()->json([
@@ -300,11 +296,6 @@ class PageController extends Controller
      */
     public function getPageByID($id)
     {
-        $authCheck = $this->checkIfSuperAdmin();
-        if ($authCheck !== true) {
-            return $authCheck;
-        }
-
         $page = Page::find($id);
         if (!$page) {
             return response()->json([
@@ -428,11 +419,6 @@ class PageController extends Controller
      */
     public function getPages()
     {
-        $authCheck = $this->checkIfSuperAdmin();
-        if ($authCheck !== true) {
-            return $authCheck;
-        }
-
         $pages = Page::paginate(10);
 
         return response()->json([
@@ -550,11 +536,6 @@ class PageController extends Controller
      */
     public function delete($id)
     {
-        $authCheck = $this->checkIfSuperAdmin();
-        if ($authCheck !== true) {
-            return $authCheck;
-        }
-
         $page = Page::find($id);
         if (!$page) {
             return response()->json([
