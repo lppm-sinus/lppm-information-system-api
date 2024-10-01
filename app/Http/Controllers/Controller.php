@@ -17,8 +17,7 @@ abstract class Controller
 {
     public function checkIfSuperAdmin()
     {
-        $currentUser = Auth::user();
-        if (!$currentUser || $currentUser->role !== 'superadmin') {
+        if (!auth()->user()->hasRole('superadmin')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized.'

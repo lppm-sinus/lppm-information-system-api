@@ -18,8 +18,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users', [UserController::class, 'getUserList']);
     Route::get('/users/current', [UserController::class, 'getCurrentUser']);
     Route::patch('/users/current', [UserController::class, 'updateCurrentUser']);
-    Route::patch('/users/{id}', [UserController::class, 'updateUser'])->where('id', '[0-9]+');
-    Route::get('/users/{id}', [UserController::class, 'getUser'])->where('id', '[0-9]+');
+    Route::patch('/users/{id}', [UserController::class, 'updateUserByID'])->where('id', '[0-9]+');
+    Route::get('/users/{id}', [UserController::class, 'getUserByID'])->where('id', '[0-9]+');
     Route::delete('/users/{id}', [UserController::class, 'deleteUser'])->where('id', '[0-9]+');
     Route::post('/users/logout', [UserController::class, 'logout']);
 

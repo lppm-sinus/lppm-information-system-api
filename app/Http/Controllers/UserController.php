@@ -7,9 +7,16 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Routing\Controller;
 
 class UserController extends Controller
 {
+
+
+    public function __construct()
+    {
+        $this->middleware(['role:superadmin'])->except(['login', 'getCurrentUser', 'updateCurrentUser']);
+    }
 
     /**
      * @OA\Post(
@@ -51,6 +58,7 @@ class UserController extends Controller
      *                  @OA\Property(property="id", type="integer", example=1),
      *                  @OA\Property(property="name", type="string", example="lppm sinus"),
      *                  @OA\Property(property="email", type="string", example="lppm@sinus.ac.id"),
+     *                  @OA\Property(property="password", type="string", example="x2YxT56...."),
      *                  @OA\Property(property="role", type="string", example="super admin"),
      *             )
      *         )
@@ -97,15 +105,6 @@ class UserController extends Controller
      */
     public function register(Request $request)
     {
-        $currentUser = Auth::user();
-
-        if (!$currentUser || $currentUser->role !== 'superadmin') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized'
-            ], 403);
-        }
-
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:3|max:255',
             'email' => 'required|string|email|unique:users',
@@ -121,10 +120,14 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
         ]);
 
-        $userData = $user->only(['id', 'name', 'email', 'role']);
+        $user->assignRole($request->role);
+
+        $role = $user->getRoleNames()->first();
+
+        $userData = $user->only(['id', 'name', 'email', 'password']);
+        $userData['role'] = $role;
 
         return response()->json([
             'success' => true,
@@ -208,7 +211,10 @@ class UserController extends Controller
 
         $token = $user->createToken($user->name);
 
-        $userData = $user->only(['id', 'name', 'email', 'role']);
+        $role = $user->getRoleNames()->first();
+
+        $userData = $user->only(['id', 'name', 'email']);
+        $userData['role'] = $role;
 
         return response()->json([
             'success' => true,
@@ -229,7 +235,7 @@ class UserController extends Controller
      *         description="Get user list successfully.",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="User list data retrived successfully."),
+     *             @OA\Property(property="message", type="string", example="User list data retrieved successfully."),
      *             @OA\Property(property="data", type="object",
      *                  @OA\Property(property="current_page", type="integer", example=1),
      *                  @OA\Property(property="data", 
@@ -326,20 +332,11 @@ class UserController extends Controller
      */
     public function getUserList()
     {
-        $currentUser = Auth::user();
-
-        if (!$currentUser || $currentUser->role !== 'superadmin') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized'
-            ], 403);
-        }
-
         $users = User::paginate(5);
 
         return response()->json([
             'success' => true,
-            'message' => "User list data retrived successfully.",
+            'message' => "User list data retrieved successfully.",
             'data' => $users
         ], 200);
     }
@@ -397,17 +394,8 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function getUser($id)
+    public function getUserByID($id)
     {
-        $currentUser = Auth::user();
-
-        if (!$currentUser || $currentUser->role !== 'superadmin') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized'
-            ], 403);
-        }
-
         $user = User::find($id);
         if (!$user) {
             return response()->json([
@@ -558,14 +546,19 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
-        $user->role = $request->role;
+        $user->assignRole($request->role);
 
         $user->save();
+
+        $role = $user->getRoleNames()->first();
+
+        $userData = $user->only(['id', 'name', 'email', 'password']);
+        $userData['role'] = $role;
 
         return response()->json([
             'success' => true,
             'message' => 'User data successfully updated.',
-            'data' => $user
+            'data' => $userData
         ], 200);
     }
 
@@ -652,16 +645,8 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function updateUser(Request $request, $id)
+    public function updateUserByID(Request $request, $id)
     {
-        $currentUser = Auth::user();
-        if (!$currentUser || $currentUser->role !== 'superadmin') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized.'
-            ], 403);
-        }
-
         $user = User::find($id);
         if (!$user) {
             return response()->json([
@@ -684,14 +669,18 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
-        $user->role = $request->role;
 
         $user->save();
+
+        $role = $user->getRoleNames()->first();
+
+        $userData = $user->only(['id', 'name', 'email', 'password']);
+        $userData['role'] = $role;
 
         return response()->json([
             'success' => true,
             'message' => 'User data successfully updated.',
-            'data' => $user
+            'data' => $userData
         ], 200);
     }
 
@@ -734,14 +723,6 @@ class UserController extends Controller
      */
     public function deleteUser($id)
     {
-        $currentUser = Auth::user();
-        if (!$currentUser || $currentUser->role !== 'superadmin') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized.'
-            ], 403);
-        }
-
         $user = User::find($id);
         if (!$user) {
             return response()->json([
