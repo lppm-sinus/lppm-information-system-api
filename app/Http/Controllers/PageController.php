@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Page;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Routing\Controller;
 
@@ -60,7 +59,7 @@ class PageController extends Controller
      *         description="Validation Error",
      *         @OA\JsonContent(
      *              @OA\Property(property="success", type="boolean", example=false),
-     *              @OA\Property(property="message", type="string", example="The name field must be at least 3 characters"),
+     *              @OA\Property(property="message", type="string", example="The title field must be at least 3 characters"),
      *              @OA\Property(
      *                  property="errors", type="object",
      *                  @OA\Property(

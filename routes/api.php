@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -28,4 +29,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/pages/{id}', [PageController::class, 'getPageByID'])->where('id', '[0-9]+');
     Route::get('/pages', [PageController::class, 'getPages']);
     Route::delete('/pages/{id}', [PageController::class, 'delete'])->where('id', '[0-9]+');
+
+    Route::post('/categories', [CategoryController::class, 'create']);
+    Route::patch('/categories/{id}', [CategoryController::class, 'update'])->where('id', '[0-9]+');
+    Route::get('/categories/{id}', [CategoryController::class, 'getCategoryByID'])->where('id', '[0-9]+');
+    Route::get('/categories', [CategoryController::class, 'getCategories']);
+    Route::delete('/categories/{id}', [CategoryController::class, 'delete'])->where('id', '[0-9]+');
 });
