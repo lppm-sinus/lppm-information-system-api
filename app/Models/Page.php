@@ -33,6 +33,11 @@ class Page extends Model
         return $this->hasMany(Page::class, 'parent_id');
     }
 
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+
     public function sluggable(): array
     {
         return [

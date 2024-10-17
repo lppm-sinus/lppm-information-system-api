@@ -16,14 +16,29 @@ class Post extends Model
     public $incrementing = true;
 
     protected $fillable = [
-        'content',
+        'title',
+        'container',
         'author_id',
         'page_id',
-        'status'
+        'category_id',
+        'status',
+        'image_url',
+        'file_url',
+        'link_url',
     ];
 
-    public function user()
+    public function author()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function page()
+    {
+        return $this->belongsTo(Page::class);
     }
 }
