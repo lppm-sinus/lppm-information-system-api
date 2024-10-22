@@ -18,7 +18,7 @@ Route::post('/users/login', [UserController::class, 'login']);
 Route::get('/pages/menu', [PageController::class, 'getPagesMenu']);
 
 // POSTS
-Route::get('/posts/{page_slug}', [PostController::class, 'getPostsByPageSlug']);
+Route::get('/posts/by-page/{page_slug}', [PostController::class, 'getPostsByPageSlug']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // AUTH
@@ -48,7 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // POSTS
     Route::post('/posts', [PostController::class, 'create']);
     Route::get('/posts', [PostController::class, 'getPosts']);
-    Route::get('/post/{id}', [PostController::class, 'getPostByID'])->where('id', '[0-9]+');
-    Route::patch('/post/{id}', [PostController::class, 'update'])->where('id', '[0-9]+');
-    Route::delete('/post/{id}', [PostController::class, 'delete'])->where('id', '[0-9]+');
+    Route::get('/posts/{id}', [PostController::class, 'getPostByID'])->where('id', '[0-9]+');
+    Route::patch('/posts/{id}', [PostController::class, 'update'])->where('id', '[0-9]+');
+    Route::delete('/posts/{id}', [PostController::class, 'delete'])->where('id', '[0-9]+');
 });

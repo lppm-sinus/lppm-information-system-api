@@ -115,7 +115,6 @@ class PostController extends Controller
      */
     public function create(Request $request)
     {
-        // dd($request->all());
         $category_slug = Category::where('id', $request->category_id)->pluck('slug')->first();
 
         $container_rule = $category_slug === 'file' ? 'nullable' : 'required';
@@ -838,7 +837,11 @@ class PostController extends Controller
         }
 
         if ($post->image_url) {
-            Storage::delete('public/' . $post->image_url);
+            Storage::disk('public')->delete($post->image_url);
+        }
+
+        if ($post->file_url) {
+            Storage::disk('public')->delete($post->file_url);
         }
 
         $post->delete();

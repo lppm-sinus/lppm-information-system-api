@@ -21,7 +21,7 @@ class PostSeeder extends Seeder
             'author_id' => 1,
             'page_id' => 1,
             'category_id' => 1,
-            'status' => 'posted'
+            'status' => 'published'
         ]);
 
         Post::create([
@@ -30,7 +30,7 @@ class PostSeeder extends Seeder
             'author_id' => 1,
             'page_id' => 2,
             'category_id' => 1,
-            'status' => 'posted'
+            'status' => 'published'
         ]);
 
         Post::create([
@@ -39,7 +39,7 @@ class PostSeeder extends Seeder
             'author_id' => 1,
             'page_id' => 3,
             'category_id' => 1,
-            'status' => 'posted'
+            'status' => 'published'
         ]);
 
         Post::create([
@@ -48,7 +48,7 @@ class PostSeeder extends Seeder
             'author_id' => 1,
             'page_id' => 4,
             'category_id' => 1,
-            'status' => 'posted'
+            'status' => 'published'
         ]);
 
         Post::create([
@@ -57,59 +57,69 @@ class PostSeeder extends Seeder
             'author_id' => 1,
             'page_id' => 4,
             'category_id' => 1,
-            'status' => 'posted'
+            'status' => 'published'
         ]);
 
         Post::create([
             'title' => 'Struktur',
             'container' => fake()->sentence(100),
-            'author_id' => 1,
+            'author_id' => 2,
             'page_id' => 5,
             'category_id' => 2,
             'image_url' => 'public/images/1727929205_layanan.png',
-            'status' => 'posted'
+            'status' => 'published'
         ]);
 
         Post::create([
             'title' => 'Jurnal Ilmiah Sinus',
             'container' => fake()->sentence(100),
-            'author_id' => 1,
+            'author_id' => 2,
             'page_id' => 5,
             'category_id' => 3,
             'image_url' => 'public/images/1727929205_layanan.png',
             'link_url' => 'https://www.facebook.com',
-            'status' => 'posted'
+            'status' => 'published'
         ]);
 
         Post::create([
             'title' => 'Jurnal TIKomSin',
             'container' => fake()->sentence(100),
-            'author_id' => 1,
+            'author_id' => 2,
             'page_id' => 5,
             'category_id' => 3,
             'image_url' => 'public/images/1727929205_layanan.png',
             'link_url' => 'https://www.facebook.com',
-            'status' => 'posted'
+            'status' => 'published'
         ]);
 
         Post::create([
             'title' => 'Jurnal No Image',
             'container' => fake()->sentence(100),
-            'author_id' => 1,
+            'author_id' => 2,
             'page_id' => 5,
             'category_id' => 3,
             'link_url' => 'https://www.facebook.com',
-            'status' => 'posted'
+            'status' => 'published'
         ]);
 
         Post::create([
             'title' => 'Test',
             'container' => fake()->sentence(100),
-            'author_id' => 1,
+            'author_id' => 2,
             'page_id' => 5,
             'category_id' => 4,
-            'file_url' => 'public/images/1727929205_layanan.pdf',
-            'status' => 'posted'
+            'file_url' => 'public/file/1727929205_layanan.pdf',
+            'status' => 'published'
+        ]);
+
+        Post::create([
+            'title' => 'Test File 2',
+            'container' => fake()->sentence(100),
+            'author_id' => 2,
+            'page_id' => 5,
+            'category_id' => 4,
+            'file_url' => 'public/file/1727929206_layanan.pdf',
+            'status' => 'published'
         ]);
     }
 }
