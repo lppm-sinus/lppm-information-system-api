@@ -333,8 +333,8 @@ class PostController extends Controller
         }
 
         if (request()->has('search')) {
-            $searchTerm = request()->input('search');
-            $query->where('title', 'like', "%{$searchTerm}%");
+            $search_term = request()->input('search');
+            $query->where('title', 'like', "%{$search_term}%");
         }
 
         // Get paginated results with relationships

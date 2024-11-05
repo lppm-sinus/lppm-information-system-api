@@ -1,15 +1,13 @@
 <?php
 
+use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\StudyProgramController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
 
 // AUTH
 Route::post('/users/login', [UserController::class, 'login']);
@@ -51,4 +49,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/posts/{id}', [PostController::class, 'getPostByID'])->where('id', '[0-9]+');
     Route::patch('/posts/{id}', [PostController::class, 'update'])->where('id', '[0-9]+');
     Route::delete('/posts/{id}', [PostController::class, 'delete'])->where('id', '[0-9]+');
+
+    // AUTHORS
+    Route::post('/authors/import', [AuthorController::class, 'import']);
+    Route::post('/authors', [AuthorController::class, 'create']);
+    Route::patch('/authors/{id}', [AuthorController::class, 'update'])->where('id', '[0-9]+');
+    Route::get('/authors/{id}', [AuthorController::class, 'getAuthorByID'])->where('id', '[0-9]+');
+    Route::get('/authors', [AuthorController::class, 'getAuthors']);
+
+    //STUDY PROGRAMS
+    Route::post('/study-programs', [StudyProgramController::class, 'create']);
+    Route::patch('/study-programs/{id}', [StudyProgramController::class, 'update'])->where('id', '[0-9]+');
+    Route::get('/study-programs/{id}', [StudyProgramController::class, 'getStudyProgramByID'])->where('id', '[0-9]+');
+    Route::get('/study-programs', [StudyProgramController::class, 'getStudyPrograms']);
+    Route::delete('/study-programs/{id}', [StudyProgramController::class, 'delete'])->where('id', '[0-9]+');
 });
+
