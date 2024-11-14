@@ -29,4 +29,9 @@ class Author extends Model
     {
         return $this->belongsToMany(Research::class);
     }
+
+    public function services()
+    {
+        return $this->belongsToMany(Service::class);
+    }
 }
