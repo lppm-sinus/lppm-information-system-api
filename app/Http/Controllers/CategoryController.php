@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Traits\ApiResponse;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -10,6 +11,8 @@ use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
+    use ApiResponse;
+
 
     public function __construct()
     {
@@ -92,13 +95,10 @@ class CategoryController extends Controller
         }
 
         $slug = SlugService::createSlug(Category::class, 'slug', $request->name);
-        $existingSlug = Category::where('slug', $slug)->first();
+        $existing_slug = Category::where('slug', $slug)->first();
 
-        if ($existingSlug) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Slug already exists. Please choose a different category name.'
-            ], 400);
+        if ($existing_slug) {
+            return $this->errorResponse('Slug already exists. Please choose a different category name.', 400);
         }
 
         $category = Category::create([
@@ -106,11 +106,7 @@ class CategoryController extends Controller
             'slug' => $slug
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Category created successfully.',
-            'data' => $category
-        ]);
+        return $this->successResponse($category, 'Category created successfully.', 201);
     }
 
     /**
@@ -189,10 +185,7 @@ class CategoryController extends Controller
     {
         $category = Category::find($id);
         if (!$category) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Category not found.'
-            ], 404);
+            return $this->errorResponse('Category not found.', 404);
         }
 
         $validator = Validator::make($request->all(), [
@@ -204,24 +197,17 @@ class CategoryController extends Controller
         }
 
         $slug = SlugService::createSlug(Category::class, 'slug', $request->name);
-        $existingSlug = Category::where('id', '!=', $id)->where('slug', $slug)->first();
+        $existing_slug = Category::where('id', '!=', $id)->where('slug', $slug)->first();
 
-        if ($existingSlug) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Slug already exists. Please choose a different category name.'
-            ], 400);
+        if ($existing_slug) {
+            return $this->errorResponse('Slug already exists. Please choose a different category name.', 400);
         }
 
         $category->name = $request->name;
         $category->slug = $slug;
         $category->save();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Category updated successfully.',
-            'data' => $category
-        ], 200);
+        return $this->successResponse($category, 'Category successfully updated.', 200);
     }
 
     /**
@@ -271,17 +257,10 @@ class CategoryController extends Controller
     {
         $category = Category::find($id);
         if (!$category) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Category not found.'
-            ], 404);
+            return $this->errorResponse('Category not found.', 404);
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Category retrieved successfully.',
-            'data' => $category
-        ], 200);
+        return $this->successResponse($category, 'Category data retrieved successfully.', 200);
     }
 
     /**
@@ -386,11 +365,7 @@ class CategoryController extends Controller
     {
         $categories = Category::paginate(10);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Categories data retrieved successfully.',
-            'data' => $categories
-        ], 200);
+        return $this->successResponse($categories, 'Categories data retrieved successfully.', 200);
     }
 
     /**
@@ -435,25 +410,11 @@ class CategoryController extends Controller
     {
         $category = Category::find($id);
         if (!$category) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Category not found.'
-            ], 404);
+            return $this->errorResponse('Category not found.', 404);
         }
 
         $category->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Category deleted successfully.'
-        ], 200);
-    }
-
-    public function formatValidationErrors($validator)
-    {
-        return response()->json([
-            'success' => false,
-            'errors' => $validator->errors(),
-        ], 422);
+        return $this->successResponse(null, 'Category data deleted successfully.', 200);
     }
 }

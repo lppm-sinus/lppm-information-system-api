@@ -879,195 +879,6 @@
                         "bearer_token": []
                     }
                 ]
-            },
-            "post": {
-                "tags": [
-                    "Research"
-                ],
-                "summary": "Create new research",
-                "operationId": "cb58e9c05204e26d3db7e68958ae1b28",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "leader_name": {
-                                        "type": "string"
-                                    },
-                                    "leaders_nidn": {
-                                        "type": "string"
-                                    },
-                                    "leaders_institution": {
-                                        "type": "string"
-                                    },
-                                    "title": {
-                                        "type": "string"
-                                    },
-                                    "scheme_short_name": {
-                                        "type": "string"
-                                    },
-                                    "scheme_name": {
-                                        "type": "string"
-                                    },
-                                    "approved_funds": {
-                                        "type": "integer"
-                                    },
-                                    "proposed_year": {
-                                        "type": "string"
-                                    },
-                                    "implementation_year": {
-                                        "type": "string"
-                                    },
-                                    "focus_area": {
-                                        "type": "string"
-                                    },
-                                    "funded_institution_name": {
-                                        "type": "string"
-                                    },
-                                    "grant_program": {
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object",
-                                "example": {
-                                    "leader_name": "Yustina",
-                                    "leaders_nidn": "2342453",
-                                    "leaders_institution": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
-                                    "title": "Penelitian 1",
-                                    "scheme_short_name": "PI",
-                                    "scheme_name": "Penelitian Internal",
-                                    "approved_funds": 2000000,
-                                    "proposed_year": "2024",
-                                    "implementation_year": "2024",
-                                    "focus_area": "Penelitian",
-                                    "funded_institution_name": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
-                                    "grant_program": "Program Pengembangan"
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Research Created",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Research created successfully."
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "leader_name": {
-                                                    "type": "string",
-                                                    "example": "Yustina"
-                                                },
-                                                "leaders_nidn": {
-                                                    "type": "string",
-                                                    "example": "2342453"
-                                                },
-                                                "leaders_institution": {
-                                                    "type": "string",
-                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
-                                                },
-                                                "title": {
-                                                    "type": "string",
-                                                    "example": "Penelitian 1"
-                                                },
-                                                "scheme_short_name": {
-                                                    "type": "string",
-                                                    "example": "PI"
-                                                },
-                                                "scheme_name": {
-                                                    "type": "string",
-                                                    "example": "Penelitian Internal"
-                                                },
-                                                "approved_funds": {
-                                                    "type": "integer",
-                                                    "example": 2000000
-                                                },
-                                                "proposed_year": {
-                                                    "type": "string",
-                                                    "example": "2024"
-                                                },
-                                                "implementation_year": {
-                                                    "type": "string",
-                                                    "example": "2024"
-                                                },
-                                                "focus_area": {
-                                                    "type": "string",
-                                                    "example": "Penelitian"
-                                                },
-                                                "funded_institution_name": {
-                                                    "type": "string",
-                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
-                                                },
-                                                "grant_program": {
-                                                    "type": "string",
-                                                    "example": "Program Pengembangan"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated access",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Unauthenticated."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Unauthorized Access",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Unauthorized"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
             }
         },
         "/api/categories": {
@@ -3498,13 +3309,13 @@
                 ]
             }
         },
-        "/api/research/import": {
+        "/api/researches/import": {
             "post": {
                 "tags": [
                     "Research"
                 ],
                 "summary": "Import research from excel file",
-                "operationId": "fafce6d855089db3f1d51aadbe219a71",
+                "operationId": "4e0d0e110df3880c02ba291014c4d4e0",
                 "requestBody": {
                     "content": {
                         "multipart/form-data": {
@@ -3560,207 +3371,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Research with NIDN 345525656 already exists."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated access",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Unauthenticated."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Unauthorized Access",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Unauthorized"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
-            }
-        },
-        "/api/research/{id}": {
-            "patch": {
-                "tags": [
-                    "Research"
-                ],
-                "summary": "Update an research by ID",
-                "operationId": "12c0864b665e192f8c1a5ad24bf21f0b",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the research",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "leader_name": {
-                                        "type": "string"
-                                    },
-                                    "leaders_nidn": {
-                                        "type": "string"
-                                    },
-                                    "leaders_institution": {
-                                        "type": "string"
-                                    },
-                                    "title": {
-                                        "type": "string"
-                                    },
-                                    "scheme_short_name": {
-                                        "type": "string"
-                                    },
-                                    "scheme_name": {
-                                        "type": "string"
-                                    },
-                                    "approved_funds": {
-                                        "type": "integer"
-                                    },
-                                    "proposed_year": {
-                                        "type": "string"
-                                    },
-                                    "implementation_year": {
-                                        "type": "string"
-                                    },
-                                    "focus_area": {
-                                        "type": "string"
-                                    },
-                                    "funded_institution_name": {
-                                        "type": "string"
-                                    },
-                                    "grant_program": {
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object",
-                                "example": {
-                                    "leader_name": "Yustina",
-                                    "leaders_nidn": "2342453",
-                                    "leaders_institution": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
-                                    "title": "Penelitian 1",
-                                    "scheme_short_name": "PI",
-                                    "scheme_name": "Penelitian Internal",
-                                    "approved_funds": 2000000,
-                                    "proposed_year": "2024",
-                                    "implementation_year": "2024",
-                                    "focus_area": "Penelitian",
-                                    "funded_institution_name": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
-                                    "grant_program": "Program Pengembangan"
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Author Updated",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Research created successfully."
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "leader_name": {
-                                                    "type": "string",
-                                                    "example": "Yustina"
-                                                },
-                                                "leaders_nidn": {
-                                                    "type": "string",
-                                                    "example": "2342453"
-                                                },
-                                                "leaders_institution": {
-                                                    "type": "string",
-                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
-                                                },
-                                                "title": {
-                                                    "type": "string",
-                                                    "example": "Penelitian 1"
-                                                },
-                                                "scheme_short_name": {
-                                                    "type": "string",
-                                                    "example": "PI"
-                                                },
-                                                "scheme_name": {
-                                                    "type": "string",
-                                                    "example": "Penelitian Internal"
-                                                },
-                                                "approved_funds": {
-                                                    "type": "integer",
-                                                    "example": 2000000
-                                                },
-                                                "proposed_year": {
-                                                    "type": "string",
-                                                    "example": "2024"
-                                                },
-                                                "implementation_year": {
-                                                    "type": "string",
-                                                    "example": "2024"
-                                                },
-                                                "focus_area": {
-                                                    "type": "string",
-                                                    "example": "Penelitian"
-                                                },
-                                                "funded_institution_name": {
-                                                    "type": "string",
-                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
-                                                },
-                                                "grant_program": {
-                                                    "type": "string",
-                                                    "example": "Program Pengembangan"
-                                                }
-                                            },
-                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -3974,6 +3584,175 @@
                         "bearer_token": []
                     }
                 ]
+            },
+            "post": {
+                "tags": [
+                    "Research"
+                ],
+                "summary": "Create new research",
+                "operationId": "aa30e260fd9e88ff424f0f429d974bdf",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "leader_name": {
+                                        "type": "string"
+                                    },
+                                    "leaders_nidn": {
+                                        "type": "string"
+                                    },
+                                    "leaders_institution": {
+                                        "type": "string"
+                                    },
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "scheme_short_name": {
+                                        "type": "string"
+                                    },
+                                    "scheme_name": {
+                                        "type": "string"
+                                    },
+                                    "approved_funds": {
+                                        "type": "integer"
+                                    },
+                                    "proposed_year": {
+                                        "type": "string"
+                                    },
+                                    "implementation_year": {
+                                        "type": "string"
+                                    },
+                                    "focus_area": {
+                                        "type": "string"
+                                    },
+                                    "funded_institution_name": {
+                                        "type": "string"
+                                    },
+                                    "grant_program": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "leader_name": "Yustina",
+                                    "leaders_nidn": "2342453",
+                                    "leaders_institution": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
+                                    "title": "Penelitian 1",
+                                    "scheme_short_name": "PI",
+                                    "scheme_name": "Penelitian Internal",
+                                    "approved_funds": 2000000,
+                                    "proposed_year": "2024",
+                                    "implementation_year": "2024",
+                                    "focus_area": "Penelitian",
+                                    "funded_institution_name": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
+                                    "grant_program": "Program Pengembangan"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Research Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Research created successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "leader_name": {
+                                                    "type": "string",
+                                                    "example": "Yustina"
+                                                },
+                                                "leaders_nidn": {
+                                                    "type": "string",
+                                                    "example": "2342453"
+                                                },
+                                                "leaders_institution": {
+                                                    "type": "string",
+                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Penelitian 1"
+                                                },
+                                                "scheme_short_name": {
+                                                    "type": "string",
+                                                    "example": "PI"
+                                                },
+                                                "scheme_name": {
+                                                    "type": "string",
+                                                    "example": "Penelitian Internal"
+                                                },
+                                                "approved_funds": {
+                                                    "type": "integer",
+                                                    "example": 2000000
+                                                },
+                                                "proposed_year": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "implementation_year": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "focus_area": {
+                                                    "type": "string",
+                                                    "example": "Penelitian"
+                                                },
+                                                "funded_institution_name": {
+                                                    "type": "string",
+                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                },
+                                                "grant_program": {
+                                                    "type": "string",
+                                                    "example": "Program Pengembangan"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
             }
         },
         "/api/researches/{id}": {
@@ -4140,6 +3919,22 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -4200,6 +3995,409 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Research data not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Research"
+                ],
+                "summary": "Update an research by ID",
+                "operationId": "2580be7bdfd43b11ff9b79241a3cb281",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the research",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "leader_name": {
+                                        "type": "string"
+                                    },
+                                    "leaders_nidn": {
+                                        "type": "string"
+                                    },
+                                    "leaders_institution": {
+                                        "type": "string"
+                                    },
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "scheme_short_name": {
+                                        "type": "string"
+                                    },
+                                    "scheme_name": {
+                                        "type": "string"
+                                    },
+                                    "approved_funds": {
+                                        "type": "integer"
+                                    },
+                                    "proposed_year": {
+                                        "type": "string"
+                                    },
+                                    "implementation_year": {
+                                        "type": "string"
+                                    },
+                                    "focus_area": {
+                                        "type": "string"
+                                    },
+                                    "funded_institution_name": {
+                                        "type": "string"
+                                    },
+                                    "grant_program": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "leader_name": "Yustina",
+                                    "leaders_nidn": "2342453",
+                                    "leaders_institution": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
+                                    "title": "Penelitian 1",
+                                    "scheme_short_name": "PI",
+                                    "scheme_name": "Penelitian Internal",
+                                    "approved_funds": 2000000,
+                                    "proposed_year": "2024",
+                                    "implementation_year": "2024",
+                                    "focus_area": "Penelitian",
+                                    "funded_institution_name": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
+                                    "grant_program": "Program Pengembangan"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Author Updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Research created successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "leader_name": {
+                                                    "type": "string",
+                                                    "example": "Yustina"
+                                                },
+                                                "leaders_nidn": {
+                                                    "type": "string",
+                                                    "example": "2342453"
+                                                },
+                                                "leaders_institution": {
+                                                    "type": "string",
+                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Penelitian 1"
+                                                },
+                                                "scheme_short_name": {
+                                                    "type": "string",
+                                                    "example": "PI"
+                                                },
+                                                "scheme_name": {
+                                                    "type": "string",
+                                                    "example": "Penelitian Internal"
+                                                },
+                                                "approved_funds": {
+                                                    "type": "integer",
+                                                    "example": 2000000
+                                                },
+                                                "proposed_year": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "implementation_year": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "focus_area": {
+                                                    "type": "string",
+                                                    "example": "Penelitian"
+                                                },
+                                                "funded_institution_name": {
+                                                    "type": "string",
+                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                },
+                                                "grant_program": {
+                                                    "type": "string",
+                                                    "example": "Program Pengembangan"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/researches/grouped-by-scheme": {
+            "get": {
+                "tags": [
+                    "Research"
+                ],
+                "summary": "Get researches grouped by scheme",
+                "description": "Retrieves research data grouped by `scheme_short_name`, with an optional filter by `study_program_id`.",
+                "operationId": "167517055f256201d5558431d2b0e6cc",
+                "parameters": [
+                    {
+                        "name": "study_program_id",
+                        "in": "query",
+                        "description": "Filter researches by study program ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful retrieval of research data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Research data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "PI": {
+                                                    "properties": {
+                                                        "count": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        },
+                                                        "data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "integer",
+                                                                        "example": 69
+                                                                    },
+                                                                    "leader_name": {
+                                                                        "type": "string",
+                                                                        "example": "DIDIK NUGROHO"
+                                                                    },
+                                                                    "leaders_nidn": {
+                                                                        "type": "string",
+                                                                        "example": "0613057201"
+                                                                    },
+                                                                    "leaders_institution": {
+                                                                        "type": "string",
+                                                                        "example": "STMIK SINAR NUSANTARA"
+                                                                    },
+                                                                    "title": {
+                                                                        "type": "string",
+                                                                        "example": "Research title"
+                                                                    },
+                                                                    "scheme_short_name": {
+                                                                        "type": "string",
+                                                                        "example": "PI"
+                                                                    },
+                                                                    "scheme_name": {
+                                                                        "type": "string",
+                                                                        "example": "PENELITIAN INTERNAL"
+                                                                    },
+                                                                    "approved_funds": {
+                                                                        "type": "string",
+                                                                        "format": "decimal",
+                                                                        "example": "3000000.00"
+                                                                    },
+                                                                    "proposed_year": {
+                                                                        "type": "string",
+                                                                        "example": "2024"
+                                                                    },
+                                                                    "implementation_year": {
+                                                                        "type": "string",
+                                                                        "example": "2024"
+                                                                    },
+                                                                    "focus_area": {
+                                                                        "type": "string",
+                                                                        "example": "TEKNOLOGI INFORMASI DAN KOMUNIKASI"
+                                                                    },
+                                                                    "funded_institution_name": {
+                                                                        "type": "string",
+                                                                        "example": "STMIK SINAR NUSANTARA"
+                                                                    },
+                                                                    "grant_program": {
+                                                                        "type": "string",
+                                                                        "example": "PENELITIAN INTERNAL"
+                                                                    },
+                                                                    "created_at": {
+                                                                        "type": "string",
+                                                                        "format": "date-time",
+                                                                        "example": "2024-11-14T03:56:09.000000Z"
+                                                                    },
+                                                                    "updated_at": {
+                                                                        "type": "string",
+                                                                        "format": "date-time",
+                                                                        "example": "2024-11-14T03:56:09.000000Z"
+                                                                    },
+                                                                    "authors": {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "properties": {
+                                                                                "id": {
+                                                                                    "type": "integer",
+                                                                                    "example": 12
+                                                                                },
+                                                                                "sinta_id": {
+                                                                                    "type": "string",
+                                                                                    "example": "6049857"
+                                                                                },
+                                                                                "nidn": {
+                                                                                    "type": "string",
+                                                                                    "example": "0613057201"
+                                                                                },
+                                                                                "name": {
+                                                                                    "type": "string",
+                                                                                    "example": "DIDIK NUGROHO"
+                                                                                },
+                                                                                "affiliation": {
+                                                                                    "type": "string",
+                                                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                                                },
+                                                                                "study_program_id": {
+                                                                                    "type": "integer",
+                                                                                    "example": 2
+                                                                                },
+                                                                                "last_education": {
+                                                                                    "type": "string",
+                                                                                    "example": "S2"
+                                                                                },
+                                                                                "functional_position": {
+                                                                                    "type": "string",
+                                                                                    "example": "Lektor"
+                                                                                },
+                                                                                "title_prefix": {
+                                                                                    "type": "string",
+                                                                                    "example": null,
+                                                                                    "nullable": true
+                                                                                },
+                                                                                "title_suffix": {
+                                                                                    "type": "string",
+                                                                                    "example": "S.Kom, M.Kom"
+                                                                                },
+                                                                                "created_at": {
+                                                                                    "type": "string",
+                                                                                    "format": "date-time",
+                                                                                    "example": "2024-11-14T02:57:18.000000Z"
+                                                                                },
+                                                                                "updated_at": {
+                                                                                    "type": "string",
+                                                                                    "format": "date-time",
+                                                                                    "example": "2024-11-14T02:57:18.000000Z"
+                                                                                }
+                                                                            },
+                                                                            "type": "object"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
                                         }
                                     },
                                     "type": "object"

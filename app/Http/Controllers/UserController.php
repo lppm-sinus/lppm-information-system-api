@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,7 @@ use Illuminate\Routing\Controller;
 
 class UserController extends Controller
 {
+    use ApiResponse;
 
 
     public function __construct()
@@ -129,11 +131,7 @@ class UserController extends Controller
         $userData = $user->only(['id', 'name', 'email', 'password']);
         $userData['role'] = $role;
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Register user success.',
-            'data' => $userData
-        ], 201);
+        return $this->successResponse($userData, 'Register user success.', 201);
     }
 
     /**
@@ -203,10 +201,7 @@ class UserController extends Controller
 
         $user = User::where('email', $request->email)->first();
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'The provided credentials are incorrect.'
-            ], 401);
+            return $this->errorResponse('The provided credentials are incorrect.', 401);
         }
 
         $token = $user->createToken($user->name);
@@ -216,12 +211,7 @@ class UserController extends Controller
         $userData = $user->only(['id', 'name', 'email']);
         $userData['role'] = $role;
 
-        return response()->json([
-            'success' => true,
-            'message' => "Logged in successfully.",
-            'data' => $userData,
-            'token' => $token->plainTextToken
-        ], 200);
+        return $this->authSuccessResponse($userData, 'Logged in successfully.', $token->plainTextToken, 200);
     }
 
     /**
@@ -334,11 +324,7 @@ class UserController extends Controller
     {
         $users = User::paginate(5);
 
-        return response()->json([
-            'success' => true,
-            'message' => "User list data retrieved successfully.",
-            'data' => $users
-        ], 200);
+        return $this->successResponse($users, 'User data retrieved successfully.', 200);
     }
 
     /**
@@ -398,17 +384,10 @@ class UserController extends Controller
     {
         $user = User::find($id);
         if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User not found.'
-            ], 404);
+            return $this->errorResponse('User not found', 404);
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => "User data retrieved successfully.",
-            'data' => $user
-        ], 200);
+        return $this->successResponse($user, 'User data retrieved successfully.', 200);
     }
 
     /**
@@ -445,11 +424,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Current user data retrieved successfully.',
-            'data' => $user
-        ], 200);
+        return $this->successResponse($user, 'Current user data retrieved successfully.', 200);
     }
 
     /**
@@ -555,11 +530,7 @@ class UserController extends Controller
         $userData = $user->only(['id', 'name', 'email', 'password']);
         $userData['role'] = $role;
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User data successfully updated.',
-            'data' => $userData
-        ], 200);
+        return $this->successResponse($userData, 'User data successfully updated.', 200);
     }
 
     /**
@@ -649,10 +620,7 @@ class UserController extends Controller
     {
         $user = User::find($id);
         if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User not found'
-            ], 404);
+            return $this->errorResponse('User not found.', 404);
         }
 
         $validator = Validator::make($request->all(), [
@@ -677,11 +645,7 @@ class UserController extends Controller
         $userData = $user->only(['id', 'name', 'email', 'password']);
         $userData['role'] = $role;
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User data successfully updated.',
-            'data' => $userData
-        ], 200);
+        return $this->successResponse($userData, 'User data successfully updated.', 200);
     }
 
     /**
@@ -725,18 +689,12 @@ class UserController extends Controller
     {
         $user = User::find($id);
         if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User not found.'
-            ], 404);
+            return $this->errorResponse('User not found.', 404);
         }
 
         $user->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User successfully deleted.'
-        ], 200);
+        return $this->successResponse(null, 'User successfully deleted.', 200);
     }
 
     /**
@@ -759,17 +717,6 @@ class UserController extends Controller
     {
         auth()->user()->currentAccessToken()->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Logged out successfully.'
-        ], 200);
-    }
-
-    protected function formatValidationErrors($validator)
-    {
-        return response()->json([
-            'success' => false,
-            'errors' => $validator->errors(),
-        ], 422);
+        return $this->successResponse(null, 'Logged out successfully.', 200);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Imports\AuthorImport;
 use App\Models\Author;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Routing\Controller;
@@ -12,6 +13,9 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthorController extends Controller
 {
+    use ApiResponse;
+
+
     public function __construct()
     {
         $this->middleware(['role:superadmin']);
@@ -90,12 +94,9 @@ class AuthorController extends Controller
 
         try {
             Excel::import(new AuthorImport, $request->file('file'));
-            return response()->json([
-                'success' => true,
-                'message' => 'Authors data imported successfully',
-            ], 201);
+            return $this->successResponse(null, 'Authors data imported successfully.', 201);
         } catch (\Exception $e) {
-            return response()->json(json_decode($e->getMessage()), 422);
+            return $this->errorResponse($e->getMessage(), 422);
         }
     }
 
@@ -234,11 +235,7 @@ class AuthorController extends Controller
             'title_suffix' => $request->title_suffix,
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Author created successfully.',
-            'data' => $author
-        ], 201);
+        return $this->successResponse($author, 'Author data created successfully.', 201);
     }
 
     /**
@@ -348,10 +345,7 @@ class AuthorController extends Controller
     {
         $author = Author::find($id);
         if (!$author) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Author not found.'
-            ], 404);
+            return $this->errorResponse('Author not found', 404);
         }
 
         $validator = Validator::make($request->all(), [
@@ -382,11 +376,7 @@ class AuthorController extends Controller
             'title_suffix' => $request->title_suffix,
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Author updated successfully.',
-            'data' => $author
-        ]);
+        return $this->successResponse($author, 'Author successfully updated.', 200);
     }
 
     /**
@@ -453,18 +443,11 @@ class AuthorController extends Controller
     {
         $author = Author::find($id);
         if (!$author) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Author not found.'
-            ], 404);
+            return $this->errorResponse('Author not found.', 404);
         }
 
         $author->study_program = $author->studyProgram;
-        return response()->json([
-            'success' => true,
-            'message' => 'Author data retrieved successfully.',
-            'data' => $author
-        ], 200);
+        return $this->successResponse($author, 'Author data retrieved successfully.', 200);
     }
 
     /**
@@ -543,11 +526,7 @@ class AuthorController extends Controller
 
         $authors = $query->with('studyProgram')->paginate(10);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Authors data retrieved successfully.',
-            'data' => $authors
-        ], 200);
+        return $this->successResponse($authors, 'Study programs data retrieved successfully.', 200);
     }
 
     /**
@@ -592,25 +571,11 @@ class AuthorController extends Controller
     {
         $author = Author::find($id);
         if (!$author) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Author not found.',
-            ], 404);
+            return $this->errorResponse('Author not found.', 404);
         }
 
         $author->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Author deleted successfully.'
-        ], 200);
-    }
-
-    public function formatValidationErrors($validator)
-    {
-        return response()->json([
-            'success' => false,
-            'errors' => $validator->errors(),
-        ], 422);
+        return $this->successResponse(null, 'Author data deleted successfully.', 200);
     }
 }

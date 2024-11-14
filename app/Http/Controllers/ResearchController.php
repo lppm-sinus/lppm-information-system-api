@@ -334,10 +334,7 @@ class ResearchController extends Controller
     {
         $research = Research::find($id);
         if (!$research) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Research data not found.',
-            ], 404);
+            return $this->errorResponse('Research not found.', 404);
         }
 
         $validator = Validator::make($request->all(), [
@@ -534,15 +531,84 @@ class ResearchController extends Controller
     {
         $research = Research::with('authors')->find($id);
         if (!$research) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Research data not found.',
-            ], 404);
+            return $this->errorResponse('Research data not found.', 404);
         }
 
         return $this->successResponse($research, 'Research data retrieved successfully.', 200);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/researches/grouped-by-scheme",
+     *     summary="Get researches grouped by scheme",
+     *     security={{"bearer_token": {}}},
+     *     description="Retrieves research data grouped by `scheme_short_name`, with an optional filter by `study_program_id`.",
+     *     tags={"Research"},
+     *     @OA\Parameter(
+     *         name="study_program_id",
+     *         in="query",
+     *         description="Filter researches by study program ID",
+     *         required=false,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful retrieval of research data",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Research data retrieved successfully."),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="PI", type="object",
+     *                     @OA\Property(property="count", type="integer", example=2),
+     *                     @OA\Property(property="data", type="array",
+     *                         @OA\Items(type="object",
+     *                             @OA\Property(property="id", type="integer", example=69),
+     *                             @OA\Property(property="leader_name", type="string", example="DIDIK NUGROHO"),
+     *                             @OA\Property(property="leaders_nidn", type="string", example="0613057201"),
+     *                             @OA\Property(property="leaders_institution", type="string", example="STMIK SINAR NUSANTARA"),
+     *                             @OA\Property(property="title", type="string", example="Research title"),
+     *                             @OA\Property(property="scheme_short_name", type="string", example="PI"),
+     *                             @OA\Property(property="scheme_name", type="string", example="PENELITIAN INTERNAL"),
+     *                             @OA\Property(property="approved_funds", type="string", format="decimal", example="3000000.00"),
+     *                             @OA\Property(property="proposed_year", type="string", example="2024"),
+     *                             @OA\Property(property="implementation_year", type="string", example="2024"),
+     *                             @OA\Property(property="focus_area", type="string", example="TEKNOLOGI INFORMASI DAN KOMUNIKASI"),
+     *                             @OA\Property(property="funded_institution_name", type="string", example="STMIK SINAR NUSANTARA"),
+     *                             @OA\Property(property="grant_program", type="string", example="PENELITIAN INTERNAL"),
+     *                             @OA\Property(property="created_at", type="string", format="date-time", example="2024-11-14T03:56:09.000000Z"),
+     *                             @OA\Property(property="updated_at", type="string", format="date-time", example="2024-11-14T03:56:09.000000Z"),
+     *                             @OA\Property(property="authors", type="array",
+     *                                 @OA\Items(type="object",
+     *                                     @OA\Property(property="id", type="integer", example=12),
+     *                                     @OA\Property(property="sinta_id", type="string", example="6049857"),
+     *                                     @OA\Property(property="nidn", type="string", example="0613057201"),
+     *                                     @OA\Property(property="name", type="string", example="DIDIK NUGROHO"),
+     *                                     @OA\Property(property="affiliation", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
+     *                                     @OA\Property(property="study_program_id", type="integer", example=2),
+     *                                     @OA\Property(property="last_education", type="string", example="S2"),
+     *                                     @OA\Property(property="functional_position", type="string", example="Lektor"),
+     *                                     @OA\Property(property="title_prefix", type="string", nullable=true, example=null),
+     *                                     @OA\Property(property="title_suffix", type="string", example="S.Kom, M.Kom"),
+     *                                     @OA\Property(property="created_at", type="string", format="date-time", example="2024-11-14T02:57:18.000000Z"),
+     *                                     @OA\Property(property="updated_at", type="string", format="date-time", example="2024-11-14T02:57:18.000000Z")
+     *                                 )
+     *                             )
+     *                         )
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated access",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
+     */
     public function getResearchesGroupedByScheme()
     {
         $query = Research::with('authors');
@@ -609,10 +675,7 @@ class ResearchController extends Controller
     {
         $research = Research::find($id);
         if (!$research) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Research data not found.'
-            ], 404);
+            return $this->errorResponse('Research data not found.', 404);
         }
 
         $research->delete();
