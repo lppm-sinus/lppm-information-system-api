@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ResearchController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StudyProgramController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -65,7 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/study-programs', [StudyProgramController::class, 'getStudyPrograms']);
     Route::delete('/study-programs/{id}', [StudyProgramController::class, 'delete'])->where('id', '[0-9]+');
 
-    // RESEARCH
+    // RESEARCHES
     Route::post('/researches/import', [ResearchController::class, 'import']);
     Route::post('/researches', [ResearchController::class, 'create']);
     Route::patch('/researches/{id}', [ResearchController::class, 'update'])->where('id', '[0-9]+');
@@ -73,5 +74,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/researches/{id}', [ResearchController::class, 'getResearchByID'])->where('id', '[0-9]+');
     Route::delete('/researches/{id}', [ResearchController::class, 'delete'])->where('id', '[0-9]+');
     Route::get('/researches/grouped-by-scheme', [ResearchController::class, 'getResearchesGroupedByScheme']);
+
+    // SERVICES
+    Route::post('/services/import', [ServiceController::class, 'import']);
 });
 
