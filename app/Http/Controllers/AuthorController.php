@@ -7,6 +7,7 @@ use App\Models\Author;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class AuthorController extends Controller
@@ -83,7 +84,8 @@ class AuthorController extends Controller
         }
 
         if ($request->boolean('reset_table')) {
-            Author::truncate();
+            DB::table('author_research')->delete();
+            DB::table('authors')->delete();
         }
 
         try {
@@ -467,99 +469,47 @@ class AuthorController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/authors",
-     *     tags={"Authors"},
-     *     summary="Get authors data",
+     *     path="/api/research",
+     *     summary="Get list of research",
+     *     tags={"Research"},
      *     security={{"bearer_token":{}}},
+     *     @OA\Parameter(
+     *         name="q",
+     *         in="query",
+     *         description="Search research by name",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Get authors data successfully.",
+     *         description="Successful operation",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Authors data retrieved successfully."),
-     *             @OA\Property(property="data", type="object",
-     *                  @OA\Property(property="current_page", type="integer", example=1),
-     *                  @OA\Property(property="data", 
-     *                      type="array",
-     *                      @OA\Items(
-     *                          type="object",
-     *                          @OA\Property(property="id", type="integer", example=1),
-     *                          @OA\Property(property="sinta_id", type="string", example="5975479"),
-     *                          @OA\Property(property="nidn", type="string", example="0617057603"), 
-     *                          @OA\Property(property="name", type="string", example="TEGUH SUSYANTO"),
-     *                          @OA\Property(property="affiliation", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
-     *                          @OA\Property(property="study_program_id", type="integer", example=1),
-     *                          @OA\Property(property="last_education", type="string", example="S2"),
-     *                          @OA\Property(property="functional_position", type="string", example="Lektor"),
-     *                          @OA\Property(property="title_prefix", type="string", example=null),
-     *                          @OA\Property(property="title_suffix", type="string", example="S.Kom, M.Cs"),
-     *                          @OA\Property(property="created_at", type="string", format="date-time", example="2024-09-12T06:33:25.000000Z"),
-     *                          @OA\Property(property="updated_at", type="string", format="date-time", example="2024-09-12T06:33:25.000000Z"),
-     *                          @OA\Property(
-     *                              property="study_program",
-     *                              type="object",
-     *                              @OA\Property(property="id", type="integer", example=1),
-     *                              @OA\Property(property="name", type="string", example="S1 Sistem Informasi"),
-     *                              @OA\Property(property="created_at", type="string", format="date-time", example="2024-10-23T06:09:07.000000Z"), 
-     *                              @OA\Property(property="updated_at", type="string", format="date-time", example="2024-10-23T06:09:07.000000Z")
-     *                          )
-     *                      ),
-     *                       @OA\Items(
-     *                          type="object",
-     *                          @OA\Property(property="id", type="integer", example=1),
-     *                          @OA\Property(property="sinta_id", type="string", example="321333435"),
-     *                          @OA\Property(property="nidn", type="string", example="465424234"), 
-     *                          @OA\Property(property="name", type="string", example="Sapto Nug"),
-     *                          @OA\Property(property="affiliation", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
-     *                          @OA\Property(property="study_program_id", type="integer", example=3),
-     *                          @OA\Property(property="last_education", type="string", example="S2"),
-     *                          @OA\Property(property="functional_position", type="string", example="Lektor"),
-     *                          @OA\Property(property="title_prefix", type="string", example=null),
-     *                          @OA\Property(property="title_suffix", type="string", example="S.Kom, M.Kom"),
-     *                          @OA\Property(property="created_at", type="string", format="date-time", example="2024-09-12T06:33:25.000000Z"),
-     *                          @OA\Property(property="updated_at", type="string", format="date-time", example="2024-09-12T06:33:25.000000Z"),
-     *                          @OA\Property(
-     *                              property="study_program",
-     *                              type="object",
-     *                              @OA\Property(property="id", type="integer", example=1),
-     *                              @OA\Property(property="name", type="string", example="S1 Sistem Informasi"),
-     *                              @OA\Property(property="created_at", type="string", format="date-time", example="2024-10-23T06:09:07.000000Z"), 
-     *                              @OA\Property(property="updated_at", type="string", format="date-time", example="2024-10-23T06:09:07.000000Z")
-     *                          )
-     *                      )
-     *                  ),
-     *                  @OA\Property(property="first_page_url", type="string", example="http://localhost:8000/api/authors?page=1"),
-     *                  @OA\Property(property="from", type="integer", example=1),
-     *                  @OA\Property(property="last_page", type="integer", example=2),
-     *                  @OA\Property(property="last_page_url", type="string", example="http://localhost:8000/api/authors?page=2"),
-     *                  @OA\Property(property="links", 
-     *                      type="array", 
-     *                      example={{ 
-     *                          "url": null,
-     *                          "label": "&laquo; Previous",
-     *                          "active": false
-     *                      }, {
-     *                          "url": "http://localhost:8000/api/authors?page=1",
-     *                          "label": "1",
-     *                          "active": true
-     *                      }, {
-     *                          "url": null,
-     *                          "label": "Next &raquo;",
-     *                          "active": false
-     *                      }},
-     *                      @OA\Items(
-     *                          type="object",
-     *                          @OA\Property(property="url", type="string", example=null),
-     *                          @OA\Property(property="label", type="string", example="&laquo; Previous"),
-     *                          @OA\Property(property="active", type="boolean", example=false),
-     *                      ),
-     *                  ),
-     *                  @OA\Property(property="next_page_url", type="string", example=null),
-     *                  @OA\Property(property="path", type="string", example="http://localhost:8000/api/authors"),
-     *                  @OA\Property(property="per_page", type="integer", example=10),
-     *                  @OA\Property(property="prev_page", type="string", example=null),
-     *                  @OA\Property(property="to", type="integer", example=4),
-     *                  @OA\Property(property="total", type="integer", example=4)
+     *             @OA\Property(property="message", type="string", example="Study programs data retrieved successfully."),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(
+     *                     property="data",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="id", type="integer", example=1),
+     *                         @OA\Property(property="name", type="string", example="Computer Science"),
+     *                         @OA\Property(
+     *                             property="authors",
+     *                             type="array",
+     *                             @OA\Items(
+     *                                 type="object",
+     *                                 @OA\Property(property="id", type="integer", example=1),
+     *                                 @OA\Property(property="name", type="string", example="John Doe")
+     *                             )
+     *                         )
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="total", type="integer", example=50),
+     *                 @OA\Property(property="per_page", type="integer", example=10)
      *             )
      *         )
      *     ),
@@ -575,7 +525,7 @@ class AuthorController extends Controller
      *         description="Unauthorized Access",
      *         @OA\JsonContent(
      *              @OA\Property(property="success", type="boolean", example=false),
-     *              @OA\Property(property="message", type="string", example="Unauthorized."),
+     *              @OA\Property(property="message", type="string", example="Unauthorized"),
      *         )
      *     ),
      * )

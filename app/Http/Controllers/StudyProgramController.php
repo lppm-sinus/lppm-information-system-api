@@ -206,13 +206,6 @@ class StudyProgramController extends Controller
      *         required=false,
      *         @OA\Schema(type="string")
      *     ),
-     *     @OA\Parameter(
-     *         name="page",
-     *         in="query",
-     *         description="Page number for pagination",
-     *         required=false,
-     *         @OA\Schema(type="integer")
-     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
