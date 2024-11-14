@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\StudyProgram;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class StudyProgramController extends Controller
 {
+    use ApiResponse;
+
+
     public function __construct()
     {
         $this->middleware(['role:superadmin']);
@@ -93,11 +97,7 @@ class StudyProgramController extends Controller
             'name' => $request->name
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Study program created successfully.',
-            'data' => $study_programs
-        ], 201);
+        return $this->successResponse($study_programs, 'Study program created successfully.', 201);
     }
 
     /**
@@ -186,11 +186,7 @@ class StudyProgramController extends Controller
             'name' => $request->name
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Study program updated successfully.',
-            'data' => $study_program
-        ], 200);
+        return $this->successResponse($study_program, 'Study program data updated successfully.', 200);
     }
 
     /**
@@ -205,13 +201,6 @@ class StudyProgramController extends Controller
      *         description="Search study programs by name",
      *         required=false,
      *         @OA\Schema(type="string")
-     *     ),
-     *     @OA\Parameter(
-     *         name="page",
-     *         in="query",
-     *         description="Page number for pagination",
-     *         required=false,
-     *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -274,11 +263,7 @@ class StudyProgramController extends Controller
 
         $study_programs = $query->with('authors')->paginate(10);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Study programs data retrieved successfully.',
-            'data' => $study_programs
-        ], 200);
+        return $this->successResponse($study_programs, 'Study programs data retrieved successfully.', 200);
     }
 
     /**
@@ -346,17 +331,10 @@ class StudyProgramController extends Controller
     {
         $study_program = StudyProgram::with('authors')->find($id);
         if (!$study_program) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Study program not found.'
-            ], 404);
+            return $this->errorResponse('Study program not found.', 404);
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Study program data retrieved successfully.',
-            'data' => $study_program
-        ], 200);
+        return $this->successResponse($study_program, 'Study program data retrieved successfully.', 200);
     }
 
     /**
@@ -409,25 +387,11 @@ class StudyProgramController extends Controller
     {
         $study_program = StudyProgram::find($id);
         if (!$study_program) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Study program not found.',
-            ], 404);
+            return $this->errorResponse('Study program not found.', 404);
         }
 
         $study_program->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Study program deleted successfully.',
-        ], 200);
-    }
-
-    public function formatValidationErrors($validator)
-    {
-        return response()->json([
-            'success' => false,
-            'errors' => $validator->errors(),
-        ], 422);
+        return $this->successResponse(null, 'Study program deleted successfully.', 200);
     }
 }

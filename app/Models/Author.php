@@ -24,4 +24,9 @@ class Author extends Model
     {
         return $this->belongsTo(StudyProgram::class);
     }
+
+    public function research()
+    {
+        return $this->belongsToMany(Research::class);
+    }
 }

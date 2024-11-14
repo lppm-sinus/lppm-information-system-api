@@ -122,243 +122,6 @@
             }
         },
         "/api/authors": {
-            "get": {
-                "tags": [
-                    "Authors"
-                ],
-                "summary": "Get authors data",
-                "operationId": "f55a52c3ecac25facdf618d8a6bf70c0",
-                "responses": {
-                    "200": {
-                        "description": "Get authors data successfully.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Authors data retrieved successfully."
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "current_page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "data": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            },
-                                                            "sinta_id": {
-                                                                "type": "string",
-                                                                "example": "5975479"
-                                                            },
-                                                            "nidn": {
-                                                                "type": "string",
-                                                                "example": "0617057603"
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "TEGUH SUSYANTO"
-                                                            },
-                                                            "affiliation": {
-                                                                "type": "string",
-                                                                "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
-                                                            },
-                                                            "study_program_id": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            },
-                                                            "last_education": {
-                                                                "type": "string",
-                                                                "example": "S2"
-                                                            },
-                                                            "functional_position": {
-                                                                "type": "string",
-                                                                "example": "Lektor"
-                                                            },
-                                                            "title_prefix": {
-                                                                "type": "string",
-                                                                "example": null
-                                                            },
-                                                            "title_suffix": {
-                                                                "type": "string",
-                                                                "example": "S.Kom, M.Cs"
-                                                            },
-                                                            "created_at": {
-                                                                "type": "string",
-                                                                "format": "date-time",
-                                                                "example": "2024-09-12T06:33:25.000000Z"
-                                                            },
-                                                            "updated_at": {
-                                                                "type": "string",
-                                                                "format": "date-time",
-                                                                "example": "2024-09-12T06:33:25.000000Z"
-                                                            },
-                                                            "study_program": {
-                                                                "properties": {
-                                                                    "id": {
-                                                                        "type": "integer",
-                                                                        "example": 1
-                                                                    },
-                                                                    "name": {
-                                                                        "type": "string",
-                                                                        "example": "S1 Sistem Informasi"
-                                                                    },
-                                                                    "created_at": {
-                                                                        "type": "string",
-                                                                        "format": "date-time",
-                                                                        "example": "2024-10-23T06:09:07.000000Z"
-                                                                    },
-                                                                    "updated_at": {
-                                                                        "type": "string",
-                                                                        "format": "date-time",
-                                                                        "example": "2024-10-23T06:09:07.000000Z"
-                                                                    }
-                                                                },
-                                                                "type": "object"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "first_page_url": {
-                                                    "type": "string",
-                                                    "example": "http://localhost:8000/api/authors?page=1"
-                                                },
-                                                "from": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "last_page": {
-                                                    "type": "integer",
-                                                    "example": 2
-                                                },
-                                                "last_page_url": {
-                                                    "type": "string",
-                                                    "example": "http://localhost:8000/api/authors?page=2"
-                                                },
-                                                "links": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "url": {
-                                                                "type": "string",
-                                                                "example": null
-                                                            },
-                                                            "label": {
-                                                                "type": "string",
-                                                                "example": "&laquo; Previous"
-                                                            },
-                                                            "active": {
-                                                                "type": "boolean",
-                                                                "example": false
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    },
-                                                    "example": [
-                                                        {
-                                                            "url": null,
-                                                            "label": "&laquo; Previous",
-                                                            "active": false
-                                                        },
-                                                        {
-                                                            "url": "http://localhost:8000/api/authors?page=1",
-                                                            "label": "1",
-                                                            "active": true
-                                                        },
-                                                        {
-                                                            "url": null,
-                                                            "label": "Next &raquo;",
-                                                            "active": false
-                                                        }
-                                                    ]
-                                                },
-                                                "next_page_url": {
-                                                    "type": "string",
-                                                    "example": null
-                                                },
-                                                "path": {
-                                                    "type": "string",
-                                                    "example": "http://localhost:8000/api/authors"
-                                                },
-                                                "per_page": {
-                                                    "type": "integer",
-                                                    "example": 10
-                                                },
-                                                "prev_page": {
-                                                    "type": "string",
-                                                    "example": null
-                                                },
-                                                "to": {
-                                                    "type": "integer",
-                                                    "example": 4
-                                                },
-                                                "total": {
-                                                    "type": "integer",
-                                                    "example": 4
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated access",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Unauthenticated."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Unauthorized Access",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Unauthorized."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
-            },
             "post": {
                 "tags": [
                     "Authors"
@@ -971,6 +734,138 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/research": {
+            "get": {
+                "tags": [
+                    "Research"
+                ],
+                "summary": "Get list of research",
+                "operationId": "6fbb3f6182ef0ff00ccc577e6d0217f1",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search research by name",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Study programs data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Computer Science"
+                                                            },
+                                                            "authors": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "integer",
+                                                                            "example": 1
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "John Doe"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized Access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
                                         }
                                     },
                                     "type": "object"
@@ -3414,6 +3309,1110 @@
                 ]
             }
         },
+        "/api/researches/import": {
+            "post": {
+                "tags": [
+                    "Research"
+                ],
+                "summary": "Import research from excel file",
+                "operationId": "4e0d0e110df3880c02ba291014c4d4e0",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "file": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "reset_table": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "file": "authors.xlsx"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Research Data Imported",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Research data imported successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Research with NIDN 345525656 already exists."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/researches": {
+            "get": {
+                "tags": [
+                    "Research"
+                ],
+                "summary": "Get paginated list of researches",
+                "description": "Returns paginated researches with optional search functionality",
+                "operationId": "getResearches",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search term for filtering researches by title or leader name",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Research data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "Research Title"
+                                                            },
+                                                            "leader_name": {
+                                                                "type": "string",
+                                                                "example": "John Doe"
+                                                            },
+                                                            "leaders_nidn": {
+                                                                "type": "string",
+                                                                "example": "1234567890"
+                                                            },
+                                                            "leaders_institution": {
+                                                                "type": "string",
+                                                                "example": "University"
+                                                            },
+                                                            "scheme_short_name": {
+                                                                "type": "string",
+                                                                "example": "RSH"
+                                                            },
+                                                            "scheme_name": {
+                                                                "type": "string",
+                                                                "example": "Research Scheme"
+                                                            },
+                                                            "approved_funds": {
+                                                                "type": "number",
+                                                                "example": 50000000
+                                                            },
+                                                            "proposed_year": {
+                                                                "type": "integer",
+                                                                "example": 2023
+                                                            },
+                                                            "implementation_year": {
+                                                                "type": "integer",
+                                                                "example": 2024
+                                                            },
+                                                            "focus_area": {
+                                                                "type": "string",
+                                                                "example": "Technology"
+                                                            },
+                                                            "funded_institution_name": {
+                                                                "type": "string",
+                                                                "example": "Funding Body"
+                                                            },
+                                                            "grant_program": {
+                                                                "type": "string",
+                                                                "example": "Research Grant"
+                                                            },
+                                                            "authors": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "integer",
+                                                                            "example": 1
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "Author Name"
+                                                                        },
+                                                                        "nidn": {
+                                                                            "type": "string",
+                                                                            "example": "1234567890"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "first_page_url": {
+                                                    "type": "string"
+                                                },
+                                                "from": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page_url": {
+                                                    "type": "string"
+                                                },
+                                                "next_page_url": {
+                                                    "type": "string"
+                                                },
+                                                "path": {
+                                                    "type": "string"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "prev_page_url": {
+                                                    "type": "string"
+                                                },
+                                                "to": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Research"
+                ],
+                "summary": "Create new research",
+                "operationId": "aa30e260fd9e88ff424f0f429d974bdf",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "leader_name": {
+                                        "type": "string"
+                                    },
+                                    "leaders_nidn": {
+                                        "type": "string"
+                                    },
+                                    "leaders_institution": {
+                                        "type": "string"
+                                    },
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "scheme_short_name": {
+                                        "type": "string"
+                                    },
+                                    "scheme_name": {
+                                        "type": "string"
+                                    },
+                                    "approved_funds": {
+                                        "type": "integer"
+                                    },
+                                    "proposed_year": {
+                                        "type": "string"
+                                    },
+                                    "implementation_year": {
+                                        "type": "string"
+                                    },
+                                    "focus_area": {
+                                        "type": "string"
+                                    },
+                                    "funded_institution_name": {
+                                        "type": "string"
+                                    },
+                                    "grant_program": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "leader_name": "Yustina",
+                                    "leaders_nidn": "2342453",
+                                    "leaders_institution": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
+                                    "title": "Penelitian 1",
+                                    "scheme_short_name": "PI",
+                                    "scheme_name": "Penelitian Internal",
+                                    "approved_funds": 2000000,
+                                    "proposed_year": "2024",
+                                    "implementation_year": "2024",
+                                    "focus_area": "Penelitian",
+                                    "funded_institution_name": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
+                                    "grant_program": "Program Pengembangan"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Research Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Research created successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "leader_name": {
+                                                    "type": "string",
+                                                    "example": "Yustina"
+                                                },
+                                                "leaders_nidn": {
+                                                    "type": "string",
+                                                    "example": "2342453"
+                                                },
+                                                "leaders_institution": {
+                                                    "type": "string",
+                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Penelitian 1"
+                                                },
+                                                "scheme_short_name": {
+                                                    "type": "string",
+                                                    "example": "PI"
+                                                },
+                                                "scheme_name": {
+                                                    "type": "string",
+                                                    "example": "Penelitian Internal"
+                                                },
+                                                "approved_funds": {
+                                                    "type": "integer",
+                                                    "example": 2000000
+                                                },
+                                                "proposed_year": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "implementation_year": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "focus_area": {
+                                                    "type": "string",
+                                                    "example": "Penelitian"
+                                                },
+                                                "funded_institution_name": {
+                                                    "type": "string",
+                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                },
+                                                "grant_program": {
+                                                    "type": "string",
+                                                    "example": "Program Pengembangan"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/researches/{id}": {
+            "get": {
+                "tags": [
+                    "Research"
+                ],
+                "summary": "Get research by ID",
+                "description": "Returns a specific research by its ID with related authors",
+                "operationId": "getResearchById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of research to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Research data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Research Title"
+                                                },
+                                                "leader_name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "leaders_nidn": {
+                                                    "type": "string",
+                                                    "example": "1234567890"
+                                                },
+                                                "leaders_institution": {
+                                                    "type": "string",
+                                                    "example": "University"
+                                                },
+                                                "scheme_short_name": {
+                                                    "type": "string",
+                                                    "example": "RSH"
+                                                },
+                                                "scheme_name": {
+                                                    "type": "string",
+                                                    "example": "Research Scheme"
+                                                },
+                                                "approved_funds": {
+                                                    "type": "number",
+                                                    "example": 50000000
+                                                },
+                                                "proposed_year": {
+                                                    "type": "integer",
+                                                    "example": 2023
+                                                },
+                                                "implementation_year": {
+                                                    "type": "integer",
+                                                    "example": 2024
+                                                },
+                                                "focus_area": {
+                                                    "type": "string",
+                                                    "example": "Technology"
+                                                },
+                                                "funded_institution_name": {
+                                                    "type": "string",
+                                                    "example": "Funding Body"
+                                                },
+                                                "grant_program": {
+                                                    "type": "string",
+                                                    "example": "Research Grant"
+                                                },
+                                                "authors": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "sinta_id": {
+                                                                "type": "string",
+                                                                "example": "34514545"
+                                                            },
+                                                            "nidn": {
+                                                                "type": "string",
+                                                                "example": "2342453"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Yustina"
+                                                            },
+                                                            "affiliation": {
+                                                                "type": "string",
+                                                                "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                            },
+                                                            "study_program_id": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "last_education": {
+                                                                "type": "string",
+                                                                "example": "S1"
+                                                            },
+                                                            "functional_position": {
+                                                                "type": "string",
+                                                                "example": "Lektor"
+                                                            },
+                                                            "title_prefix": {
+                                                                "type": "string",
+                                                                "example": "Prof."
+                                                            },
+                                                            "title_suffix": {
+                                                                "type": "string",
+                                                                "example": "S.T."
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Research not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Research data not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Research"
+                ],
+                "summary": "Delete a research",
+                "description": "Deletes a research record by ID",
+                "operationId": "deleteResearch",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of research to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Research deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Response data deleted successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Research not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Research data not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Research"
+                ],
+                "summary": "Update an research by ID",
+                "operationId": "2580be7bdfd43b11ff9b79241a3cb281",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the research",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "leader_name": {
+                                        "type": "string"
+                                    },
+                                    "leaders_nidn": {
+                                        "type": "string"
+                                    },
+                                    "leaders_institution": {
+                                        "type": "string"
+                                    },
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "scheme_short_name": {
+                                        "type": "string"
+                                    },
+                                    "scheme_name": {
+                                        "type": "string"
+                                    },
+                                    "approved_funds": {
+                                        "type": "integer"
+                                    },
+                                    "proposed_year": {
+                                        "type": "string"
+                                    },
+                                    "implementation_year": {
+                                        "type": "string"
+                                    },
+                                    "focus_area": {
+                                        "type": "string"
+                                    },
+                                    "funded_institution_name": {
+                                        "type": "string"
+                                    },
+                                    "grant_program": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "leader_name": "Yustina",
+                                    "leaders_nidn": "2342453",
+                                    "leaders_institution": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
+                                    "title": "Penelitian 1",
+                                    "scheme_short_name": "PI",
+                                    "scheme_name": "Penelitian Internal",
+                                    "approved_funds": 2000000,
+                                    "proposed_year": "2024",
+                                    "implementation_year": "2024",
+                                    "focus_area": "Penelitian",
+                                    "funded_institution_name": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
+                                    "grant_program": "Program Pengembangan"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Author Updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Research created successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "leader_name": {
+                                                    "type": "string",
+                                                    "example": "Yustina"
+                                                },
+                                                "leaders_nidn": {
+                                                    "type": "string",
+                                                    "example": "2342453"
+                                                },
+                                                "leaders_institution": {
+                                                    "type": "string",
+                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Penelitian 1"
+                                                },
+                                                "scheme_short_name": {
+                                                    "type": "string",
+                                                    "example": "PI"
+                                                },
+                                                "scheme_name": {
+                                                    "type": "string",
+                                                    "example": "Penelitian Internal"
+                                                },
+                                                "approved_funds": {
+                                                    "type": "integer",
+                                                    "example": 2000000
+                                                },
+                                                "proposed_year": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "implementation_year": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "focus_area": {
+                                                    "type": "string",
+                                                    "example": "Penelitian"
+                                                },
+                                                "funded_institution_name": {
+                                                    "type": "string",
+                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                },
+                                                "grant_program": {
+                                                    "type": "string",
+                                                    "example": "Program Pengembangan"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/researches/grouped-by-scheme": {
+            "get": {
+                "tags": [
+                    "Research"
+                ],
+                "summary": "Get researches grouped by scheme",
+                "description": "Retrieves research data grouped by `scheme_short_name`, with an optional filter by `study_program_id`.",
+                "operationId": "167517055f256201d5558431d2b0e6cc",
+                "parameters": [
+                    {
+                        "name": "study_program_id",
+                        "in": "query",
+                        "description": "Filter researches by study program ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful retrieval of research data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Research data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "PI": {
+                                                    "properties": {
+                                                        "count": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        },
+                                                        "data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "integer",
+                                                                        "example": 69
+                                                                    },
+                                                                    "leader_name": {
+                                                                        "type": "string",
+                                                                        "example": "DIDIK NUGROHO"
+                                                                    },
+                                                                    "leaders_nidn": {
+                                                                        "type": "string",
+                                                                        "example": "0613057201"
+                                                                    },
+                                                                    "leaders_institution": {
+                                                                        "type": "string",
+                                                                        "example": "STMIK SINAR NUSANTARA"
+                                                                    },
+                                                                    "title": {
+                                                                        "type": "string",
+                                                                        "example": "Research title"
+                                                                    },
+                                                                    "scheme_short_name": {
+                                                                        "type": "string",
+                                                                        "example": "PI"
+                                                                    },
+                                                                    "scheme_name": {
+                                                                        "type": "string",
+                                                                        "example": "PENELITIAN INTERNAL"
+                                                                    },
+                                                                    "approved_funds": {
+                                                                        "type": "string",
+                                                                        "format": "decimal",
+                                                                        "example": "3000000.00"
+                                                                    },
+                                                                    "proposed_year": {
+                                                                        "type": "string",
+                                                                        "example": "2024"
+                                                                    },
+                                                                    "implementation_year": {
+                                                                        "type": "string",
+                                                                        "example": "2024"
+                                                                    },
+                                                                    "focus_area": {
+                                                                        "type": "string",
+                                                                        "example": "TEKNOLOGI INFORMASI DAN KOMUNIKASI"
+                                                                    },
+                                                                    "funded_institution_name": {
+                                                                        "type": "string",
+                                                                        "example": "STMIK SINAR NUSANTARA"
+                                                                    },
+                                                                    "grant_program": {
+                                                                        "type": "string",
+                                                                        "example": "PENELITIAN INTERNAL"
+                                                                    },
+                                                                    "created_at": {
+                                                                        "type": "string",
+                                                                        "format": "date-time",
+                                                                        "example": "2024-11-14T03:56:09.000000Z"
+                                                                    },
+                                                                    "updated_at": {
+                                                                        "type": "string",
+                                                                        "format": "date-time",
+                                                                        "example": "2024-11-14T03:56:09.000000Z"
+                                                                    },
+                                                                    "authors": {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "properties": {
+                                                                                "id": {
+                                                                                    "type": "integer",
+                                                                                    "example": 12
+                                                                                },
+                                                                                "sinta_id": {
+                                                                                    "type": "string",
+                                                                                    "example": "6049857"
+                                                                                },
+                                                                                "nidn": {
+                                                                                    "type": "string",
+                                                                                    "example": "0613057201"
+                                                                                },
+                                                                                "name": {
+                                                                                    "type": "string",
+                                                                                    "example": "DIDIK NUGROHO"
+                                                                                },
+                                                                                "affiliation": {
+                                                                                    "type": "string",
+                                                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                                                },
+                                                                                "study_program_id": {
+                                                                                    "type": "integer",
+                                                                                    "example": 2
+                                                                                },
+                                                                                "last_education": {
+                                                                                    "type": "string",
+                                                                                    "example": "S2"
+                                                                                },
+                                                                                "functional_position": {
+                                                                                    "type": "string",
+                                                                                    "example": "Lektor"
+                                                                                },
+                                                                                "title_prefix": {
+                                                                                    "type": "string",
+                                                                                    "example": null,
+                                                                                    "nullable": true
+                                                                                },
+                                                                                "title_suffix": {
+                                                                                    "type": "string",
+                                                                                    "example": "S.Kom, M.Kom"
+                                                                                },
+                                                                                "created_at": {
+                                                                                    "type": "string",
+                                                                                    "format": "date-time",
+                                                                                    "example": "2024-11-14T02:57:18.000000Z"
+                                                                                },
+                                                                                "updated_at": {
+                                                                                    "type": "string",
+                                                                                    "format": "date-time",
+                                                                                    "example": "2024-11-14T02:57:18.000000Z"
+                                                                                }
+                                                                            },
+                                                                            "type": "object"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/api/study-programs": {
             "get": {
                 "tags": [
@@ -3429,15 +4428,6 @@
                         "required": false,
                         "schema": {
                             "type": "string"
-                        }
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "description": "Page number for pagination",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
                         }
                     }
                 ],
@@ -5160,6 +6150,10 @@
         {
             "name": "Authors",
             "description": "Authors"
+        },
+        {
+            "name": "Research",
+            "description": "Research"
         },
         {
             "name": "Categories",

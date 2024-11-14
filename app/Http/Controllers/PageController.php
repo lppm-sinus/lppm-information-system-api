@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Page;
+use App\Traits\ApiResponse;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -10,6 +11,8 @@ use Illuminate\Routing\Controller;
 
 class PageController extends Controller
 {
+    use ApiResponse;
+
 
     public function __construct()
     {
@@ -101,10 +104,10 @@ class PageController extends Controller
 
         $slug = SlugService::createSlug(Page::class, 'slug', $request->title);
 
-        $existingSlug = Page::where('slug', $slug)->first();
+        $existing_slug = Page::where('slug', $slug)->first();
 
         if ($request->parent_id != null) {
-            if ($existingSlug) {
+            if ($existing_slug) {
                 $parent_menu = Page::where('id', $request->parent_id)->first();
                 $slug = $parent_menu->slug . '-' . $slug;
                 $link = '/' . $parent_menu->slug . '/' . $slug;
@@ -113,11 +116,8 @@ class PageController extends Controller
                 $link = '/' . $parent_menu->slug . '/' . $slug;
             }
         } else {
-            if ($existingSlug) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Slug already exists. Please choose a different title.'
-                ], 400);
+            if ($existing_slug) {
+                return $this->errorResponse('The slug has already been taken.', 400);
             } else {
                 $link = '/' . $slug;
             }
@@ -130,11 +130,7 @@ class PageController extends Controller
             'parent_id' => $request->parent_id
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Page created successfully.',
-            'data' => $page
-        ], 201);
+        return $this->successResponse($page, 'Page created successfully.', 201);
     }
 
     /**
@@ -211,10 +207,7 @@ class PageController extends Controller
     {
         $page = Page::find($id);
         if (!$page) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Page not found.'
-            ], 404);
+            return $this->errorResponse('Page not found.', 404);
         }
 
         $validator = Validator::make($request->all(), [
@@ -235,12 +228,9 @@ class PageController extends Controller
             $link = '/' . $slug;
         }
 
-        $existingSlug = Page::where('id', '!=', $id)->where('slug', $slug)->first();
-        if ($existingSlug) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Slug already exists. Please choose a different title.'
-            ], 400);
+        $existing_slug = Page::where('id', '!=', $id)->where('slug', $slug)->first();
+        if ($existing_slug) {
+            return $this->errorResponse('The slug has already been taken.', 400);
         }
 
         $page->title = $request->title;
@@ -250,11 +240,7 @@ class PageController extends Controller
 
         $page->save();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Page updated successfully.',
-            'data' => $page
-        ], 201);
+        return $this->successResponse($page, 'Page successfully updated.', 200);
     }
 
     /**
@@ -298,17 +284,10 @@ class PageController extends Controller
     {
         $page = Page::find($id);
         if (!$page) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Page not found.'
-            ], 404);
+            return $this->errorResponse('Page not found.', 404);
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Page retrieved successfully.',
-            'data' => $page
-        ], 200);
+        return $this->successResponse($page, 'Page data retrieved successfully.', 200);
     }
 
     /**
@@ -421,11 +400,7 @@ class PageController extends Controller
     {
         $pages = Page::paginate(10);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Page data retrieved successfully.',
-            'data' => $pages
-        ], 200);
+        return $this->successResponse($pages, 'Pages data retrieved successfully.', 200);
     }
 
     /**
@@ -489,11 +464,7 @@ class PageController extends Controller
     {
         $pages = Page::where('slug', '!=', 'beranda')->get();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Pages menu retrieved successfully.',
-            'data' => $pages
-        ], 200);
+        return $this->successResponse($pages, 'Pages menu retrieved successfully.', 200);
     }
 
     /**
@@ -538,25 +509,11 @@ class PageController extends Controller
     {
         $page = Page::find($id);
         if (!$page) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Page not found.'
-            ], 404);
+            return $this->errorResponse('Page not found.', 404);
         }
 
         $page->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Page deleted successfully.'
-        ], 200);
-    }
-
-    public function formatValidationErrors($validator)
-    {
-        return response()->json([
-            'success' => false,
-            'errors' => $validator->errors(),
-        ], 422);
+        return $this->successResponse(null, 'Page data deleted successfully.', 200);
     }
 }

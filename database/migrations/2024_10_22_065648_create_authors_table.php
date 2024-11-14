@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->string('sinta_id', 20);
             $table->string('nidn', 20)->unique();
             $table->string('name', 100);
-            $table->string('affiliation', '100');
+            $table->string('affiliation', 100);
             $table->foreignId('study_program_id')->nullable()->constrained('study_programs')->onDelete('cascade');
             $table->string('last_education', 20)->nullable();
             $table->string('functional_position', 50)->nullable();

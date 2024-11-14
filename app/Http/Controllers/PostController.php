@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Page;
 use App\Models\Post;
-use App\Models\User;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controller;
@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
+    use ApiResponse;
+
 
     public function __construct()
     {
@@ -135,24 +137,15 @@ class PostController extends Controller
         }
 
         if ($category_slug == 'media' && !$request->file('image')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Image required for media category.'
-            ], 400);
+            return $this->errorResponse('Image required for media category.', 400);
         }
 
         if ($category_slug == 'journal' && !$request->link_url) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Link required for journal category.'
-            ], 400);
+            return $this->errorResponse('Link URL required for journal category.', 400);
         }
 
         if ($category_slug == 'file' && !$request->file('file')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'File required for file category.'
-            ], 400);
+            return $this->errorResponse('File required for file category.', 400);
         }
 
         $page_slug = Page::where('id', $request->page_id)->pluck('slug')->first();
@@ -187,11 +180,7 @@ class PostController extends Controller
             'status' => $request->status
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Post created successfully.',
-            'data' => $post
-        ], 201);
+        return $this->successResponse($post, 'Post created successfully.', 201);
     }
 
     /**
@@ -359,10 +348,10 @@ class PostController extends Controller
             ->paginate(10);
 
         // Transform the data
-        $transformedData = $posts->toArray();
+        $transformed_data = $posts->toArray();
 
         // Transform each post in the data array
-        $transformedData['data'] = collect($transformedData['data'])->map(function ($post) {
+        $transformed_data['data'] = collect($transformed_data['data'])->map(function ($post) {
             return [
                 'id' => $post['id'],
                 'title' => $post['title'],
@@ -379,11 +368,7 @@ class PostController extends Controller
             ];
         })->toArray();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Posts data retrieved successfully.',
-            'data' => $transformedData
-        ], 200);
+        return $this->successResponse($transformed_data, 'Posts data retrieved successfully.', 200);
     }
 
     /**
@@ -468,10 +453,7 @@ class PostController extends Controller
     {
         $page = Page::where('slug', $page_slug)->first();
         if (!$page) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Page slug not found.'
-            ], 404);
+            return $this->errorResponse('Page slug not found.', 404);
         }
 
         $posts = Post::where('page_id', $page->id)
@@ -493,11 +475,7 @@ class PostController extends Controller
             ];
         });
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Posts data retrieved successfully.',
-            'data' => $posts
-        ], 200);
+        return $this->successResponse($posts, 'Posts data retrieved successfully.', 200);
     }
 
     /**
@@ -563,21 +541,14 @@ class PostController extends Controller
     {
         $post = Post::find($id);
         if (!$post) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Post not found'
-            ], 404);
+            return $this->errorResponse('Post not found.', 404);
         }
 
         $post = Post::where('id', $id)
             ->with(['category:id,name,slug', 'author:id,name,email'])
             ->first();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Post data retrieved successfully.',
-            'data' => $post
-        ], 200);
+        return $this->successResponse($post, 'Post data retrieved successfully.', 200);
     }
 
     /**
@@ -687,17 +658,11 @@ class PostController extends Controller
         $post = Post::find($id);
 
         if (!$post) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Post not found.'
-            ], 404);
+            return $this->errorResponse('Post not found.', 404);
         }
 
         if (!auth()->user()->hasRole('superadmin') && auth()->user()->id !== $post->author_id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized.'
-            ], 403);
+            return $this->errorResponse('You are not authorized to update this post.', 401);
         }
 
         $category_slug = Category::where('id', $request->category_id)->pluck('slug')->first();
@@ -720,24 +685,15 @@ class PostController extends Controller
         }
 
         if ($category_slug == 'media' && !$request->file('image')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Image required for media category.'
-            ], 400);
+            return $this->errorResponse('Image required for media category.', 400);
         }
 
         if ($category_slug == 'journal' && !$request->link_url) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Link required for journal category.'
-            ], 400);
+            return $this->errorResponse('Link URL required for journal category.', 400);
         }
 
         if ($category_slug == 'file' && !$request->file('file')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'File required for file category.'
-            ], 400);
+            return $this->errorResponse('File required for file category.', 400);
         }
 
         $image_path = $post->image_url;
@@ -773,11 +729,7 @@ class PostController extends Controller
             'status' => $request->status
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Post updated successfully.',
-            'data' => $post
-        ], 200);
+        return $this->successResponse($post, 'Post updated successfully.', 200);
     }
 
     /**
@@ -823,17 +775,11 @@ class PostController extends Controller
         $post = Post::find($id);
 
         if (!$post) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Post not found.'
-            ], 404);
+            return $this->errorResponse('Post not found.', 404);
         }
 
         if (!auth()->user()->hasRole('superadmin') && auth()->user()->id !== $post->author_id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized.'
-            ], 403);
+            return $this->errorResponse('You are not authorized to delete this post.', 403);
         }
 
         if ($post->image_url) {
@@ -846,17 +792,7 @@ class PostController extends Controller
 
         $post->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Post data deleted successfully.'
-        ], 200);
+        return $this->successResponse(null, 'Post data deleted successfully.', 200);
     }
 
-    public function formatValidationErrors($validator)
-    {
-        return response()->json([
-            'success' => false,
-            'errors' => $validator->errors(),
-        ], 422);
-    }
 }
