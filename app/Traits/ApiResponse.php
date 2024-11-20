@@ -36,10 +36,11 @@ trait ApiResponse
         ], $code);
     }
 
-    protected function paginatedResponse($collection)
+    protected function paginatedResponse($collection, $message, $code = 200)
     {
         return response()->json([
             'success' => true,
+            'message' => $message,
             'data' => $collection->items(),
             'meta' => [
                 'total' => $collection->total(),
@@ -47,7 +48,7 @@ trait ApiResponse
                 'current_page' => $collection->currentPage(),
                 'last_page' => $collection->lastPage(),
             ]
-        ]);
+        ], );
     }
 
     protected function formatValidationErrors($validator, $code = 422)
@@ -55,6 +56,21 @@ trait ApiResponse
         return response()->json([
             'success' => false,
             'errors' => $validator->errors(),
+        ], $code);
+    }
+
+    protected function importValidationErrorsResponse($failures, $code = 422)
+    {
+        return response()->json([
+            'success' => false,
+            'message' => 'Validation errors',
+            'errors' => collect($failures)->map(function ($failure) {
+                return [
+                    'row' => $failure->row(),
+                    'field' => $failure->attribute(),
+                    'error' => $failure->errors()[0],
+                ];
+            })
         ], $code);
     }
 }

@@ -12,18 +12,27 @@ return new class extends Migration {
     {
         Schema::create('services', function (Blueprint $table) {
             $table->id();
-            $table->string('leader_name', 100);
-            $table->string('leaders_nidn', 100);
-            $table->string('leaders_institution', 100);
-            $table->string('title', 255);
-            $table->string('scheme_short_name', 50);
-            $table->string('scheme_name', 100);
-            $table->decimal('approved_funds', 12, 2);
-            $table->string('proposed_year', 4);
-            $table->string('implementation_year', 4);
-            $table->string('focus_area', 100);
-            $table->string('funded_institution_name', 100);
-            $table->string('grant_program', 50);
+            $table->string('nama_ketua', 255);
+            $table->string('nidn_ketua', 100);
+            $table->string('afiliasi_ketua', 255);
+            $table->string('kd_pt_ketua', 50);
+            $table->string('judul', 255);
+            $table->string('nama_singkat_skema', 50);
+            $table->string('thn_pertama_usulan', 4);
+            $table->string('thn_usulan_kegiatan', 4);
+            $table->string('thn_pelaksanaan_kegiatan', 4);
+            $table->string('lama_kegiatan', 4);
+            $table->string('bidang_fokus', 100);
+            $table->string('nama_skema', 100);
+            $table->string('status_usulan', 50);
+            $table->decimal('dana_disetujui', 12, 2);
+            $table->string('afiliasi_sinta_id', 4);
+            $table->string('nama_institusi_penerima_dana', 255);
+            $table->string('target_tkt', 20);
+            $table->string('nama_program_hibah', 100);
+            $table->string('kategori_sumber_dana', 20);
+            $table->string('negara_sumber_dana', 20);
+            $table->string('sumber_dana', 20);
             $table->timestamps();
         });
     }

@@ -77,5 +77,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // SERVICES
     Route::post('/services/import', [ServiceController::class, 'import']);
+    Route::post('/services', [ServiceController::class, 'create']);
+    Route::patch('/services/{id}', [ServiceController::class, 'update'])->where('id', '[0-9]+');
+    Route::get('/services', [ServiceController::class, 'getServices']);
+    Route::get('/services/{id}', [ServiceController::class, 'getServiceByID'])->where('id', '[0-9]+');
+    Route::get('/services/grouped-by-scheme', [ServiceController::class, 'getServicesGroupedByScheme']);
+    Route::delete('/services/{id}', [ServiceController::class, 'delete'])->where('id', '[0-9]+');
 });
 
