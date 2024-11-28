@@ -9,29 +9,38 @@ class Research extends Model
 {
     use HasFactory;
 
-    protected $table = 'research';
+    protected $table = 'researches';
     protected $primaryKey = 'id';
     protected $keyType = 'int';
     public $timestamps = true;
     public $incrementing = true;
 
     protected $fillable = [
-        'leader_name',
-        'leaders_nidn',
-        'leaders_institution',
-        'title',
-        'scheme_short_name',
-        'scheme_name',
-        'approved_funds',
-        'proposed_year',
-        'implementation_year',
-        'focus_area',
-        'funded_institution_name',
-        'grant_program',
+        'nama_ketua',
+        'nidn_ketua',
+        'afiliasi_ketua',
+        'kd_pt_ketua',
+        'judul',
+        'nama_singkat_skema',
+        'thn_pertama_usulan',
+        'thn_usulan_kegiatan',
+        'thn_pelaksanaan_kegiatan',
+        'lama_kegiatan',
+        'bidang_fokus',
+        'nama_skema',
+        'status_usulan',
+        'dana_disetujui',
+        'afiliasi_sinta_id',
+        'nama_institusi_penerima_dana',
+        'target_tkt',
+        'nama_program_hibah',
+        'kategori_sumber_dana',
+        'negara_sumber_dana',
+        'sumber_dana',
     ];
 
     public function authors()
     {
-        return $this->belongsToMany(Author::class);
+        return $this->belongsToMany(Author::class, 'author_research', 'research_id', 'author_id');
     }
 }

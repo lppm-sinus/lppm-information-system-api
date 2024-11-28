@@ -5,16 +5,44 @@ namespace App\Http\Controllers;
 use App\Imports\ResearchImport;
 use App\Models\Author;
 use App\Models\Research;
+use App\Models\StudyProgram;
 use App\Traits\ApiResponse;
+use App\Traits\FunctionalMethod;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Validators\ValidationException;
 
 class ResearchController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse, FunctionalMethod;
+    protected $validation_rules = [
+        'nama_ketua' => 'required|string|max:255',
+        'nidn_ketua' => 'required|string|max:100',
+        'afiliasi_ketua' => 'required|string|max:255',
+        'kd_pt_ketua' => 'required|string|max:50',
+        'judul' => 'required|string|max:255',
+        'nama_singkat_skema' => 'required|string|max:50',
+        'thn_pertama_usulan' => 'required|string|max:4',
+        'thn_usulan_kegiatan' => 'required|string|max:4',
+        'thn_pelaksanaan_kegiatan' => 'required|string|max:4',
+        'lama_kegiatan' => 'required|string|max:4',
+        'bidang_fokus' => 'required|string|max:100',
+        'nama_skema' => 'required|string|max:100',
+        'status_usulan' => 'required|string|max:50',
+        'dana_disetujui' => 'required|integer',
+        'afiliasi_sinta_id' => 'required|string|max:4',
+        'nama_institusi_penerima_dana' => 'required|string|max:255',
+        'target_tkt' => 'required|string|max:20',
+        'nama_program_hibah' => 'required|string|max:100',
+        'kategori_sumber_dana' => 'required|string|max:50',
+        'negara_sumber_dana' => 'required|string|max:50',
+        'sumber_dana' => 'required|string|max:50',
+        'author_members' => 'nullable|array',
+        'author_members.*' => 'exists:authors,id',
+    ];
 
 
     public function __construct()
@@ -25,55 +53,60 @@ class ResearchController extends Controller
     /**
      * @OA\Post(
      *     path="/api/researches/import",
-     *     tags={"Research"},
-     *     summary="Import research from excel file",
-     *     security={{"bearer_token":{}}},
+     *     summary="Import researches data from Excel/CSV file",
+     *     tags={"Researches"},
+     *     security={{ "bearer": {} }},
      *     @OA\RequestBody(
+     *         required=true,
      *         @OA\MediaType(
-     *             mediaType="multipart/form-data", 
+     *             mediaType="multipart/form-data",
      *             @OA\Schema(
+     *                 type="object",
      *                 @OA\Property(
      *                     property="file",
-     *                     type="string",
-     *                     format="binary"
+     *                     type="file",
+     *                     description="Excel/CSV file containing researches data"
      *                 ),
      *                 @OA\Property(
      *                     property="reset_table",
      *                     type="boolean",
-     *                 ),
-     *                 example={"file": "authors.xlsx"}
+     *                     description="Whether to reset the tables before import",
+     *                     example=false
+     *                 )
      *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Research Data Imported",
+     *         description="Researches imported successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Research data imported successfully."),
+     *             @OA\Property(property="message", type="string", example="Researches data imported successfully."),
      *         )
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Validation Error",
+     *         description="Validation error or import failure",
      *         @OA\JsonContent(
-     *              @OA\Property(property="success", type="boolean", example=false),
-     *              @OA\Property(property="message", type="string", example="Research with NIDN 345525656 already exists."),
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object")
      *         )
      *     ),
      *     @OA\Response(
      *         response=401,
-     *         description="Unauthenticated access",
+     *         description="Unauthenticated",
      *         @OA\JsonContent(
      *             @OA\Property(property="message", type="string", example="Unauthenticated.")
      *         )
-     *     ),
+     *     )
      * )
      */
     public function import(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'file' => 'required|mimes:xlsx,xls,csv',
+            'file' => 'required|file|mimes:csv,xls,xlsx',
+            'reset_table' => 'required|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -82,27 +115,19 @@ class ResearchController extends Controller
 
         try {
             $import = new ResearchImport();
-            $collection = Excel::toCollection($import, $request->file('file'))->first();
-
-            foreach ($collection as $row) {
-                if ($row[0] == 'NO' || empty($row[1])) {
-                    continue;
-                }
-
-                $author = Author::where('nidn', $row[2])->first();
-                if (!$author) {
-                    throw new \Exception('Author with NIDN ' . $row[2] . ' not found.');
-                }
-            }
 
             if ($request->boolean('reset_table')) {
                 DB::table('author_research')->delete();
-                DB::table('research')->delete();
+                DB::table('researches')->delete();
             }
 
             Excel::import($import, $request->file('file'));
 
             return $this->successResponse(null, 'Research data imported successfully.', 201);
+        } catch (ValidationException $e) {
+            $failures = $e->failures();
+
+            return $this->importValidationErrorsResponse($failures, 422);
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), 422);
         }
@@ -111,7 +136,7 @@ class ResearchController extends Controller
     /**
      * @OA\Post(
      *     path="/api/researches",
-     *     tags={"Research"},
+     *     tags={"Researches"},
      *     summary="Create new research",
      *     security={{"bearer_token":{}}},
      *  @OA\RequestBody(
@@ -120,27 +145,55 @@ class ResearchController extends Controller
      *         mediaType="application/json",
      *         @OA\Schema(
      *             @OA\Property(
-     *                 property="leader_name",
+     *                 property="nama_ketua",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="leaders_nidn",
+     *                 property="nidn_ketua",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="leaders_institution",
+     *                 property="afiliasi_ketua",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="title",
+     *                 property="kd_pt_ketua",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="scheme_short_name",
+     *                 property="judul",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="scheme_name",
+     *                 property="nama_singkat_skema",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="thn_pertama_usulan",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="thn_usulan_kegiatan",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="thn_pelaksanaan_kegiatan",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="lama_kegitan",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="bidang_fokus",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="nama_skema",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="status_usulan",
      *                 type="string"
      *             ),
      *             @OA\Property(
@@ -148,26 +201,34 @@ class ResearchController extends Controller
      *                 type="integer"
      *             ),
      *             @OA\Property(
-     *                 property="proposed_year",
+     *                 property="afiliasi_sinta_id",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="implementation_year",
+     *                 property="nama_institusi_penerima_dana",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="focus_area",
+     *                 property="target_tkt",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="funded_institution_name",
+     *                 property="nama_program_hibah",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="grant_program",
+     *                 property="kategori_sumber_dana",
      *                 type="string"
      *             ),
-     *             example={"leader_name": "Yustina", "leaders_nidn": "2342453", "leaders_institution": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "title": "Penelitian 1", "scheme_short_name": "PI", "scheme_name": "Penelitian Internal", "approved_funds": 2000000, "proposed_year": "2024", "implementation_year": "2024", "focus_area": "Penelitian", "funded_institution_name": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "grant_program": "Program Pengembangan"}
+     *             @OA\Property(
+     *                 property="negara_sumber_dana",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="sumber_dana",
+     *                 type="string"
+     *             ),
+     *             example={"nama_ketua": "Yustina", "nidn_ketua": "2342453", "afiliasi_ketua": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "kd_pt_ketua": "063040", "judul": "Penelitian 1", "nama_singkat_skema": "PKS", "thn_pertama_usulan": "2024", "thn_usulan_kegiatan": "2024", "thn_pelaksanaan_kegiatan": "2024", "lama_kegiatan": "1", "bidang_fokus": "Teknologi Informasi dan Komunikasi", "nama_skema": "PENELITIAN KERJASAMA", "status_usulan": "Disetujui", "approved_funds": 1200000, "afiliasi_sinta_id": "123456789", "nama_institusi_penerima_dana": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "target_tkt": "8", "nama_program_hibah": "PENELITIAN KERJASAMA", "kategori_sumber_dana": "Perusahaan/Organisasi", "negara_sumber_dana": "ID", "sumber_dana": "PERUSAHAAN" }
      *         )
      *     )
      * ),
@@ -179,18 +240,27 @@ class ResearchController extends Controller
      *             @OA\Property(property="message", type="string", example="Research created successfully."),
      *             @OA\Property(property="data", type="object",
      *                  @OA\Property(property="id", type="integer", example=1),
-     *                  @OA\Property(property="leader_name", type="string", example="Yustina"),
-     *                  @OA\Property(property="leaders_nidn", type="string", example="2342453"),
-     *                  @OA\Property(property="leaders_institution", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
-     *                  @OA\Property(property="title", type="string", example="Penelitian 1"),
-     *                  @OA\Property(property="scheme_short_name", type="string", example="PI"),
-     *                  @OA\Property(property="scheme_name", type="string", example="Penelitian Internal"),
-     *                  @OA\Property(property="approved_funds", type="integer", example=2000000),
-     *                  @OA\Property(property="proposed_year", type="string", example="2024"),
-     *                  @OA\Property(property="implementation_year", type="string", example="2024"),
-     *                  @OA\Property(property="focus_area", type="string", example="Penelitian"),
-     *                  @OA\Property(property="funded_institution_name", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
-     *                  @OA\Property(property="grant_program", type="string", example="Program Pengembangan"),
+     *                  @OA\Property(property="nama_ketua", type="string", example="Yustina"),
+     *                  @OA\Property(property="nidn_ketua", type="string", example="2342453"),
+     *                  @OA\Property(property="afiliasi_ketua", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
+     *                  @OA\Property(property="kd_pt_ketua", type="string", example="063040"),
+     *                  @OA\Property(property="judul", type="string", example="Penelitian 1"),
+     *                  @OA\Property(property="nama_singkat_skema", type="string", example="PKS"),
+     *                  @OA\Property(property="thn_pertama_usulan", type="string", example="2024"),
+     *                  @OA\Property(property="thn_usulan_kegiatan", type="string", example="2024"),
+     *                  @OA\Property(property="thn_pelaksanaan_kegiatan", type="string", example="2024"),
+     *                  @OA\Property(property="lama_kegiatan", type="string", example="1"),
+     *                  @OA\Property(property="bidang_fokus", type="string", example="Teknologi Informasi dan Komunikasi"),
+     *                  @OA\Property(property="nama_skema", type="string", example="PENELITIAN KERJASAMA"),
+     *                  @OA\Property(property="status_usulan", type="string", example="Disetujui"),
+     *                  @OA\Property(property="dana_disetujui", type="string", example="Rp 1.200.000,00"),
+     *                  @OA\Property(property="afiliasi_sinta_id", type="string", example="123456789"),
+     *                  @OA\Property(property="nama_institusi_penerima_dana", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
+     *                  @OA\Property(property="target_tkt", type="string", example="8"),
+     *                  @OA\Property(property="nama_program_hibah", type="string", example="PENELITIAN KERJASAMA"),
+     *                  @OA\Property(property="kategori_sumber_dana", type="string", example="Perusahaan/Organisasi"),
+     *                  @OA\Property(property="negara_sumber_dana", type="string", example="ID"),
+     *                  @OA\Property(property="sumber_dana", type="string", example="PERUSAHAAN"),
      *             )
      *         )
      *     ),
@@ -205,34 +275,31 @@ class ResearchController extends Controller
      */
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'leader_name' => 'required|string',
-            'leaders_nidn' => 'required|string',
-            'leaders_institution' => 'required|string',
-            'title' => 'required|string',
-            'scheme_short_name' => 'required|string',
-            'scheme_name' => 'required|string',
-            'approved_funds' => 'required|integer',
-            'proposed_year' => 'required|string',
-            'implementation_year' => 'required|string',
-            'focus_area' => 'required|string',
-            'funded_institution_name' => 'required|string',
-            'grant_program' => 'required|string',
-        ]);
+        $validator = Validator::make($request->all(), $this->validation_rules);
 
         if ($validator->fails()) {
             return $this->formatValidationErrors($validator);
         }
 
-        $research = Research::create($request->all());
+        $author = Author::where('nidn', $request->input('nidn_ketua'))->first();
+        if (!$author) {
+            return $this->errorResponse('Author not found.', 404);
+        }
 
-        return $this->successResponse($research, 'Research data created successfully.', 201);
+        $research = Research::create($request->all());
+        $research->authors()->attach($author->id);
+        $research->authors()->attach($request->author_members);
+        $research->save();
+
+        $research->load('authors');
+
+        return $this->successResponse($research, 'Research created successfully.', 201);
     }
 
     /**
      * @OA\Patch(
      *     path="/api/researches/{id}",
-     *     tags={"Research"},
+     *     tags={"Researches"},
      *     summary="Update an research by ID",
      *     security={{"bearer_token":{}}},
      *     @OA\Parameter(
@@ -246,28 +313,56 @@ class ResearchController extends Controller
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 @OA\Property(
-     *                 property="leader_name",
+     *             @OA\Property(
+     *                 property="nama_ketua",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="leaders_nidn",
+     *                 property="nidn_ketua",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="leaders_institution",
+     *                 property="afiliasi_ketua",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="title",
+     *                 property="kd_pt_ketua",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="scheme_short_name",
+     *                 property="judul",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="scheme_name",
+     *                 property="nama_singkat_skema",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="thn_pertama_usulan",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="thn_usulan_kegiatan",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="thn_pelaksanaan_kegiatan",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="lama_kegitan",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="bidang_fokus",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="nama_skema",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="status_usulan",
      *                 type="string"
      *             ),
      *             @OA\Property(
@@ -275,49 +370,66 @@ class ResearchController extends Controller
      *                 type="integer"
      *             ),
      *             @OA\Property(
-     *                 property="proposed_year",
+     *                 property="afiliasi_sinta_id",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="implementation_year",
+     *                 property="nama_institusi_penerima_dana",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="focus_area",
+     *                 property="target_tkt",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="funded_institution_name",
+     *                 property="nama_program_hibah",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="grant_program",
+     *                 property="kategori_sumber_dana",
      *                 type="string"
      *             ),
-     *             example={"leader_name": "Yustina", "leaders_nidn": "2342453", "leaders_institution": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "title": "Penelitian 1", "scheme_short_name": "PI", "scheme_name": "Penelitian Internal", "approved_funds": 2000000, "proposed_year": "2024", "implementation_year": "2024", "focus_area": "Penelitian", "funded_institution_name": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "grant_program": "Program Pengembangan"}
-     *             )
+     *             @OA\Property(
+     *                 property="negara_sumber_dana",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="sumber_dana",
+     *                 type="string"
+     *             ),
+     *             example={"nama_ketua": "Yustina", "nidn_ketua": "2342453", "afiliasi_ketua": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "kd_pt_ketua": "063040", "judul": "Penelitian 1", "nama_singkat_skema": "PKS", "thn_pertama_usulan": "2024", "thn_usulan_kegiatan": "2024", "thn_pelaksanaan_kegiatan": "2024", "lama_kegiatan": "1", "bidang_fokus": "Teknologi Informasi dan Komunikasi", "nama_skema": "PENELITIAN KERJASAMA", "status_usulan": "Disetujui", "approved_funds": 1200000, "afiliasi_sinta_id": "123456789", "nama_institusi_penerima_dana": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "target_tkt": "8", "nama_program_hibah": "PENELITIAN KERJASAMA", "kategori_sumber_dana": "Perusahaan/Organisasi", "negara_sumber_dana": "ID", "sumber_dana": "PERUSAHAAN" }
+     *         )
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Author Updated",
+     *         description="Research Updated",
      *          @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Research created successfully."),
+     *             @OA\Property(property="message", type="string", example="Research updated successfully."),
      *             @OA\Property(property="data", type="object",
      *                  @OA\Property(property="id", type="integer", example=1),
-     *                  @OA\Property(property="leader_name", type="string", example="Yustina"),
-     *                  @OA\Property(property="leaders_nidn", type="string", example="2342453"),
-     *                  @OA\Property(property="leaders_institution", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
-     *                  @OA\Property(property="title", type="string", example="Penelitian 1"),
-     *                  @OA\Property(property="scheme_short_name", type="string", example="PI"),
-     *                  @OA\Property(property="scheme_name", type="string", example="Penelitian Internal"),
-     *                  @OA\Property(property="approved_funds", type="integer", example=2000000),
-     *                  @OA\Property(property="proposed_year", type="string", example="2024"),
-     *                  @OA\Property(property="implementation_year", type="string", example="2024"),
-     *                  @OA\Property(property="focus_area", type="string", example="Penelitian"),
-     *                  @OA\Property(property="funded_institution_name", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
-     *                  @OA\Property(property="grant_program", type="string", example="Program Pengembangan"),
+     *                  @OA\Property(property="nama_ketua", type="string", example="Yustina"),
+     *                  @OA\Property(property="nidn_ketua", type="string", example="2342453"),
+     *                  @OA\Property(property="afiliasi_ketua", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
+     *                  @OA\Property(property="kd_pt_ketua", type="string", example="063040"),
+     *                  @OA\Property(property="judul", type="string", example="Penelitian 1"),
+     *                  @OA\Property(property="nama_singkat_skema", type="string", example="PKS"),
+     *                  @OA\Property(property="thn_pertama_usulan", type="string", example="2024"),
+     *                  @OA\Property(property="thn_usulan_kegiatan", type="string", example="2024"),
+     *                  @OA\Property(property="thn_pelaksanaan_kegiatan", type="string", example="2024"),
+     *                  @OA\Property(property="lama_kegiatan", type="string", example="1"),
+     *                  @OA\Property(property="bidang_fokus", type="string", example="Teknologi Informasi dan Komunikasi"),
+     *                  @OA\Property(property="nama_skema", type="string", example="PENELITIAN KERJASAMA"),
+     *                  @OA\Property(property="status_usulan", type="string", example="Disetujui"),
+     *                  @OA\Property(property="dana_disetujui", type="string", example="Rp 1.200.000,00"),
+     *                  @OA\Property(property="afiliasi_sinta_id", type="string", example="123456789"),
+     *                  @OA\Property(property="nama_institusi_penerima_dana", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
+     *                  @OA\Property(property="target_tkt", type="string", example="8"),
+     *                  @OA\Property(property="nama_program_hibah", type="string", example="PENELITIAN KERJASAMA"),
+     *                  @OA\Property(property="kategori_sumber_dana", type="string", example="Perusahaan/Organisasi"),
+     *                  @OA\Property(property="negara_sumber_dana", type="string", example="ID"),
+     *                  @OA\Property(property="sumber_dana", type="string", example="PERUSAHAAN"),
      *             )
      *         )
      *     ),
@@ -332,33 +444,30 @@ class ResearchController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $research = Research::find($id);
-        if (!$research) {
-            return $this->errorResponse('Research not found.', 404);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'leader_name' => 'required|string',
-            'leaders_nidn' => 'required|string',
-            'leaders_institution' => 'required|string',
-            'title' => 'required|string',
-            'scheme_short_name' => 'required|string',
-            'scheme_name' => 'required|string',
-            'approved_funds' => 'required|integer',
-            'proposed_year' => 'required|string',
-            'implementation_year' => 'required|string',
-            'focus_area' => 'required|string',
-            'funded_institution_name' => 'required|string',
-            'grant_program' => 'required|string',
-        ]);
+        $validator = Validator::make($request->all(), $this->validation_rules);
 
         if ($validator->fails()) {
             return $this->formatValidationErrors($validator);
         }
 
-        $research->update($request->all());
+        $research = Research::find($id);
+        if (!$research) {
+            return $this->errorResponse('Research not found.', 404);
+        }
 
-        return $this->successResponse($research, 'Research data updated successfully.', 200);
+        $author = Author::where('nidn', $request->input('nidn_ketua'))->first();
+        if (!$author) {
+            return $this->errorResponse('Author with NIDN ' . $author->nidn_ketua . ' not found.', 404);
+        }
+
+        $research->update($request->all());
+        $research->authors()->sync([$author->id]);
+        $research->authors()->syncWithoutDetaching($request->author_members);
+        $research->save();
+
+        $research->load('authors');
+
+        return $this->successResponse($research, 'Research updated successfully.', 200);
     }
 
     /**
@@ -366,13 +475,12 @@ class ResearchController extends Controller
      *     path="/api/researches",
      *     summary="Get paginated list of researches",
      *     description="Returns paginated researches with optional search functionality",
-     *     operationId="getResearches",
      *     security={{"bearer_token": {}}},
-     *     tags={"Research"},
+     *     tags={"Researches"},
      *     @OA\Parameter(
      *         name="q",
      *         in="query",
-     *         description="Search term for filtering researches by title or leader name",
+     *         description="Search term for filtering researches by title, leaders nidn or leader name",
      *         required=false,
      *         @OA\Schema(type="string")
      *     ),
@@ -381,7 +489,7 @@ class ResearchController extends Controller
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Research data retrieved successfully."),
+     *             @OA\Property(property="message", type="string", example="Researches data retrieved successfully."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -392,40 +500,54 @@ class ResearchController extends Controller
      *                     @OA\Items(
      *                         type="object",
      *                         @OA\Property(property="id", type="integer", example=1),
-     *                         @OA\Property(property="title", type="string", example="Research Title"),
-     *                         @OA\Property(property="leader_name", type="string", example="John Doe"),
-     *                         @OA\Property(property="leaders_nidn", type="string", example="1234567890"),
-     *                         @OA\Property(property="leaders_institution", type="string", example="University"),
-     *                         @OA\Property(property="scheme_short_name", type="string", example="RSH"),
-     *                         @OA\Property(property="scheme_name", type="string", example="Research Scheme"),
-     *                         @OA\Property(property="approved_funds", type="number", example=50000000),
-     *                         @OA\Property(property="proposed_year", type="integer", example=2023),
-     *                         @OA\Property(property="implementation_year", type="integer", example=2024),
-     *                         @OA\Property(property="focus_area", type="string", example="Technology"),
-     *                         @OA\Property(property="funded_institution_name", type="string", example="Funding Body"),
-     *                         @OA\Property(property="grant_program", type="string", example="Research Grant"),
+     *                         @OA\Property(property="nama_ketua", type="string", example="Yustina"),
+     *                         @OA\Property(property="nidn_ketua", type="string", example="2342453"),
+     *                         @OA\Property(property="afiliasi_ketua", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
+     *                         @OA\Property(property="kd_pt_ketua", type="string", example="063040"),
+     *                         @OA\Property(property="judul", type="string", example="Penelitian 1"),
+     *                         @OA\Property(property="nama_singkat_skema", type="string", example="PKS"),
+     *                         @OA\Property(property="thn_pertama_usulan", type="string", example="2024"),
+     *                         @OA\Property(property="thn_usulan_kegiatan", type="string", example="2024"),
+     *                         @OA\Property(property="thn_pelaksanaan_kegiatan", type="string", example="2024"),
+     *                         @OA\Property(property="lama_kegiatan", type="string", example="1"),
+     *                         @OA\Property(property="bidang_fokus", type="string", example="Teknologi Informasi dan Komunikasi"),
+     *                         @OA\Property(property="nama_skema", type="string", example="PENELITIAN KERJASAMA"),
+     *                         @OA\Property(property="status_usulan", type="string", example="Disetujui"),
+     *                         @OA\Property(property="dana_disetujui", type="string", example="Rp 1.200.000,00"),
+     *                         @OA\Property(property="afiliasi_sinta_id", type="string", example="123456789"),
+     *                         @OA\Property(property="nama_institusi_penerima_dana", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
+     *                         @OA\Property(property="target_tkt", type="string", example="8"),
+     *                         @OA\Property(property="nama_program_hibah", type="string", example="PENELITIAN KERJASAMA"),
+     *                         @OA\Property(property="kategori_sumber_dana", type="string", example="Perusahaan/Organisasi"),
+     *                         @OA\Property(property="negara_sumber_dana", type="string", example="ID"),
+     *                         @OA\Property(property="sumber_dana", type="string", example="PERUSAHAAN"),
      *                         @OA\Property(
      *                             property="authors",
      *                             type="array",
      *                             @OA\Items(
      *                                 type="object",
      *                                 @OA\Property(property="id", type="integer", example=1),
-     *                                 @OA\Property(property="name", type="string", example="Author Name"),
-     *                                 @OA\Property(property="nidn", type="string", example="1234567890")
-     *                             )
+     *                                 @OA\Property(property="sinta_id", type="string", example="66889756"),
+     *                                 @OA\Property(property="nidn", type="string", example="2342453"),
+     *                                 @OA\Property(property="name", type="string", example="Yustina"),
+     *                                 @OA\Property(property="affiliation", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
+     *                                 @OA\Property(property="study_program_id", type="integer", example="2"),
+     *                                 @OA\Property(property="last_education", type="string", example="S2"),
+     *                                 @OA\Property(property="functional_position", type="string", example="Asisten Ahli"),
+     *                                 @OA\Property(property="title_prefix", type="string", example=null),
+     *                                 @OA\Property(property="title_suffix", type="string", example="S.Kom, M.Kom"),
+     *                             ),
      *                         )
      *                     )
      *                 ),
-     *                 @OA\Property(property="first_page_url", type="string"),
-     *                 @OA\Property(property="from", type="integer"),
-     *                 @OA\Property(property="last_page", type="integer"),
-     *                 @OA\Property(property="last_page_url", type="string"),
-     *                 @OA\Property(property="next_page_url", type="string"),
-     *                 @OA\Property(property="path", type="string"),
-     *                 @OA\Property(property="per_page", type="integer", example=10),
-     *                 @OA\Property(property="prev_page_url", type="string"),
-     *                 @OA\Property(property="to", type="integer"),
-     *                 @OA\Property(property="total", type="integer")
+     *                 @OA\Property(
+     *                      property="meta",
+     *                      type="object",
+     *                          @OA\Property(property="total", type="integer", example=100),   
+     *                          @OA\Property(property="per_page", type="integer", example=10),
+     *                          @OA\Property(property="current_page", type="integer", example=1),
+     *                          @OA\Property(property="last_page", type="integer", example=10),
+     *                  )
      *             )
      *         )
      *     ),
@@ -444,12 +566,17 @@ class ResearchController extends Controller
 
         if (request()->has('q')) {
             $search_term = request()->input('q');
-            $query->whereAny(['title', 'leader_name'], 'like', '%' . $search_term . '%');
+            $query->whereAny(['nama_ketua', 'nidn_ketua', 'judul'], 'like', "%$search_term%");
         }
 
-        $researches = $query->with(['authors'])->paginate(10);
+        $researches = $query->with('authors')->paginate(10);
 
-        return $this->successResponse($researches, 'Research data retrieved successfully.', 200);
+        $researches->getCollection()->transform(function ($research) {
+            $research->dana_disetujui = $this->currencyFormat($research->dana_disetujui);
+            return $research;
+        });
+
+        return $this->paginatedResponse($researches, 'Researches data retrieved successfully.', 200);
     }
 
     /**
@@ -457,9 +584,8 @@ class ResearchController extends Controller
      *     path="/api/researches/{id}",
      *     summary="Get research by ID",
      *     description="Returns a specific research by its ID with related authors",
-     *     operationId="getResearchById",
      *     security={{"bearer_token": {}}},
-     *     tags={"Research"},
+     *     tags={"Researches"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -477,33 +603,42 @@ class ResearchController extends Controller
      *                 property="data",
      *                 type="object",
      *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="title", type="string", example="Research Title"),
-     *                 @OA\Property(property="leader_name", type="string", example="John Doe"),
-     *                 @OA\Property(property="leaders_nidn", type="string", example="1234567890"),
-     *                 @OA\Property(property="leaders_institution", type="string", example="University"),
-     *                 @OA\Property(property="scheme_short_name", type="string", example="RSH"),
-     *                 @OA\Property(property="scheme_name", type="string", example="Research Scheme"),
-     *                 @OA\Property(property="approved_funds", type="number", example=50000000),
-     *                 @OA\Property(property="proposed_year", type="integer", example=2023),
-     *                 @OA\Property(property="implementation_year", type="integer", example=2024),
-     *                 @OA\Property(property="focus_area", type="string", example="Technology"),
-     *                 @OA\Property(property="funded_institution_name", type="string", example="Funding Body"),
-     *                 @OA\Property(property="grant_program", type="string", example="Research Grant"),
+     *                 @OA\Property(property="nama_ketua", type="string", example="Yustina"),
+     *                 @OA\Property(property="nidn_ketua", type="string", example="2342453"),
+     *                 @OA\Property(property="afiliasi_ketua", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
+     *                 @OA\Property(property="kd_pt_ketua", type="string", example="063040"),
+     *                 @OA\Property(property="judul", type="string", example="Penelitian 1"),
+     *                 @OA\Property(property="nama_singkat_skema", type="string", example="PKS"),
+     *                 @OA\Property(property="thn_pertama_usulan", type="string", example="2024"),
+     *                 @OA\Property(property="thn_usulan_kegiatan", type="string", example="2024"),
+     *                 @OA\Property(property="thn_pelaksanaan_kegiatan", type="string", example="2024"),
+     *                 @OA\Property(property="lama_kegiatan", type="string", example="1"),
+     *                 @OA\Property(property="bidang_fokus", type="string", example="Teknologi Informasi dan Komunikasi"),
+     *                 @OA\Property(property="nama_skema", type="string", example="PENELITIAN KERJASAMA"),
+     *                 @OA\Property(property="status_usulan", type="string", example="Disetujui"),
+     *                 @OA\Property(property="dana_disetujui", type="string", example="Rp 1.200.000,00"),
+     *                 @OA\Property(property="afiliasi_sinta_id", type="string", example="123456789"),
+     *                 @OA\Property(property="nama_institusi_penerima_dana", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
+     *                 @OA\Property(property="target_tkt", type="string", example="8"),
+     *                 @OA\Property(property="nama_program_hibah", type="string", example="PENELITIAN KERJASAMA"),
+     *                 @OA\Property(property="kategori_sumber_dana", type="string", example="Perusahaan/Organisasi"),
+     *                 @OA\Property(property="negara_sumber_dana", type="string", example="ID"),
+     *                 @OA\Property(property="sumber_dana", type="string", example="PERUSAHAAN"),
      *                 @OA\Property(
      *                     property="authors",
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
      *                        @OA\Property(property="id", type="integer", example=1),
-     *                  @OA\Property(property="sinta_id", type="string", example="34514545"),
-     *                  @OA\Property(property="nidn", type="string", example="2342453"),
-     *                  @OA\Property(property="name", type="string", example="Yustina"),
-     *                  @OA\Property(property="affiliation", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
-     *                  @OA\Property(property="study_program_id", type="integer", example=3),
-     *                  @OA\Property(property="last_education", type="string", example="S1"),
-     *                  @OA\Property(property="functional_position", type="string", example="Lektor"),
-     *                  @OA\Property(property="title_prefix", type="string", example="Prof."),
-     *                  @OA\Property(property="title_suffix", type="string", example="S.T."),
+     *                        @OA\Property(property="sinta_id", type="string", example="34514545"),
+     *                        @OA\Property(property="nidn", type="string", example="2342453"),
+     *                        @OA\Property(property="name", type="string", example="Yustina"),
+     *                        @OA\Property(property="affiliation", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
+     *                        @OA\Property(property="study_program_id", type="integer", example=3),
+     *                        @OA\Property(property="last_education", type="string", example="S1"),
+     *                        @OA\Property(property="functional_position", type="string", example="Lektor"),
+     *                        @OA\Property(property="title_prefix", type="string", example="Prof."),
+     *                        @OA\Property(property="title_suffix", type="string", example="S.T."),
      *                     )
      *                 )
      *             )
@@ -526,13 +661,14 @@ class ResearchController extends Controller
      *     )
      * )
      */
-
     public function getResearchByID($id)
     {
         $research = Research::with('authors')->find($id);
         if (!$research) {
-            return $this->errorResponse('Research data not found.', 404);
+            return $this->errorResponse('Research not found.', 404);
         }
+
+        $research->dana_disetujui = $this->currencyFormat($research->dana_disetujui);
 
         return $this->successResponse($research, 'Research data retrieved successfully.', 200);
     }
@@ -542,8 +678,8 @@ class ResearchController extends Controller
      *     path="/api/researches/grouped-by-scheme",
      *     summary="Get researches grouped by scheme",
      *     security={{"bearer_token": {}}},
-     *     description="Retrieves research data grouped by `scheme_short_name`, with an optional filter by `study_program_id`.",
-     *     tags={"Research"},
+     *     description="Retrieves researches data grouped by `nama_singkat_skema`, with an optional filter by `study_program_id`.",
+     *     tags={"Researches"},
      *     @OA\Parameter(
      *         name="study_program_id",
      *         in="query",
@@ -557,45 +693,11 @@ class ResearchController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Research data retrieved successfully."),
+     *             @OA\Property(property="message", type="string", example="Researches data retrieved successfully."),
      *             @OA\Property(property="data", type="object",
      *                 @OA\Property(property="PI", type="object",
      *                     @OA\Property(property="count", type="integer", example=2),
-     *                     @OA\Property(property="data", type="array",
-     *                         @OA\Items(type="object",
-     *                             @OA\Property(property="id", type="integer", example=69),
-     *                             @OA\Property(property="leader_name", type="string", example="DIDIK NUGROHO"),
-     *                             @OA\Property(property="leaders_nidn", type="string", example="0613057201"),
-     *                             @OA\Property(property="leaders_institution", type="string", example="STMIK SINAR NUSANTARA"),
-     *                             @OA\Property(property="title", type="string", example="Research title"),
-     *                             @OA\Property(property="scheme_short_name", type="string", example="PI"),
-     *                             @OA\Property(property="scheme_name", type="string", example="PENELITIAN INTERNAL"),
-     *                             @OA\Property(property="approved_funds", type="string", format="decimal", example="3000000.00"),
-     *                             @OA\Property(property="proposed_year", type="string", example="2024"),
-     *                             @OA\Property(property="implementation_year", type="string", example="2024"),
-     *                             @OA\Property(property="focus_area", type="string", example="TEKNOLOGI INFORMASI DAN KOMUNIKASI"),
-     *                             @OA\Property(property="funded_institution_name", type="string", example="STMIK SINAR NUSANTARA"),
-     *                             @OA\Property(property="grant_program", type="string", example="PENELITIAN INTERNAL"),
-     *                             @OA\Property(property="created_at", type="string", format="date-time", example="2024-11-14T03:56:09.000000Z"),
-     *                             @OA\Property(property="updated_at", type="string", format="date-time", example="2024-11-14T03:56:09.000000Z"),
-     *                             @OA\Property(property="authors", type="array",
-     *                                 @OA\Items(type="object",
-     *                                     @OA\Property(property="id", type="integer", example=12),
-     *                                     @OA\Property(property="sinta_id", type="string", example="6049857"),
-     *                                     @OA\Property(property="nidn", type="string", example="0613057201"),
-     *                                     @OA\Property(property="name", type="string", example="DIDIK NUGROHO"),
-     *                                     @OA\Property(property="affiliation", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
-     *                                     @OA\Property(property="study_program_id", type="integer", example=2),
-     *                                     @OA\Property(property="last_education", type="string", example="S2"),
-     *                                     @OA\Property(property="functional_position", type="string", example="Lektor"),
-     *                                     @OA\Property(property="title_prefix", type="string", nullable=true, example=null),
-     *                                     @OA\Property(property="title_suffix", type="string", example="S.Kom, M.Kom"),
-     *                                     @OA\Property(property="created_at", type="string", format="date-time", example="2024-11-14T02:57:18.000000Z"),
-     *                                     @OA\Property(property="updated_at", type="string", format="date-time", example="2024-11-14T02:57:18.000000Z")
-     *                                 )
-     *                             )
-     *                         )
-     *                     )
+     *                     @OA\Property(property="total_funds", type="string", example="Rp 24.000.000,00"),
      *                 )
      *             )
      *         )
@@ -621,14 +723,125 @@ class ResearchController extends Controller
         }
 
         $researches = $query->get();
-        $grouped_data = $researches->groupBy('scheme_short_name')->map(function ($group) {
+        $grouped_data = $researches->groupBy('nama_singkat_skema')->map(function ($group) {
             return [
                 'count' => $group->count(),
-                'data' => $group
+                'total_funds' => $this->currencyFormat($group->sum('dana_disetujui'))
             ];
         });
 
-        return $this->successResponse($grouped_data, 'Research data retrieved successfully.', 200);
+        return $this->successResponse($grouped_data, 'Researches data retrieved successfully.', 200);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/researches/chart-data",
+     *     summary="Get research statistics chart data",
+     *     security={{"bearer_token": {}}},
+     *     description="Retrieves research statistics grouped by study programs for chart visualization",
+     *     tags={"Researches"},
+     *     @OA\Parameter(
+     *         name="year",
+     *         in="query",
+     *         description="Filter statistics by year",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=2024)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Researches chart data retrieved successfully."),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="labels",
+     *                     type="array",
+     *                     @OA\Items(type="string", example="Computer Science")
+     *                 ),
+     *                 @OA\Property(
+     *                     property="datasets",
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="data",
+     *                         type="array",
+     *                         @OA\Items(type="integer", example=10)
+     *                     ),
+     *                     @OA\Property(
+     *                         property="background_color",
+     *                         type="array",
+     *                         @OA\Items(type="string", example="#FF5733")
+     *                     )
+     *                 ),
+     *                 @OA\Property(
+     *                     property="study_programs",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         @OA\Property(property="name", type="string", example="Computer Science"),
+     *                         @OA\Property(property="total", type="integer", example=10),
+     *                         @OA\Property(property="percentage", type="number", format="float", example=25.5)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="total_researches", type="integer", example=40)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     )
+     * )
+     */
+    public function getResearchesChartData()
+    {
+        // Base query starting with study programs
+        $researches_by_program = StudyProgram::select(
+            'study_programs.name as study_program',
+            DB::raw('COALESCE(COUNT(DISTINCT researches.id), 0) as total_researches')
+        )
+            ->leftJoin('authors', 'study_programs.id', '=', 'authors.study_program_id')
+            ->leftJoin('author_research', 'authors.id', '=', 'author_research.author_id')
+            ->leftJoin('researches', 'author_research.research_id', '=', 'researches.id');
+
+        // Apply year filter if provided
+        if (request()->has('year')) {
+            $year = request()->input('year');
+            $researches_by_program->where('researches.thn_pelaksanaan_kegiatan', $year);
+        }
+
+        // Complete the query
+        $researches_by_program = $researches_by_program
+            ->groupBy('study_programs.id', 'study_programs.name')
+            ->orderBy('study_programs.name')
+            ->get();
+
+        // Calculate total researches
+        $total_researches = $researches_by_program->sum('total_researches');
+
+        // Prepare chart data
+        $chart_data = [
+            'labels' => $researches_by_program->pluck('study_program')->toArray(),
+            'datasets' => [
+                'data' => $researches_by_program->pluck('total_researches')->toArray(),
+                'background_color' => $this->generateColors(count($researches_by_program))
+            ],
+            'study_programs' => $researches_by_program->map(function ($item) use ($total_researches) {
+                return [
+                    'name' => $item->study_program,
+                    'total' => $item->total_researches,
+                    'percentage' => $total_researches > 0 ? round(($item->total_researches / $total_researches) * 100, 2) : 0,
+                ];
+            }),
+            'total_researches' => $total_researches
+        ];
+
+        return $this->successResponse($chart_data, 'Researches chart data retrieved successfully.', 200);
     }
 
     /**
@@ -636,9 +849,8 @@ class ResearchController extends Controller
      *     path="/api/researches/{id}",
      *     summary="Delete a research",
      *     description="Deletes a research record by ID",
-     *     operationId="deleteResearch",
      *     security={{"bearer_token": {}}},
-     *     tags={"Research"},
+     *     tags={"Researches"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -651,7 +863,7 @@ class ResearchController extends Controller
      *         description="Research deleted successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Response data deleted successfully.")
+     *             @OA\Property(property="message", type="string", example="Service data deleted successfully.")
      *         )
      *     ),
      *     @OA\Response(
@@ -682,5 +894,4 @@ class ResearchController extends Controller
 
         return $this->successResponse(null, 'Research data deleted successfully.', 200);
     }
-
 }

@@ -48,7 +48,7 @@ trait ApiResponse
                 'current_page' => $collection->currentPage(),
                 'last_page' => $collection->lastPage(),
             ]
-        ], );
+        ], $code);
     }
 
     protected function formatValidationErrors($validator, $code = 422)

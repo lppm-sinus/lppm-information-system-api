@@ -74,6 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/researches/{id}', [ResearchController::class, 'getResearchByID'])->where('id', '[0-9]+');
     Route::delete('/researches/{id}', [ResearchController::class, 'delete'])->where('id', '[0-9]+');
     Route::get('/researches/grouped-by-scheme', [ResearchController::class, 'getResearchesGroupedByScheme']);
+    Route::get('/researches/chart-data', [ResearchController::class, 'getResearchesChartData']);
 
     // SERVICES
     Route::post('/services/import', [ServiceController::class, 'import']);
@@ -83,5 +84,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/services/{id}', [ServiceController::class, 'getServiceByID'])->where('id', '[0-9]+');
     Route::get('/services/grouped-by-scheme', [ServiceController::class, 'getServicesGroupedByScheme']);
     Route::delete('/services/{id}', [ServiceController::class, 'delete'])->where('id', '[0-9]+');
+    Route::get('/services/chart-data', [ServiceController::class, 'getServicesChartData']);
 });
 

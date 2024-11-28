@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->foreign('author_id')->references('id')->on('authors')->onDelete('cascade');
-            $table->foreign('research_id')->references('id')->on('research')->onDelete('cascade');
+            $table->foreign('research_id')->references('id')->on('researches')->onDelete('cascade');
         });
     }
 

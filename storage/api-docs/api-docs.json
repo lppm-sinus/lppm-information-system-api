@@ -122,6 +122,136 @@
             }
         },
         "/api/authors": {
+            "get": {
+                "tags": [
+                    "Authors"
+                ],
+                "summary": "Get list of authors",
+                "operationId": "f55a52c3ecac25facdf618d8a6bf70c0",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search author by name or nidn",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Authors data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Computer Science"
+                                                            },
+                                                            "authors": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "integer",
+                                                                            "example": 1
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "John Doe"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Unauthorized Access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "Authors"
@@ -734,138 +864,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Unauthenticated."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
-            }
-        },
-        "/api/research": {
-            "get": {
-                "tags": [
-                    "Research"
-                ],
-                "summary": "Get list of research",
-                "operationId": "6fbb3f6182ef0ff00ccc577e6d0217f1",
-                "parameters": [
-                    {
-                        "name": "q",
-                        "in": "query",
-                        "description": "Search research by name",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Study programs data retrieved successfully."
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "current_page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "data": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "Computer Science"
-                                                            },
-                                                            "authors": {
-                                                                "type": "array",
-                                                                "items": {
-                                                                    "properties": {
-                                                                        "id": {
-                                                                            "type": "integer",
-                                                                            "example": 1
-                                                                        },
-                                                                        "name": {
-                                                                            "type": "string",
-                                                                            "example": "John Doe"
-                                                                        }
-                                                                    },
-                                                                    "type": "object"
-                                                                }
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "total": {
-                                                    "type": "integer",
-                                                    "example": 50
-                                                },
-                                                "per_page": {
-                                                    "type": "integer",
-                                                    "example": 10
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated access",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Unauthenticated."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Unauthorized Access",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Unauthorized"
                                         }
                                     },
                                     "type": "object"
@@ -2748,13 +2746,13 @@
                 ]
             }
         },
-        "/api/posts/{page_slug}": {
+        "/api/posts/by_page/{page_slug}": {
             "get": {
                 "tags": [
                     "Posts"
                 ],
                 "summary": "Get a posts by page slug",
-                "operationId": "a1a788db5687c7cd46a10e89f39e7200",
+                "operationId": "84016530bdae1143f9f827329203db4c",
                 "parameters": [
                     {
                         "name": "page_slug",
@@ -3312,34 +3310,34 @@
         "/api/researches/import": {
             "post": {
                 "tags": [
-                    "Research"
+                    "Researches"
                 ],
-                "summary": "Import research from excel file",
+                "summary": "Import researches data from Excel/CSV file",
                 "operationId": "4e0d0e110df3880c02ba291014c4d4e0",
                 "requestBody": {
+                    "required": true,
                     "content": {
                         "multipart/form-data": {
                             "schema": {
                                 "properties": {
                                     "file": {
-                                        "type": "string",
-                                        "format": "binary"
+                                        "description": "Excel/CSV file containing researches data",
+                                        "type": "file"
                                     },
                                     "reset_table": {
-                                        "type": "boolean"
+                                        "description": "Whether to reset the tables before import",
+                                        "type": "boolean",
+                                        "example": false
                                     }
                                 },
-                                "type": "object",
-                                "example": {
-                                    "file": "authors.xlsx"
-                                }
+                                "type": "object"
                             }
                         }
                     }
                 },
                 "responses": {
                     "201": {
-                        "description": "Research Data Imported",
+                        "description": "Researches imported successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3350,7 +3348,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Research data imported successfully."
+                                            "example": "Researches data imported successfully."
                                         }
                                     },
                                     "type": "object"
@@ -3359,7 +3357,7 @@
                         }
                     },
                     "422": {
-                        "description": "Validation Error",
+                        "description": "Validation error or import failure",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3370,7 +3368,10 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Research with NIDN 345525656 already exists."
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -3379,7 +3380,7 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthenticated access",
+                        "description": "Unauthenticated",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3397,7 +3398,7 @@
                 },
                 "security": [
                     {
-                        "bearer_token": []
+                        "bearer": []
                     }
                 ]
             }
@@ -3405,16 +3406,16 @@
         "/api/researches": {
             "get": {
                 "tags": [
-                    "Research"
+                    "Researches"
                 ],
                 "summary": "Get paginated list of researches",
                 "description": "Returns paginated researches with optional search functionality",
-                "operationId": "getResearches",
+                "operationId": "8a5991d079b56871f3457ce69214114f",
                 "parameters": [
                     {
                         "name": "q",
                         "in": "query",
-                        "description": "Search term for filtering researches by title or leader name",
+                        "description": "Search term for filtering researches by title, leaders nidn or leader name",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -3434,7 +3435,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Research data retrieved successfully."
+                                            "example": "Researches data retrieved successfully."
                                         },
                                         "data": {
                                             "properties": {
@@ -3450,53 +3451,89 @@
                                                                 "type": "integer",
                                                                 "example": 1
                                                             },
-                                                            "title": {
+                                                            "nama_ketua": {
                                                                 "type": "string",
-                                                                "example": "Research Title"
+                                                                "example": "Yustina"
                                                             },
-                                                            "leader_name": {
+                                                            "nidn_ketua": {
                                                                 "type": "string",
-                                                                "example": "John Doe"
+                                                                "example": "2342453"
                                                             },
-                                                            "leaders_nidn": {
+                                                            "afiliasi_ketua": {
                                                                 "type": "string",
-                                                                "example": "1234567890"
+                                                                "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
                                                             },
-                                                            "leaders_institution": {
+                                                            "kd_pt_ketua": {
                                                                 "type": "string",
-                                                                "example": "University"
+                                                                "example": "063040"
                                                             },
-                                                            "scheme_short_name": {
+                                                            "judul": {
                                                                 "type": "string",
-                                                                "example": "RSH"
+                                                                "example": "Penelitian 1"
                                                             },
-                                                            "scheme_name": {
+                                                            "nama_singkat_skema": {
                                                                 "type": "string",
-                                                                "example": "Research Scheme"
+                                                                "example": "PKS"
                                                             },
-                                                            "approved_funds": {
-                                                                "type": "number",
-                                                                "example": 50000000
-                                                            },
-                                                            "proposed_year": {
-                                                                "type": "integer",
-                                                                "example": 2023
-                                                            },
-                                                            "implementation_year": {
-                                                                "type": "integer",
-                                                                "example": 2024
-                                                            },
-                                                            "focus_area": {
+                                                            "thn_pertama_usulan": {
                                                                 "type": "string",
-                                                                "example": "Technology"
+                                                                "example": "2024"
                                                             },
-                                                            "funded_institution_name": {
+                                                            "thn_usulan_kegiatan": {
                                                                 "type": "string",
-                                                                "example": "Funding Body"
+                                                                "example": "2024"
                                                             },
-                                                            "grant_program": {
+                                                            "thn_pelaksanaan_kegiatan": {
                                                                 "type": "string",
-                                                                "example": "Research Grant"
+                                                                "example": "2024"
+                                                            },
+                                                            "lama_kegiatan": {
+                                                                "type": "string",
+                                                                "example": "1"
+                                                            },
+                                                            "bidang_fokus": {
+                                                                "type": "string",
+                                                                "example": "Teknologi Informasi dan Komunikasi"
+                                                            },
+                                                            "nama_skema": {
+                                                                "type": "string",
+                                                                "example": "PENELITIAN KERJASAMA"
+                                                            },
+                                                            "status_usulan": {
+                                                                "type": "string",
+                                                                "example": "Disetujui"
+                                                            },
+                                                            "dana_disetujui": {
+                                                                "type": "string",
+                                                                "example": "Rp 1.200.000,00"
+                                                            },
+                                                            "afiliasi_sinta_id": {
+                                                                "type": "string",
+                                                                "example": "123456789"
+                                                            },
+                                                            "nama_institusi_penerima_dana": {
+                                                                "type": "string",
+                                                                "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                            },
+                                                            "target_tkt": {
+                                                                "type": "string",
+                                                                "example": "8"
+                                                            },
+                                                            "nama_program_hibah": {
+                                                                "type": "string",
+                                                                "example": "PENELITIAN KERJASAMA"
+                                                            },
+                                                            "kategori_sumber_dana": {
+                                                                "type": "string",
+                                                                "example": "Perusahaan/Organisasi"
+                                                            },
+                                                            "negara_sumber_dana": {
+                                                                "type": "string",
+                                                                "example": "ID"
+                                                            },
+                                                            "sumber_dana": {
+                                                                "type": "string",
+                                                                "example": "PERUSAHAAN"
                                                             },
                                                             "authors": {
                                                                 "type": "array",
@@ -3506,13 +3543,41 @@
                                                                             "type": "integer",
                                                                             "example": 1
                                                                         },
-                                                                        "name": {
+                                                                        "sinta_id": {
                                                                             "type": "string",
-                                                                            "example": "Author Name"
+                                                                            "example": "66889756"
                                                                         },
                                                                         "nidn": {
                                                                             "type": "string",
-                                                                            "example": "1234567890"
+                                                                            "example": "2342453"
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "Yustina"
+                                                                        },
+                                                                        "affiliation": {
+                                                                            "type": "string",
+                                                                            "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                                        },
+                                                                        "study_program_id": {
+                                                                            "type": "integer",
+                                                                            "example": "2"
+                                                                        },
+                                                                        "last_education": {
+                                                                            "type": "string",
+                                                                            "example": "S2"
+                                                                        },
+                                                                        "functional_position": {
+                                                                            "type": "string",
+                                                                            "example": "Asisten Ahli"
+                                                                        },
+                                                                        "title_prefix": {
+                                                                            "type": "string",
+                                                                            "example": null
+                                                                        },
+                                                                        "title_suffix": {
+                                                                            "type": "string",
+                                                                            "example": "S.Kom, M.Kom"
                                                                         }
                                                                     },
                                                                     "type": "object"
@@ -3522,36 +3587,26 @@
                                                         "type": "object"
                                                     }
                                                 },
-                                                "first_page_url": {
-                                                    "type": "string"
-                                                },
-                                                "from": {
-                                                    "type": "integer"
-                                                },
-                                                "last_page": {
-                                                    "type": "integer"
-                                                },
-                                                "last_page_url": {
-                                                    "type": "string"
-                                                },
-                                                "next_page_url": {
-                                                    "type": "string"
-                                                },
-                                                "path": {
-                                                    "type": "string"
-                                                },
-                                                "per_page": {
-                                                    "type": "integer",
-                                                    "example": 10
-                                                },
-                                                "prev_page_url": {
-                                                    "type": "string"
-                                                },
-                                                "to": {
-                                                    "type": "integer"
-                                                },
-                                                "total": {
-                                                    "type": "integer"
+                                                "meta": {
+                                                    "properties": {
+                                                        "total": {
+                                                            "type": "integer",
+                                                            "example": 100
+                                                        },
+                                                        "per_page": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        },
+                                                        "current_page": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "last_page": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        }
+                                                    },
+                                                    "type": "object"
                                                 }
                                             },
                                             "type": "object"
@@ -3587,7 +3642,7 @@
             },
             "post": {
                 "tags": [
-                    "Research"
+                    "Researches"
                 ],
                 "summary": "Create new research",
                 "operationId": "aa30e260fd9e88ff424f0f429d974bdf",
@@ -3597,57 +3652,93 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "leader_name": {
+                                    "nama_ketua": {
                                         "type": "string"
                                     },
-                                    "leaders_nidn": {
+                                    "nidn_ketua": {
                                         "type": "string"
                                     },
-                                    "leaders_institution": {
+                                    "afiliasi_ketua": {
                                         "type": "string"
                                     },
-                                    "title": {
+                                    "kd_pt_ketua": {
                                         "type": "string"
                                     },
-                                    "scheme_short_name": {
+                                    "judul": {
                                         "type": "string"
                                     },
-                                    "scheme_name": {
+                                    "nama_singkat_skema": {
+                                        "type": "string"
+                                    },
+                                    "thn_pertama_usulan": {
+                                        "type": "string"
+                                    },
+                                    "thn_usulan_kegiatan": {
+                                        "type": "string"
+                                    },
+                                    "thn_pelaksanaan_kegiatan": {
+                                        "type": "string"
+                                    },
+                                    "lama_kegitan": {
+                                        "type": "string"
+                                    },
+                                    "bidang_fokus": {
+                                        "type": "string"
+                                    },
+                                    "nama_skema": {
+                                        "type": "string"
+                                    },
+                                    "status_usulan": {
                                         "type": "string"
                                     },
                                     "approved_funds": {
                                         "type": "integer"
                                     },
-                                    "proposed_year": {
+                                    "afiliasi_sinta_id": {
                                         "type": "string"
                                     },
-                                    "implementation_year": {
+                                    "nama_institusi_penerima_dana": {
                                         "type": "string"
                                     },
-                                    "focus_area": {
+                                    "target_tkt": {
                                         "type": "string"
                                     },
-                                    "funded_institution_name": {
+                                    "nama_program_hibah": {
                                         "type": "string"
                                     },
-                                    "grant_program": {
+                                    "kategori_sumber_dana": {
+                                        "type": "string"
+                                    },
+                                    "negara_sumber_dana": {
+                                        "type": "string"
+                                    },
+                                    "sumber_dana": {
                                         "type": "string"
                                     }
                                 },
                                 "type": "object",
                                 "example": {
-                                    "leader_name": "Yustina",
-                                    "leaders_nidn": "2342453",
-                                    "leaders_institution": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
-                                    "title": "Penelitian 1",
-                                    "scheme_short_name": "PI",
-                                    "scheme_name": "Penelitian Internal",
-                                    "approved_funds": 2000000,
-                                    "proposed_year": "2024",
-                                    "implementation_year": "2024",
-                                    "focus_area": "Penelitian",
-                                    "funded_institution_name": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
-                                    "grant_program": "Program Pengembangan"
+                                    "nama_ketua": "Yustina",
+                                    "nidn_ketua": "2342453",
+                                    "afiliasi_ketua": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
+                                    "kd_pt_ketua": "063040",
+                                    "judul": "Penelitian 1",
+                                    "nama_singkat_skema": "PKS",
+                                    "thn_pertama_usulan": "2024",
+                                    "thn_usulan_kegiatan": "2024",
+                                    "thn_pelaksanaan_kegiatan": "2024",
+                                    "lama_kegiatan": "1",
+                                    "bidang_fokus": "Teknologi Informasi dan Komunikasi",
+                                    "nama_skema": "PENELITIAN KERJASAMA",
+                                    "status_usulan": "Disetujui",
+                                    "approved_funds": 1200000,
+                                    "afiliasi_sinta_id": "123456789",
+                                    "nama_institusi_penerima_dana": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
+                                    "target_tkt": "8",
+                                    "nama_program_hibah": "PENELITIAN KERJASAMA",
+                                    "kategori_sumber_dana": "Perusahaan/Organisasi",
+                                    "negara_sumber_dana": "ID",
+                                    "sumber_dana": "PERUSAHAAN"
                                 }
                             }
                         }
@@ -3674,53 +3765,89 @@
                                                     "type": "integer",
                                                     "example": 1
                                                 },
-                                                "leader_name": {
+                                                "nama_ketua": {
                                                     "type": "string",
                                                     "example": "Yustina"
                                                 },
-                                                "leaders_nidn": {
+                                                "nidn_ketua": {
                                                     "type": "string",
                                                     "example": "2342453"
                                                 },
-                                                "leaders_institution": {
+                                                "afiliasi_ketua": {
                                                     "type": "string",
                                                     "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
                                                 },
-                                                "title": {
+                                                "kd_pt_ketua": {
+                                                    "type": "string",
+                                                    "example": "063040"
+                                                },
+                                                "judul": {
                                                     "type": "string",
                                                     "example": "Penelitian 1"
                                                 },
-                                                "scheme_short_name": {
+                                                "nama_singkat_skema": {
                                                     "type": "string",
-                                                    "example": "PI"
+                                                    "example": "PKS"
                                                 },
-                                                "scheme_name": {
-                                                    "type": "string",
-                                                    "example": "Penelitian Internal"
-                                                },
-                                                "approved_funds": {
-                                                    "type": "integer",
-                                                    "example": 2000000
-                                                },
-                                                "proposed_year": {
+                                                "thn_pertama_usulan": {
                                                     "type": "string",
                                                     "example": "2024"
                                                 },
-                                                "implementation_year": {
+                                                "thn_usulan_kegiatan": {
                                                     "type": "string",
                                                     "example": "2024"
                                                 },
-                                                "focus_area": {
+                                                "thn_pelaksanaan_kegiatan": {
                                                     "type": "string",
-                                                    "example": "Penelitian"
+                                                    "example": "2024"
                                                 },
-                                                "funded_institution_name": {
+                                                "lama_kegiatan": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "bidang_fokus": {
+                                                    "type": "string",
+                                                    "example": "Teknologi Informasi dan Komunikasi"
+                                                },
+                                                "nama_skema": {
+                                                    "type": "string",
+                                                    "example": "PENELITIAN KERJASAMA"
+                                                },
+                                                "status_usulan": {
+                                                    "type": "string",
+                                                    "example": "Disetujui"
+                                                },
+                                                "dana_disetujui": {
+                                                    "type": "string",
+                                                    "example": "Rp 1.200.000,00"
+                                                },
+                                                "afiliasi_sinta_id": {
+                                                    "type": "string",
+                                                    "example": "123456789"
+                                                },
+                                                "nama_institusi_penerima_dana": {
                                                     "type": "string",
                                                     "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
                                                 },
-                                                "grant_program": {
+                                                "target_tkt": {
                                                     "type": "string",
-                                                    "example": "Program Pengembangan"
+                                                    "example": "8"
+                                                },
+                                                "nama_program_hibah": {
+                                                    "type": "string",
+                                                    "example": "PENELITIAN KERJASAMA"
+                                                },
+                                                "kategori_sumber_dana": {
+                                                    "type": "string",
+                                                    "example": "Perusahaan/Organisasi"
+                                                },
+                                                "negara_sumber_dana": {
+                                                    "type": "string",
+                                                    "example": "ID"
+                                                },
+                                                "sumber_dana": {
+                                                    "type": "string",
+                                                    "example": "PERUSAHAAN"
                                                 }
                                             },
                                             "type": "object"
@@ -3758,11 +3885,11 @@
         "/api/researches/{id}": {
             "get": {
                 "tags": [
-                    "Research"
+                    "Researches"
                 ],
                 "summary": "Get research by ID",
                 "description": "Returns a specific research by its ID with related authors",
-                "operationId": "getResearchById",
+                "operationId": "b583eaa41cc409fb37638e6184f8cbb3",
                 "parameters": [
                     {
                         "name": "id",
@@ -3795,53 +3922,89 @@
                                                     "type": "integer",
                                                     "example": 1
                                                 },
-                                                "title": {
+                                                "nama_ketua": {
                                                     "type": "string",
-                                                    "example": "Research Title"
+                                                    "example": "Yustina"
                                                 },
-                                                "leader_name": {
+                                                "nidn_ketua": {
                                                     "type": "string",
-                                                    "example": "John Doe"
+                                                    "example": "2342453"
                                                 },
-                                                "leaders_nidn": {
+                                                "afiliasi_ketua": {
                                                     "type": "string",
-                                                    "example": "1234567890"
+                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
                                                 },
-                                                "leaders_institution": {
+                                                "kd_pt_ketua": {
                                                     "type": "string",
-                                                    "example": "University"
+                                                    "example": "063040"
                                                 },
-                                                "scheme_short_name": {
+                                                "judul": {
                                                     "type": "string",
-                                                    "example": "RSH"
+                                                    "example": "Penelitian 1"
                                                 },
-                                                "scheme_name": {
+                                                "nama_singkat_skema": {
                                                     "type": "string",
-                                                    "example": "Research Scheme"
+                                                    "example": "PKS"
                                                 },
-                                                "approved_funds": {
-                                                    "type": "number",
-                                                    "example": 50000000
-                                                },
-                                                "proposed_year": {
-                                                    "type": "integer",
-                                                    "example": 2023
-                                                },
-                                                "implementation_year": {
-                                                    "type": "integer",
-                                                    "example": 2024
-                                                },
-                                                "focus_area": {
+                                                "thn_pertama_usulan": {
                                                     "type": "string",
-                                                    "example": "Technology"
+                                                    "example": "2024"
                                                 },
-                                                "funded_institution_name": {
+                                                "thn_usulan_kegiatan": {
                                                     "type": "string",
-                                                    "example": "Funding Body"
+                                                    "example": "2024"
                                                 },
-                                                "grant_program": {
+                                                "thn_pelaksanaan_kegiatan": {
                                                     "type": "string",
-                                                    "example": "Research Grant"
+                                                    "example": "2024"
+                                                },
+                                                "lama_kegiatan": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "bidang_fokus": {
+                                                    "type": "string",
+                                                    "example": "Teknologi Informasi dan Komunikasi"
+                                                },
+                                                "nama_skema": {
+                                                    "type": "string",
+                                                    "example": "PENELITIAN KERJASAMA"
+                                                },
+                                                "status_usulan": {
+                                                    "type": "string",
+                                                    "example": "Disetujui"
+                                                },
+                                                "dana_disetujui": {
+                                                    "type": "string",
+                                                    "example": "Rp 1.200.000,00"
+                                                },
+                                                "afiliasi_sinta_id": {
+                                                    "type": "string",
+                                                    "example": "123456789"
+                                                },
+                                                "nama_institusi_penerima_dana": {
+                                                    "type": "string",
+                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                },
+                                                "target_tkt": {
+                                                    "type": "string",
+                                                    "example": "8"
+                                                },
+                                                "nama_program_hibah": {
+                                                    "type": "string",
+                                                    "example": "PENELITIAN KERJASAMA"
+                                                },
+                                                "kategori_sumber_dana": {
+                                                    "type": "string",
+                                                    "example": "Perusahaan/Organisasi"
+                                                },
+                                                "negara_sumber_dana": {
+                                                    "type": "string",
+                                                    "example": "ID"
+                                                },
+                                                "sumber_dana": {
+                                                    "type": "string",
+                                                    "example": "PERUSAHAAN"
                                                 },
                                                 "authors": {
                                                     "type": "array",
@@ -3945,11 +4108,11 @@
             },
             "delete": {
                 "tags": [
-                    "Research"
+                    "Researches"
                 ],
                 "summary": "Delete a research",
                 "description": "Deletes a research record by ID",
-                "operationId": "deleteResearch",
+                "operationId": "45c3e3c297f73f91d48d7f3752ee8b71",
                 "parameters": [
                     {
                         "name": "id",
@@ -3974,7 +4137,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Response data deleted successfully."
+                                            "example": "Service data deleted successfully."
                                         }
                                     },
                                     "type": "object"
@@ -4027,7 +4190,7 @@
             },
             "patch": {
                 "tags": [
-                    "Research"
+                    "Researches"
                 ],
                 "summary": "Update an research by ID",
                 "operationId": "2580be7bdfd43b11ff9b79241a3cb281",
@@ -4047,57 +4210,93 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "leader_name": {
+                                    "nama_ketua": {
                                         "type": "string"
                                     },
-                                    "leaders_nidn": {
+                                    "nidn_ketua": {
                                         "type": "string"
                                     },
-                                    "leaders_institution": {
+                                    "afiliasi_ketua": {
                                         "type": "string"
                                     },
-                                    "title": {
+                                    "kd_pt_ketua": {
                                         "type": "string"
                                     },
-                                    "scheme_short_name": {
+                                    "judul": {
                                         "type": "string"
                                     },
-                                    "scheme_name": {
+                                    "nama_singkat_skema": {
+                                        "type": "string"
+                                    },
+                                    "thn_pertama_usulan": {
+                                        "type": "string"
+                                    },
+                                    "thn_usulan_kegiatan": {
+                                        "type": "string"
+                                    },
+                                    "thn_pelaksanaan_kegiatan": {
+                                        "type": "string"
+                                    },
+                                    "lama_kegitan": {
+                                        "type": "string"
+                                    },
+                                    "bidang_fokus": {
+                                        "type": "string"
+                                    },
+                                    "nama_skema": {
+                                        "type": "string"
+                                    },
+                                    "status_usulan": {
                                         "type": "string"
                                     },
                                     "approved_funds": {
                                         "type": "integer"
                                     },
-                                    "proposed_year": {
+                                    "afiliasi_sinta_id": {
                                         "type": "string"
                                     },
-                                    "implementation_year": {
+                                    "nama_institusi_penerima_dana": {
                                         "type": "string"
                                     },
-                                    "focus_area": {
+                                    "target_tkt": {
                                         "type": "string"
                                     },
-                                    "funded_institution_name": {
+                                    "nama_program_hibah": {
                                         "type": "string"
                                     },
-                                    "grant_program": {
+                                    "kategori_sumber_dana": {
+                                        "type": "string"
+                                    },
+                                    "negara_sumber_dana": {
+                                        "type": "string"
+                                    },
+                                    "sumber_dana": {
                                         "type": "string"
                                     }
                                 },
                                 "type": "object",
                                 "example": {
-                                    "leader_name": "Yustina",
-                                    "leaders_nidn": "2342453",
-                                    "leaders_institution": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
-                                    "title": "Penelitian 1",
-                                    "scheme_short_name": "PI",
-                                    "scheme_name": "Penelitian Internal",
-                                    "approved_funds": 2000000,
-                                    "proposed_year": "2024",
-                                    "implementation_year": "2024",
-                                    "focus_area": "Penelitian",
-                                    "funded_institution_name": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
-                                    "grant_program": "Program Pengembangan"
+                                    "nama_ketua": "Yustina",
+                                    "nidn_ketua": "2342453",
+                                    "afiliasi_ketua": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
+                                    "kd_pt_ketua": "063040",
+                                    "judul": "Penelitian 1",
+                                    "nama_singkat_skema": "PKS",
+                                    "thn_pertama_usulan": "2024",
+                                    "thn_usulan_kegiatan": "2024",
+                                    "thn_pelaksanaan_kegiatan": "2024",
+                                    "lama_kegiatan": "1",
+                                    "bidang_fokus": "Teknologi Informasi dan Komunikasi",
+                                    "nama_skema": "PENELITIAN KERJASAMA",
+                                    "status_usulan": "Disetujui",
+                                    "approved_funds": 1200000,
+                                    "afiliasi_sinta_id": "123456789",
+                                    "nama_institusi_penerima_dana": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
+                                    "target_tkt": "8",
+                                    "nama_program_hibah": "PENELITIAN KERJASAMA",
+                                    "kategori_sumber_dana": "Perusahaan/Organisasi",
+                                    "negara_sumber_dana": "ID",
+                                    "sumber_dana": "PERUSAHAAN"
                                 }
                             }
                         }
@@ -4105,7 +4304,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Author Updated",
+                        "description": "Research Updated",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4116,7 +4315,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Research created successfully."
+                                            "example": "Research updated successfully."
                                         },
                                         "data": {
                                             "properties": {
@@ -4124,53 +4323,89 @@
                                                     "type": "integer",
                                                     "example": 1
                                                 },
-                                                "leader_name": {
+                                                "nama_ketua": {
                                                     "type": "string",
                                                     "example": "Yustina"
                                                 },
-                                                "leaders_nidn": {
+                                                "nidn_ketua": {
                                                     "type": "string",
                                                     "example": "2342453"
                                                 },
-                                                "leaders_institution": {
+                                                "afiliasi_ketua": {
                                                     "type": "string",
                                                     "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
                                                 },
-                                                "title": {
+                                                "kd_pt_ketua": {
+                                                    "type": "string",
+                                                    "example": "063040"
+                                                },
+                                                "judul": {
                                                     "type": "string",
                                                     "example": "Penelitian 1"
                                                 },
-                                                "scheme_short_name": {
+                                                "nama_singkat_skema": {
                                                     "type": "string",
-                                                    "example": "PI"
+                                                    "example": "PKS"
                                                 },
-                                                "scheme_name": {
-                                                    "type": "string",
-                                                    "example": "Penelitian Internal"
-                                                },
-                                                "approved_funds": {
-                                                    "type": "integer",
-                                                    "example": 2000000
-                                                },
-                                                "proposed_year": {
+                                                "thn_pertama_usulan": {
                                                     "type": "string",
                                                     "example": "2024"
                                                 },
-                                                "implementation_year": {
+                                                "thn_usulan_kegiatan": {
                                                     "type": "string",
                                                     "example": "2024"
                                                 },
-                                                "focus_area": {
+                                                "thn_pelaksanaan_kegiatan": {
                                                     "type": "string",
-                                                    "example": "Penelitian"
+                                                    "example": "2024"
                                                 },
-                                                "funded_institution_name": {
+                                                "lama_kegiatan": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "bidang_fokus": {
+                                                    "type": "string",
+                                                    "example": "Teknologi Informasi dan Komunikasi"
+                                                },
+                                                "nama_skema": {
+                                                    "type": "string",
+                                                    "example": "PENELITIAN KERJASAMA"
+                                                },
+                                                "status_usulan": {
+                                                    "type": "string",
+                                                    "example": "Disetujui"
+                                                },
+                                                "dana_disetujui": {
+                                                    "type": "string",
+                                                    "example": "Rp 1.200.000,00"
+                                                },
+                                                "afiliasi_sinta_id": {
+                                                    "type": "string",
+                                                    "example": "123456789"
+                                                },
+                                                "nama_institusi_penerima_dana": {
                                                     "type": "string",
                                                     "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
                                                 },
-                                                "grant_program": {
+                                                "target_tkt": {
                                                     "type": "string",
-                                                    "example": "Program Pengembangan"
+                                                    "example": "8"
+                                                },
+                                                "nama_program_hibah": {
+                                                    "type": "string",
+                                                    "example": "PENELITIAN KERJASAMA"
+                                                },
+                                                "kategori_sumber_dana": {
+                                                    "type": "string",
+                                                    "example": "Perusahaan/Organisasi"
+                                                },
+                                                "negara_sumber_dana": {
+                                                    "type": "string",
+                                                    "example": "ID"
+                                                },
+                                                "sumber_dana": {
+                                                    "type": "string",
+                                                    "example": "PERUSAHAAN"
                                                 }
                                             },
                                             "type": "object"
@@ -4208,10 +4443,10 @@
         "/api/researches/grouped-by-scheme": {
             "get": {
                 "tags": [
-                    "Research"
+                    "Researches"
                 ],
                 "summary": "Get researches grouped by scheme",
-                "description": "Retrieves research data grouped by `scheme_short_name`, with an optional filter by `study_program_id`.",
+                "description": "Retrieves researches data grouped by `nama_singkat_skema`, with an optional filter by `study_program_id`.",
                 "operationId": "167517055f256201d5558431d2b0e6cc",
                 "parameters": [
                     {
@@ -4237,7 +4472,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Research data retrieved successfully."
+                                            "example": "Researches data retrieved successfully."
                                         },
                                         "data": {
                                             "properties": {
@@ -4247,135 +4482,9 @@
                                                             "type": "integer",
                                                             "example": 2
                                                         },
-                                                        "data": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "properties": {
-                                                                    "id": {
-                                                                        "type": "integer",
-                                                                        "example": 69
-                                                                    },
-                                                                    "leader_name": {
-                                                                        "type": "string",
-                                                                        "example": "DIDIK NUGROHO"
-                                                                    },
-                                                                    "leaders_nidn": {
-                                                                        "type": "string",
-                                                                        "example": "0613057201"
-                                                                    },
-                                                                    "leaders_institution": {
-                                                                        "type": "string",
-                                                                        "example": "STMIK SINAR NUSANTARA"
-                                                                    },
-                                                                    "title": {
-                                                                        "type": "string",
-                                                                        "example": "Research title"
-                                                                    },
-                                                                    "scheme_short_name": {
-                                                                        "type": "string",
-                                                                        "example": "PI"
-                                                                    },
-                                                                    "scheme_name": {
-                                                                        "type": "string",
-                                                                        "example": "PENELITIAN INTERNAL"
-                                                                    },
-                                                                    "approved_funds": {
-                                                                        "type": "string",
-                                                                        "format": "decimal",
-                                                                        "example": "3000000.00"
-                                                                    },
-                                                                    "proposed_year": {
-                                                                        "type": "string",
-                                                                        "example": "2024"
-                                                                    },
-                                                                    "implementation_year": {
-                                                                        "type": "string",
-                                                                        "example": "2024"
-                                                                    },
-                                                                    "focus_area": {
-                                                                        "type": "string",
-                                                                        "example": "TEKNOLOGI INFORMASI DAN KOMUNIKASI"
-                                                                    },
-                                                                    "funded_institution_name": {
-                                                                        "type": "string",
-                                                                        "example": "STMIK SINAR NUSANTARA"
-                                                                    },
-                                                                    "grant_program": {
-                                                                        "type": "string",
-                                                                        "example": "PENELITIAN INTERNAL"
-                                                                    },
-                                                                    "created_at": {
-                                                                        "type": "string",
-                                                                        "format": "date-time",
-                                                                        "example": "2024-11-14T03:56:09.000000Z"
-                                                                    },
-                                                                    "updated_at": {
-                                                                        "type": "string",
-                                                                        "format": "date-time",
-                                                                        "example": "2024-11-14T03:56:09.000000Z"
-                                                                    },
-                                                                    "authors": {
-                                                                        "type": "array",
-                                                                        "items": {
-                                                                            "properties": {
-                                                                                "id": {
-                                                                                    "type": "integer",
-                                                                                    "example": 12
-                                                                                },
-                                                                                "sinta_id": {
-                                                                                    "type": "string",
-                                                                                    "example": "6049857"
-                                                                                },
-                                                                                "nidn": {
-                                                                                    "type": "string",
-                                                                                    "example": "0613057201"
-                                                                                },
-                                                                                "name": {
-                                                                                    "type": "string",
-                                                                                    "example": "DIDIK NUGROHO"
-                                                                                },
-                                                                                "affiliation": {
-                                                                                    "type": "string",
-                                                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
-                                                                                },
-                                                                                "study_program_id": {
-                                                                                    "type": "integer",
-                                                                                    "example": 2
-                                                                                },
-                                                                                "last_education": {
-                                                                                    "type": "string",
-                                                                                    "example": "S2"
-                                                                                },
-                                                                                "functional_position": {
-                                                                                    "type": "string",
-                                                                                    "example": "Lektor"
-                                                                                },
-                                                                                "title_prefix": {
-                                                                                    "type": "string",
-                                                                                    "example": null,
-                                                                                    "nullable": true
-                                                                                },
-                                                                                "title_suffix": {
-                                                                                    "type": "string",
-                                                                                    "example": "S.Kom, M.Kom"
-                                                                                },
-                                                                                "created_at": {
-                                                                                    "type": "string",
-                                                                                    "format": "date-time",
-                                                                                    "example": "2024-11-14T02:57:18.000000Z"
-                                                                                },
-                                                                                "updated_at": {
-                                                                                    "type": "string",
-                                                                                    "format": "date-time",
-                                                                                    "example": "2024-11-14T02:57:18.000000Z"
-                                                                                }
-                                                                            },
-                                                                            "type": "object"
-                                                                        }
-                                                                    }
-                                                                },
-                                                                "type": "object"
-                                                            }
+                                                        "total_funds": {
+                                                            "type": "string",
+                                                            "example": "Rp 24.000.000,00"
                                                         }
                                                     },
                                                     "type": "object"
@@ -4391,6 +4500,1463 @@
                     },
                     "401": {
                         "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/researches/chart-data": {
+            "get": {
+                "tags": [
+                    "Researches"
+                ],
+                "summary": "Get research statistics chart data",
+                "description": "Retrieves research statistics grouped by study programs for chart visualization",
+                "operationId": "9a59c307327ae5c546d9d814822102ee",
+                "parameters": [
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "description": "Filter statistics by year",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2024
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Researches chart data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "labels": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Computer Science"
+                                                    }
+                                                },
+                                                "datasets": {
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "integer",
+                                                                "example": 10
+                                                            }
+                                                        },
+                                                        "background_color": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "string",
+                                                                "example": "#FF5733"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "study_programs": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Computer Science"
+                                                            },
+                                                            "total": {
+                                                                "type": "integer",
+                                                                "example": 10
+                                                            },
+                                                            "percentage": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 25.5
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "total_researches": {
+                                                    "type": "integer",
+                                                    "example": 40
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/services/import": {
+            "post": {
+                "tags": [
+                    "Services"
+                ],
+                "summary": "Import services data from Excel/CSV file",
+                "operationId": "ccf135bb7abb5bb39d0cddf69923b1df",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "file": {
+                                        "description": "Excel/CSV file containing services data",
+                                        "type": "file"
+                                    },
+                                    "reset_table": {
+                                        "description": "Whether to reset the tables before import",
+                                        "type": "boolean",
+                                        "example": false
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Services imported successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Services data imported successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error or import failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/services": {
+            "get": {
+                "tags": [
+                    "Services"
+                ],
+                "summary": "Get paginated list of services",
+                "description": "Returns paginated services with optional search functionality",
+                "operationId": "47031a7bc6548cc7b6635910d9d5b54c",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search term for filtering services by title, leaders nidn or leader name",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Services data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "nama_ketua": {
+                                                                "type": "string",
+                                                                "example": "Yustina"
+                                                            },
+                                                            "nidn_ketua": {
+                                                                "type": "string",
+                                                                "example": "2342453"
+                                                            },
+                                                            "afiliasi_ketua": {
+                                                                "type": "string",
+                                                                "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                            },
+                                                            "kd_pt_ketua": {
+                                                                "type": "string",
+                                                                "example": "063040"
+                                                            },
+                                                            "judul": {
+                                                                "type": "string",
+                                                                "example": "Pengabdian 1"
+                                                            },
+                                                            "nama_singkat_skema": {
+                                                                "type": "string",
+                                                                "example": "PKS"
+                                                            },
+                                                            "thn_pertama_usulan": {
+                                                                "type": "string",
+                                                                "example": "2024"
+                                                            },
+                                                            "thn_usulan_kegiatan": {
+                                                                "type": "string",
+                                                                "example": "2024"
+                                                            },
+                                                            "thn_pelaksanaan_kegiatan": {
+                                                                "type": "string",
+                                                                "example": "2024"
+                                                            },
+                                                            "lama_kegiatan": {
+                                                                "type": "string",
+                                                                "example": "1"
+                                                            },
+                                                            "bidang_fokus": {
+                                                                "type": "string",
+                                                                "example": "Teknologi Informasi dan Komunikasi"
+                                                            },
+                                                            "nama_skema": {
+                                                                "type": "string",
+                                                                "example": "PENGABDIAN KERJASAMA"
+                                                            },
+                                                            "status_usulan": {
+                                                                "type": "string",
+                                                                "example": "Disetujui"
+                                                            },
+                                                            "dana_disetujui": {
+                                                                "type": "string",
+                                                                "example": "Rp 1.200.000,00"
+                                                            },
+                                                            "afiliasi_sinta_id": {
+                                                                "type": "string",
+                                                                "example": "123456789"
+                                                            },
+                                                            "nama_institusi_penerima_dana": {
+                                                                "type": "string",
+                                                                "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                            },
+                                                            "target_tkt": {
+                                                                "type": "string",
+                                                                "example": "8"
+                                                            },
+                                                            "nama_program_hibah": {
+                                                                "type": "string",
+                                                                "example": "PENGABDIAN KERJASAMA"
+                                                            },
+                                                            "kategori_sumber_dana": {
+                                                                "type": "string",
+                                                                "example": "Perusahaan/Organisasi"
+                                                            },
+                                                            "negara_sumber_dana": {
+                                                                "type": "string",
+                                                                "example": "ID"
+                                                            },
+                                                            "sumber_dana": {
+                                                                "type": "string",
+                                                                "example": "PERUSAHAAN"
+                                                            },
+                                                            "authors": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "integer",
+                                                                            "example": 1
+                                                                        },
+                                                                        "sinta_id": {
+                                                                            "type": "string",
+                                                                            "example": "66889756"
+                                                                        },
+                                                                        "nidn": {
+                                                                            "type": "string",
+                                                                            "example": "2342453"
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "Yustina"
+                                                                        },
+                                                                        "affiliation": {
+                                                                            "type": "string",
+                                                                            "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                                        },
+                                                                        "study_program_id": {
+                                                                            "type": "integer",
+                                                                            "example": "2"
+                                                                        },
+                                                                        "last_education": {
+                                                                            "type": "string",
+                                                                            "example": "S2"
+                                                                        },
+                                                                        "functional_position": {
+                                                                            "type": "string",
+                                                                            "example": "Asisten Ahli"
+                                                                        },
+                                                                        "title_prefix": {
+                                                                            "type": "string",
+                                                                            "example": null
+                                                                        },
+                                                                        "title_suffix": {
+                                                                            "type": "string",
+                                                                            "example": "S.Kom, M.Kom"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "meta": {
+                                                    "properties": {
+                                                        "total": {
+                                                            "type": "integer",
+                                                            "example": 100
+                                                        },
+                                                        "per_page": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        },
+                                                        "current_page": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "last_page": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Services"
+                ],
+                "summary": "Create new service",
+                "operationId": "6a6991b9572a1b66cd23bd8125dc8474",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nama_ketua": {
+                                        "type": "string"
+                                    },
+                                    "nidn_ketua": {
+                                        "type": "string"
+                                    },
+                                    "afiliasi_ketua": {
+                                        "type": "string"
+                                    },
+                                    "kd_pt_ketua": {
+                                        "type": "string"
+                                    },
+                                    "judul": {
+                                        "type": "string"
+                                    },
+                                    "nama_singkat_skema": {
+                                        "type": "string"
+                                    },
+                                    "thn_pertama_usulan": {
+                                        "type": "string"
+                                    },
+                                    "thn_usulan_kegiatan": {
+                                        "type": "string"
+                                    },
+                                    "thn_pelaksanaan_kegiatan": {
+                                        "type": "string"
+                                    },
+                                    "lama_kegitan": {
+                                        "type": "string"
+                                    },
+                                    "bidang_fokus": {
+                                        "type": "string"
+                                    },
+                                    "nama_skema": {
+                                        "type": "string"
+                                    },
+                                    "status_usulan": {
+                                        "type": "string"
+                                    },
+                                    "approved_funds": {
+                                        "type": "integer"
+                                    },
+                                    "afiliasi_sinta_id": {
+                                        "type": "string"
+                                    },
+                                    "nama_institusi_penerima_dana": {
+                                        "type": "string"
+                                    },
+                                    "target_tkt": {
+                                        "type": "string"
+                                    },
+                                    "nama_program_hibah": {
+                                        "type": "string"
+                                    },
+                                    "kategori_sumber_dana": {
+                                        "type": "string"
+                                    },
+                                    "negara_sumber_dana": {
+                                        "type": "string"
+                                    },
+                                    "sumber_dana": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "nama_ketua": "Yustina",
+                                    "nidn_ketua": "2342453",
+                                    "afiliasi_ketua": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
+                                    "kd_pt_ketua": "063040",
+                                    "judul": "Pengabdian 1",
+                                    "nama_singkat_skema": "PKS",
+                                    "thn_pertama_usulan": "2024",
+                                    "thn_usulan_kegiatan": "2024",
+                                    "thn_pelaksanaan_kegiatan": "2024",
+                                    "lama_kegiatan": "1",
+                                    "bidang_fokus": "Teknologi Informasi dan Komunikasi",
+                                    "nama_skema": "PENGABDIAN KERJASAMA",
+                                    "status_usulan": "Disetujui",
+                                    "approved_funds": 1200000,
+                                    "afiliasi_sinta_id": "123456789",
+                                    "nama_institusi_penerima_dana": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
+                                    "target_tkt": "8",
+                                    "nama_program_hibah": "PENGABDIAN KERJASAMA",
+                                    "kategori_sumber_dana": "Perusahaan/Organisasi",
+                                    "negara_sumber_dana": "ID",
+                                    "sumber_dana": "PERUSAHAAN"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Service Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Service created successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "nama_ketua": {
+                                                    "type": "string",
+                                                    "example": "Yustina"
+                                                },
+                                                "nidn_ketua": {
+                                                    "type": "string",
+                                                    "example": "2342453"
+                                                },
+                                                "afiliasi_ketua": {
+                                                    "type": "string",
+                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                },
+                                                "kd_pt_ketua": {
+                                                    "type": "string",
+                                                    "example": "063040"
+                                                },
+                                                "judul": {
+                                                    "type": "string",
+                                                    "example": "Pengabdian 1"
+                                                },
+                                                "nama_singkat_skema": {
+                                                    "type": "string",
+                                                    "example": "PKS"
+                                                },
+                                                "thn_pertama_usulan": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "thn_usulan_kegiatan": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "thn_pelaksanaan_kegiatan": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "lama_kegiatan": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "bidang_fokus": {
+                                                    "type": "string",
+                                                    "example": "Teknologi Informasi dan Komunikasi"
+                                                },
+                                                "nama_skema": {
+                                                    "type": "string",
+                                                    "example": "PENGABDIAN KERJASAMA"
+                                                },
+                                                "status_usulan": {
+                                                    "type": "string",
+                                                    "example": "Disetujui"
+                                                },
+                                                "dana_disetujui": {
+                                                    "type": "string",
+                                                    "example": "Rp 1.200.000,00"
+                                                },
+                                                "afiliasi_sinta_id": {
+                                                    "type": "string",
+                                                    "example": "123456789"
+                                                },
+                                                "nama_institusi_penerima_dana": {
+                                                    "type": "string",
+                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                },
+                                                "target_tkt": {
+                                                    "type": "string",
+                                                    "example": "8"
+                                                },
+                                                "nama_program_hibah": {
+                                                    "type": "string",
+                                                    "example": "PENGABDIAN KERJASAMA"
+                                                },
+                                                "kategori_sumber_dana": {
+                                                    "type": "string",
+                                                    "example": "Perusahaan/Organisasi"
+                                                },
+                                                "negara_sumber_dana": {
+                                                    "type": "string",
+                                                    "example": "ID"
+                                                },
+                                                "sumber_dana": {
+                                                    "type": "string",
+                                                    "example": "PERUSAHAAN"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/services/{id}": {
+            "get": {
+                "tags": [
+                    "Services"
+                ],
+                "summary": "Get service by ID",
+                "description": "Returns a specific service by its ID with related authors",
+                "operationId": "3e30ae49b274024740cad2bbfdc46da5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of service to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Service data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "nama_ketua": {
+                                                    "type": "string",
+                                                    "example": "Yustina"
+                                                },
+                                                "nidn_ketua": {
+                                                    "type": "string",
+                                                    "example": "2342453"
+                                                },
+                                                "afiliasi_ketua": {
+                                                    "type": "string",
+                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                },
+                                                "kd_pt_ketua": {
+                                                    "type": "string",
+                                                    "example": "063040"
+                                                },
+                                                "judul": {
+                                                    "type": "string",
+                                                    "example": "Pengabdian 1"
+                                                },
+                                                "nama_singkat_skema": {
+                                                    "type": "string",
+                                                    "example": "PKS"
+                                                },
+                                                "thn_pertama_usulan": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "thn_usulan_kegiatan": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "thn_pelaksanaan_kegiatan": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "lama_kegiatan": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "bidang_fokus": {
+                                                    "type": "string",
+                                                    "example": "Teknologi Informasi dan Komunikasi"
+                                                },
+                                                "nama_skema": {
+                                                    "type": "string",
+                                                    "example": "PENGABDIAN KERJASAMA"
+                                                },
+                                                "status_usulan": {
+                                                    "type": "string",
+                                                    "example": "Disetujui"
+                                                },
+                                                "dana_disetujui": {
+                                                    "type": "string",
+                                                    "example": "Rp 1.200.000,00"
+                                                },
+                                                "afiliasi_sinta_id": {
+                                                    "type": "string",
+                                                    "example": "123456789"
+                                                },
+                                                "nama_institusi_penerima_dana": {
+                                                    "type": "string",
+                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                },
+                                                "target_tkt": {
+                                                    "type": "string",
+                                                    "example": "8"
+                                                },
+                                                "nama_program_hibah": {
+                                                    "type": "string",
+                                                    "example": "PENGABDIAN KERJASAMA"
+                                                },
+                                                "kategori_sumber_dana": {
+                                                    "type": "string",
+                                                    "example": "Perusahaan/Organisasi"
+                                                },
+                                                "negara_sumber_dana": {
+                                                    "type": "string",
+                                                    "example": "ID"
+                                                },
+                                                "sumber_dana": {
+                                                    "type": "string",
+                                                    "example": "PERUSAHAAN"
+                                                },
+                                                "authors": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "sinta_id": {
+                                                                "type": "string",
+                                                                "example": "34514545"
+                                                            },
+                                                            "nidn": {
+                                                                "type": "string",
+                                                                "example": "2342453"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Yustina"
+                                                            },
+                                                            "affiliation": {
+                                                                "type": "string",
+                                                                "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                            },
+                                                            "study_program_id": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "last_education": {
+                                                                "type": "string",
+                                                                "example": "S1"
+                                                            },
+                                                            "functional_position": {
+                                                                "type": "string",
+                                                                "example": "Lektor"
+                                                            },
+                                                            "title_prefix": {
+                                                                "type": "string",
+                                                                "example": "Prof."
+                                                            },
+                                                            "title_suffix": {
+                                                                "type": "string",
+                                                                "example": "S.T."
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Research not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Research data not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Services"
+                ],
+                "summary": "Delete a service",
+                "description": "Deletes a service record by ID",
+                "operationId": "75e72ddc9d4c854ce9d5285a802fd75a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of service to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Service deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Service data deleted successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Service not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Service data not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Services"
+                ],
+                "summary": "Update an service by ID",
+                "operationId": "15b04fed30ca919f8cf3d049cf186049",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the service",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nama_ketua": {
+                                        "type": "string"
+                                    },
+                                    "nidn_ketua": {
+                                        "type": "string"
+                                    },
+                                    "afiliasi_ketua": {
+                                        "type": "string"
+                                    },
+                                    "kd_pt_ketua": {
+                                        "type": "string"
+                                    },
+                                    "judul": {
+                                        "type": "string"
+                                    },
+                                    "nama_singkat_skema": {
+                                        "type": "string"
+                                    },
+                                    "thn_pertama_usulan": {
+                                        "type": "string"
+                                    },
+                                    "thn_usulan_kegiatan": {
+                                        "type": "string"
+                                    },
+                                    "thn_pelaksanaan_kegiatan": {
+                                        "type": "string"
+                                    },
+                                    "lama_kegitan": {
+                                        "type": "string"
+                                    },
+                                    "bidang_fokus": {
+                                        "type": "string"
+                                    },
+                                    "nama_skema": {
+                                        "type": "string"
+                                    },
+                                    "status_usulan": {
+                                        "type": "string"
+                                    },
+                                    "approved_funds": {
+                                        "type": "integer"
+                                    },
+                                    "afiliasi_sinta_id": {
+                                        "type": "string"
+                                    },
+                                    "nama_institusi_penerima_dana": {
+                                        "type": "string"
+                                    },
+                                    "target_tkt": {
+                                        "type": "string"
+                                    },
+                                    "nama_program_hibah": {
+                                        "type": "string"
+                                    },
+                                    "kategori_sumber_dana": {
+                                        "type": "string"
+                                    },
+                                    "negara_sumber_dana": {
+                                        "type": "string"
+                                    },
+                                    "sumber_dana": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "nama_ketua": "Yustina",
+                                    "nidn_ketua": "2342453",
+                                    "afiliasi_ketua": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
+                                    "kd_pt_ketua": "063040",
+                                    "judul": "Pengabdian 1",
+                                    "nama_singkat_skema": "PKS",
+                                    "thn_pertama_usulan": "2024",
+                                    "thn_usulan_kegiatan": "2024",
+                                    "thn_pelaksanaan_kegiatan": "2024",
+                                    "lama_kegiatan": "1",
+                                    "bidang_fokus": "Teknologi Informasi dan Komunikasi",
+                                    "nama_skema": "PENGABDIAN KERJASAMA",
+                                    "status_usulan": "Disetujui",
+                                    "approved_funds": 1200000,
+                                    "afiliasi_sinta_id": "123456789",
+                                    "nama_institusi_penerima_dana": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara",
+                                    "target_tkt": "8",
+                                    "nama_program_hibah": "PENGABDIAN KERJASAMA",
+                                    "kategori_sumber_dana": "Perusahaan/Organisasi",
+                                    "negara_sumber_dana": "ID",
+                                    "sumber_dana": "PERUSAHAAN"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Service Updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Service updated successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "nama_ketua": {
+                                                    "type": "string",
+                                                    "example": "Yustina"
+                                                },
+                                                "nidn_ketua": {
+                                                    "type": "string",
+                                                    "example": "2342453"
+                                                },
+                                                "afiliasi_ketua": {
+                                                    "type": "string",
+                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                },
+                                                "kd_pt_ketua": {
+                                                    "type": "string",
+                                                    "example": "063040"
+                                                },
+                                                "judul": {
+                                                    "type": "string",
+                                                    "example": "Pengabdian 1"
+                                                },
+                                                "nama_singkat_skema": {
+                                                    "type": "string",
+                                                    "example": "PKS"
+                                                },
+                                                "thn_pertama_usulan": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "thn_usulan_kegiatan": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "thn_pelaksanaan_kegiatan": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "lama_kegiatan": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "bidang_fokus": {
+                                                    "type": "string",
+                                                    "example": "Teknologi Informasi dan Komunikasi"
+                                                },
+                                                "nama_skema": {
+                                                    "type": "string",
+                                                    "example": "PENGABDIAN KERJASAMA"
+                                                },
+                                                "status_usulan": {
+                                                    "type": "string",
+                                                    "example": "Disetujui"
+                                                },
+                                                "dana_disetujui": {
+                                                    "type": "string",
+                                                    "example": "Rp 1.200.000,00"
+                                                },
+                                                "afiliasi_sinta_id": {
+                                                    "type": "string",
+                                                    "example": "123456789"
+                                                },
+                                                "nama_institusi_penerima_dana": {
+                                                    "type": "string",
+                                                    "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                },
+                                                "target_tkt": {
+                                                    "type": "string",
+                                                    "example": "8"
+                                                },
+                                                "nama_program_hibah": {
+                                                    "type": "string",
+                                                    "example": "PENGABDIAN KERJASAMA"
+                                                },
+                                                "kategori_sumber_dana": {
+                                                    "type": "string",
+                                                    "example": "Perusahaan/Organisasi"
+                                                },
+                                                "negara_sumber_dana": {
+                                                    "type": "string",
+                                                    "example": "ID"
+                                                },
+                                                "sumber_dana": {
+                                                    "type": "string",
+                                                    "example": "PERUSAHAAN"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/services/grouped-by-scheme": {
+            "get": {
+                "tags": [
+                    "Services"
+                ],
+                "summary": "Get services grouped by scheme",
+                "description": "Retrieves services data grouped by `nama_singkat_skema`, with an optional filter by `study_program_id`.",
+                "operationId": "a97d892b97861c19568d24b96608f810",
+                "parameters": [
+                    {
+                        "name": "study_program_id",
+                        "in": "query",
+                        "description": "Filter services by study program ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful retrieval of services data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Services data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "PI": {
+                                                    "properties": {
+                                                        "count": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        },
+                                                        "total_funds": {
+                                                            "type": "string",
+                                                            "example": "Rp 24.000.000,00"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/services/chart-data": {
+            "get": {
+                "tags": [
+                    "Services"
+                ],
+                "summary": "Get services statistics chart data",
+                "description": "Retrieves services statistics grouped by study programs for chart visualization",
+                "operationId": "35e2c10a48a3c064e98ab248b9abe86f",
+                "parameters": [
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "description": "Filter statistics by year",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2024
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Services chart data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "labels": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Computer Science"
+                                                    }
+                                                },
+                                                "datasets": {
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "integer",
+                                                                "example": 10
+                                                            }
+                                                        },
+                                                        "background_color": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "string",
+                                                                "example": "#FF5733"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "study_programs": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Computer Science"
+                                                            },
+                                                            "total": {
+                                                                "type": "integer",
+                                                                "example": 10
+                                                            },
+                                                            "percentage": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 25.5
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "total_researches": {
+                                                    "type": "integer",
+                                                    "example": 40
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -6152,10 +7718,6 @@
             "description": "Authors"
         },
         {
-            "name": "Research",
-            "description": "Research"
-        },
-        {
             "name": "Categories",
             "description": "Categories"
         },
@@ -6166,6 +7728,14 @@
         {
             "name": "Posts",
             "description": "Posts"
+        },
+        {
+            "name": "Researches",
+            "description": "Researches"
+        },
+        {
+            "name": "Services",
+            "description": "Services"
         },
         {
             "name": "Study Programs",
