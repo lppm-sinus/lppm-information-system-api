@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\GooglePublicationController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ResearchController;
@@ -85,5 +86,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/services/grouped-by-scheme', [ServiceController::class, 'getServicesGroupedByScheme']);
     Route::delete('/services/{id}', [ServiceController::class, 'delete'])->where('id', '[0-9]+');
     Route::get('/services/chart-data', [ServiceController::class, 'getServicesChartData']);
+
+    // GOOGLE PUBLICATION
+    Route::post('/google-publications/import', [GooglePublicationController::class, 'import']);
+    Route::post('/google-publications', [GooglePublicationController::class, 'create']);
+    Route::patch('/google-publications/{id}', [GooglePublicationController::class, 'update'])->where('id', '[0-9]+');
+    Route::get('/google-publications', [GooglePublicationController::class, 'getGooglePublications']);
+    Route::get('/google-publications/{id}', [GooglePublicationController::class, 'getGooglePublicationByID'])->where('id', '[0-9]+');
+    Route::get('/google-publications/grouped-by-accreditation', [GooglePublicationController::class, 'getDataGroupedByAccreditation']);
+    Route::get('/google-publications/chart-data', [GooglePublicationController::class, 'getChartsData']);
 });
 

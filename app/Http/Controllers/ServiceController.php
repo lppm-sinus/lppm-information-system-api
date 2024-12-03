@@ -228,7 +228,15 @@ class ServiceController extends Controller
      *                 property="sumber_dana",
      *                 type="string"
      *             ),
-     *             example={"nama_ketua": "Yustina", "nidn_ketua": "2342453", "afiliasi_ketua": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "kd_pt_ketua": "063040", "judul": "Pengabdian 1", "nama_singkat_skema": "PKS", "thn_pertama_usulan": "2024", "thn_usulan_kegiatan": "2024", "thn_pelaksanaan_kegiatan": "2024", "lama_kegiatan": "1", "bidang_fokus": "Teknologi Informasi dan Komunikasi", "nama_skema": "PENGABDIAN KERJASAMA", "status_usulan": "Disetujui", "approved_funds": 1200000, "afiliasi_sinta_id": "123456789", "nama_institusi_penerima_dana": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "target_tkt": "8", "nama_program_hibah": "PENGABDIAN KERJASAMA", "kategori_sumber_dana": "Perusahaan/Organisasi", "negara_sumber_dana": "ID", "sumber_dana": "PERUSAHAAN" }
+     *             @OA\Property(
+     *                 property="authors",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="integer",
+     *                     example=2
+     *                 )
+     *             ),
+     *             example={"nama_ketua": "Yustina", "nidn_ketua": "2342453", "afiliasi_ketua": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "kd_pt_ketua": "063040", "judul": "Pengabdian 1", "nama_singkat_skema": "PKS", "thn_pertama_usulan": "2024", "thn_usulan_kegiatan": "2024", "thn_pelaksanaan_kegiatan": "2024", "lama_kegiatan": "1", "bidang_fokus": "Teknologi Informasi dan Komunikasi", "nama_skema": "PENGABDIAN KERJASAMA", "status_usulan": "Disetujui", "approved_funds": 1200000, "afiliasi_sinta_id": "123456789", "nama_institusi_penerima_dana": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "target_tkt": "8", "nama_program_hibah": "PENGABDIAN KERJASAMA", "kategori_sumber_dana": "Perusahaan/Organisasi", "negara_sumber_dana": "ID", "sumber_dana": "PERUSAHAAN", "authors": {"0": 2, "1": 4, "2": 8} }
      *         )
      *     )
      * ),
@@ -397,7 +405,15 @@ class ServiceController extends Controller
      *                 property="sumber_dana",
      *                 type="string"
      *             ),
-     *             example={"nama_ketua": "Yustina", "nidn_ketua": "2342453", "afiliasi_ketua": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "kd_pt_ketua": "063040", "judul": "Pengabdian 1", "nama_singkat_skema": "PKS", "thn_pertama_usulan": "2024", "thn_usulan_kegiatan": "2024", "thn_pelaksanaan_kegiatan": "2024", "lama_kegiatan": "1", "bidang_fokus": "Teknologi Informasi dan Komunikasi", "nama_skema": "PENGABDIAN KERJASAMA", "status_usulan": "Disetujui", "approved_funds": 1200000, "afiliasi_sinta_id": "123456789", "nama_institusi_penerima_dana": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "target_tkt": "8", "nama_program_hibah": "PENGABDIAN KERJASAMA", "kategori_sumber_dana": "Perusahaan/Organisasi", "negara_sumber_dana": "ID", "sumber_dana": "PERUSAHAAN" }
+     *             @OA\Property(
+     *                 property="authors",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="integer",
+     *                     example=2
+     *                 )
+     *             ),
+     *             example={"nama_ketua": "Yustina", "nidn_ketua": "2342453", "afiliasi_ketua": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "kd_pt_ketua": "063040", "judul": "Pengabdian 1", "nama_singkat_skema": "PKS", "thn_pertama_usulan": "2024", "thn_usulan_kegiatan": "2024", "thn_pelaksanaan_kegiatan": "2024", "lama_kegiatan": "1", "bidang_fokus": "Teknologi Informasi dan Komunikasi", "nama_skema": "PENGABDIAN KERJASAMA", "status_usulan": "Disetujui", "approved_funds": 1200000, "afiliasi_sinta_id": "123456789", "nama_institusi_penerima_dana": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "target_tkt": "8", "nama_program_hibah": "PENGABDIAN KERJASAMA", "kategori_sumber_dana": "Perusahaan/Organisasi", "negara_sumber_dana": "ID", "sumber_dana": "PERUSAHAAN", "authors": {"0": 2, "1": 4, "2": 8} }
      *         )
      *         )
      *     ),
@@ -641,10 +657,10 @@ class ServiceController extends Controller
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Research not found",
+     *         description="Service not found",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Research data not found.")
+     *             @OA\Property(property="message", type="string", example="Service data not found.")
      *         )
      *     ),
      *     @OA\Response(
@@ -738,7 +754,7 @@ class ServiceController extends Controller
      *         in="query",
      *         description="Filter statistics by year",
      *         required=false,
-     *         @OA\Schema(type="integer", example=2024)
+     *         @OA\Schema(type="string", example="2024")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -752,7 +768,7 @@ class ServiceController extends Controller
      *                 @OA\Property(
      *                     property="labels",
      *                     type="array",
-     *                     @OA\Items(type="string", example="Computer Science")
+     *                     @OA\Items(type="string", example="S1-Informatika")
      *                 ),
      *                 @OA\Property(
      *                     property="datasets",
@@ -773,12 +789,12 @@ class ServiceController extends Controller
      *                     type="array",
      *                     @OA\Items(
      *                         type="object",
-     *                         @OA\Property(property="name", type="string", example="Computer Science"),
+     *                         @OA\Property(property="name", type="string", example="S1-Informatika"),
      *                         @OA\Property(property="total", type="integer", example=10),
      *                         @OA\Property(property="percentage", type="number", format="float", example=25.5)
      *                     )
      *                 ),
-     *                 @OA\Property(property="total_researches", type="integer", example=40)
+     *                 @OA\Property(property="total_services", type="integer", example=40)
      *             )
      *         )
      *     ),
