@@ -3,13 +3,13 @@
 namespace App\Imports;
 
 use App\Models\Author;
-use App\Models\Research;
+use App\Models\Service;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class ResearchImport implements ToModel, WithHeadingRow, WithValidation
+class ServiceImport implements ToModel, WithHeadingRow, WithValidation
 {
     /**
      * @param array $row
@@ -19,7 +19,7 @@ class ResearchImport implements ToModel, WithHeadingRow, WithValidation
     public function model(array $row)
     {
         try {
-            $service = Research::create([
+            $service = Service::create([
                 'nama_ketua' => $row['nama_ketua'],
                 'nidn_ketua' => $row['nidn_ketua'],
                 'afiliasi_ketua' => $row['afiliasi_ketua'],

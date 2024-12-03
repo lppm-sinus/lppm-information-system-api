@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\GooglePublicationController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ResearchController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StudyProgramController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -65,7 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/study-programs', [StudyProgramController::class, 'getStudyPrograms']);
     Route::delete('/study-programs/{id}', [StudyProgramController::class, 'delete'])->where('id', '[0-9]+');
 
-    // RESEARCH
+    // RESEARCHES
     Route::post('/researches/import', [ResearchController::class, 'import']);
     Route::post('/researches', [ResearchController::class, 'create']);
     Route::patch('/researches/{id}', [ResearchController::class, 'update'])->where('id', '[0-9]+');
@@ -73,5 +75,25 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/researches/{id}', [ResearchController::class, 'getResearchByID'])->where('id', '[0-9]+');
     Route::delete('/researches/{id}', [ResearchController::class, 'delete'])->where('id', '[0-9]+');
     Route::get('/researches/grouped-by-scheme', [ResearchController::class, 'getResearchesGroupedByScheme']);
+    Route::get('/researches/chart-data', [ResearchController::class, 'getResearchesChartData']);
+
+    // SERVICES
+    Route::post('/services/import', [ServiceController::class, 'import']);
+    Route::post('/services', [ServiceController::class, 'create']);
+    Route::patch('/services/{id}', [ServiceController::class, 'update'])->where('id', '[0-9]+');
+    Route::get('/services', [ServiceController::class, 'getServices']);
+    Route::get('/services/{id}', [ServiceController::class, 'getServiceByID'])->where('id', '[0-9]+');
+    Route::get('/services/grouped-by-scheme', [ServiceController::class, 'getServicesGroupedByScheme']);
+    Route::delete('/services/{id}', [ServiceController::class, 'delete'])->where('id', '[0-9]+');
+    Route::get('/services/chart-data', [ServiceController::class, 'getServicesChartData']);
+
+    // GOOGLE PUBLICATION
+    Route::post('/google-publications/import', [GooglePublicationController::class, 'import']);
+    Route::post('/google-publications', [GooglePublicationController::class, 'create']);
+    Route::patch('/google-publications/{id}', [GooglePublicationController::class, 'update'])->where('id', '[0-9]+');
+    Route::get('/google-publications', [GooglePublicationController::class, 'getGooglePublications']);
+    Route::get('/google-publications/{id}', [GooglePublicationController::class, 'getGooglePublicationByID'])->where('id', '[0-9]+');
+    Route::get('/google-publications/grouped-by-accreditation', [GooglePublicationController::class, 'getDataGroupedByAccreditation']);
+    Route::get('/google-publications/chart-data', [GooglePublicationController::class, 'getChartsData']);
 });
 

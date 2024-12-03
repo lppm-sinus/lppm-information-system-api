@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Research extends Model
+class Service extends Model
 {
     use HasFactory;
 
-    protected $table = 'researches';
+    protected $table = 'services';
     protected $primaryKey = 'id';
     protected $keyType = 'int';
     public $timestamps = true;
@@ -41,6 +41,6 @@ class Research extends Model
 
     public function authors()
     {
-        return $this->belongsToMany(Author::class, 'author_research', 'research_id', 'author_id');
+        return $this->belongsToMany(Author::class, 'author_service', 'service_id', 'author_id');
     }
 }

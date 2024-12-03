@@ -452,14 +452,14 @@ class AuthorController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/research",
-     *     summary="Get list of research",
-     *     tags={"Research"},
+     *     path="/api/authors",
+     *     summary="Get list of authors",
+     *     tags={"Authors"},
      *     security={{"bearer_token":{}}},
      *     @OA\Parameter(
      *         name="q",
      *         in="query",
-     *         description="Search research by name",
+     *         description="Search author by name or nidn",
      *         required=false,
      *         @OA\Schema(type="string")
      *     ),
@@ -468,7 +468,7 @@ class AuthorController extends Controller
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Study programs data retrieved successfully."),
+     *             @OA\Property(property="message", type="string", example="Authors data retrieved successfully."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -519,14 +519,12 @@ class AuthorController extends Controller
 
         if (request()->has('search')) {
             $search_term = request()->input('search');
-            $query->where('name', 'like', '%' . $search_term . '%')
-                ->orWhere('sinta_id', 'like', '%' . $search_term . '%')
-                ->orWhere('nidn', 'like', '%' . $search_term . '%');
+            $query->whereAny(['name', 'sinta_id', 'nidn'], '%' . $search_term . '%');
         }
 
         $authors = $query->with('studyProgram')->paginate(10);
 
-        return $this->successResponse($authors, 'Study programs data retrieved successfully.', 200);
+        return $this->successResponse($authors, 'Authors data retrieved successfully.', 200);
     }
 
     /**

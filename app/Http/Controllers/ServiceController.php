@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Imports\ResearchImport;
+use App\Imports\ServiceImport;
 use App\Models\Author;
-use App\Models\Research;
+use App\Models\Service;
 use App\Models\StudyProgram;
 use App\Traits\ApiResponse;
 use App\Traits\FunctionalMethod;
@@ -12,10 +12,11 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Number;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
 
-class ResearchController extends Controller
+class ServiceController extends Controller
 {
     use ApiResponse, FunctionalMethod;
     protected $validation_rules = [
@@ -52,9 +53,9 @@ class ResearchController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/researches/import",
-     *     summary="Import researches data from Excel/CSV file",
-     *     tags={"Researches"},
+     *     path="/api/services/import",
+     *     summary="Import services data from Excel/CSV file",
+     *     tags={"Services"},
      *     security={{ "bearer": {} }},
      *     @OA\RequestBody(
      *         required=true,
@@ -65,7 +66,7 @@ class ResearchController extends Controller
      *                 @OA\Property(
      *                     property="file",
      *                     type="file",
-     *                     description="Excel/CSV file containing researches data"
+     *                     description="Excel/CSV file containing services data"
      *                 ),
      *                 @OA\Property(
      *                     property="reset_table",
@@ -78,10 +79,10 @@ class ResearchController extends Controller
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Researches imported successfully",
+     *         description="Services imported successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Researches data imported successfully."),
+     *             @OA\Property(property="message", type="string", example="Services data imported successfully."),
      *         )
      *     ),
      *     @OA\Response(
@@ -106,7 +107,6 @@ class ResearchController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'file' => 'required|file|mimes:csv,xls,xlsx',
-            'reset_table' => 'required|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -114,16 +114,16 @@ class ResearchController extends Controller
         }
 
         try {
-            $import = new ResearchImport();
+            $import = new ServiceImport();
 
             if ($request->boolean('reset_table')) {
-                DB::table('author_research')->delete();
-                DB::table('researches')->delete();
+                DB::table('author_service')->delete();
+                DB::table('services')->delete();
             }
 
             Excel::import($import, $request->file('file'));
 
-            return $this->successResponse(null, 'Research data imported successfully.', 201);
+            return $this->successResponse(null, 'Services data imported successfully.', 201);
         } catch (ValidationException $e) {
             $failures = $e->failures();
 
@@ -135,9 +135,9 @@ class ResearchController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/researches",
-     *     tags={"Researches"},
-     *     summary="Create new research",
+     *     path="/api/services",
+     *     tags={"Services"},
+     *     summary="Create new service",
      *     security={{"bearer_token":{}}},
      *  @OA\RequestBody(
      *     required=true,
@@ -236,36 +236,36 @@ class ResearchController extends Controller
      *                     example=2
      *                 )
      *             ),
-     *             example={"nama_ketua": "Yustina", "nidn_ketua": "2342453", "afiliasi_ketua": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "kd_pt_ketua": "063040", "judul": "Penelitian 1", "nama_singkat_skema": "PKS", "thn_pertama_usulan": "2024", "thn_usulan_kegiatan": "2024", "thn_pelaksanaan_kegiatan": "2024", "lama_kegiatan": "1", "bidang_fokus": "Teknologi Informasi dan Komunikasi", "nama_skema": "PENELITIAN KERJASAMA", "status_usulan": "Disetujui", "approved_funds": 1200000, "afiliasi_sinta_id": "123456789", "nama_institusi_penerima_dana": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "target_tkt": "8", "nama_program_hibah": "PENELITIAN KERJASAMA", "kategori_sumber_dana": "Perusahaan/Organisasi", "negara_sumber_dana": "ID", "sumber_dana": "PERUSAHAAN", "authors": {"0": 2, "1": 4, "2": 8} }
+     *             example={"nama_ketua": "Yustina", "nidn_ketua": "2342453", "afiliasi_ketua": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "kd_pt_ketua": "063040", "judul": "Pengabdian 1", "nama_singkat_skema": "PKS", "thn_pertama_usulan": "2024", "thn_usulan_kegiatan": "2024", "thn_pelaksanaan_kegiatan": "2024", "lama_kegiatan": "1", "bidang_fokus": "Teknologi Informasi dan Komunikasi", "nama_skema": "PENGABDIAN KERJASAMA", "status_usulan": "Disetujui", "approved_funds": 1200000, "afiliasi_sinta_id": "123456789", "nama_institusi_penerima_dana": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "target_tkt": "8", "nama_program_hibah": "PENGABDIAN KERJASAMA", "kategori_sumber_dana": "Perusahaan/Organisasi", "negara_sumber_dana": "ID", "sumber_dana": "PERUSAHAAN", "authors": {"0": 2, "1": 4, "2": 8} }
      *         )
      *     )
      * ),
      *     @OA\Response(
      *         response=201,
-     *         description="Research Created",
+     *         description="Service Created",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Research created successfully."),
+     *             @OA\Property(property="message", type="string", example="Service created successfully."),
      *             @OA\Property(property="data", type="object",
      *                  @OA\Property(property="id", type="integer", example=1),
      *                  @OA\Property(property="nama_ketua", type="string", example="Yustina"),
      *                  @OA\Property(property="nidn_ketua", type="string", example="2342453"),
      *                  @OA\Property(property="afiliasi_ketua", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
      *                  @OA\Property(property="kd_pt_ketua", type="string", example="063040"),
-     *                  @OA\Property(property="judul", type="string", example="Penelitian 1"),
+     *                  @OA\Property(property="judul", type="string", example="Pengabdian 1"),
      *                  @OA\Property(property="nama_singkat_skema", type="string", example="PKS"),
      *                  @OA\Property(property="thn_pertama_usulan", type="string", example="2024"),
      *                  @OA\Property(property="thn_usulan_kegiatan", type="string", example="2024"),
      *                  @OA\Property(property="thn_pelaksanaan_kegiatan", type="string", example="2024"),
      *                  @OA\Property(property="lama_kegiatan", type="string", example="1"),
      *                  @OA\Property(property="bidang_fokus", type="string", example="Teknologi Informasi dan Komunikasi"),
-     *                  @OA\Property(property="nama_skema", type="string", example="PENELITIAN KERJASAMA"),
+     *                  @OA\Property(property="nama_skema", type="string", example="PENGABDIAN KERJASAMA"),
      *                  @OA\Property(property="status_usulan", type="string", example="Disetujui"),
      *                  @OA\Property(property="dana_disetujui", type="string", example="Rp 1.200.000,00"),
      *                  @OA\Property(property="afiliasi_sinta_id", type="string", example="123456789"),
      *                  @OA\Property(property="nama_institusi_penerima_dana", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
      *                  @OA\Property(property="target_tkt", type="string", example="8"),
-     *                  @OA\Property(property="nama_program_hibah", type="string", example="PENELITIAN KERJASAMA"),
+     *                  @OA\Property(property="nama_program_hibah", type="string", example="PENGABDIAN KERJASAMA"),
      *                  @OA\Property(property="kategori_sumber_dana", type="string", example="Perusahaan/Organisasi"),
      *                  @OA\Property(property="negara_sumber_dana", type="string", example="ID"),
      *                  @OA\Property(property="sumber_dana", type="string", example="PERUSAHAAN"),
@@ -294,27 +294,27 @@ class ResearchController extends Controller
             return $this->errorResponse('Author not found.', 404);
         }
 
-        $research = Research::create($request->all());
-        $research->authors()->attach($author->id);
-        $research->authors()->attach($request->author_members);
-        $research->save();
+        $service = Service::create($request->all());
+        $service->authors()->attach($author->id);
+        $service->authors()->attach($request->author_members);
+        $service->save();
 
-        $research->load('authors');
+        $service->load('authors');
 
-        return $this->successResponse($research, 'Research created successfully.', 201);
+        return $this->successResponse($service, 'Service created successfully.', 201);
     }
 
     /**
      * @OA\Patch(
-     *     path="/api/researches/{id}",
-     *     tags={"Researches"},
-     *     summary="Update an research by ID",
+     *     path="/api/services/{id}",
+     *     tags={"Services"},
+     *     summary="Update an service by ID",
      *     security={{"bearer_token":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="ID of the research",
+     *         description="ID of the service",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\RequestBody(
@@ -413,36 +413,36 @@ class ResearchController extends Controller
      *                     example=2
      *                 )
      *             ),
-     *             example={"nama_ketua": "Yustina", "nidn_ketua": "2342453", "afiliasi_ketua": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "kd_pt_ketua": "063040", "judul": "Penelitian 1", "nama_singkat_skema": "PKS", "thn_pertama_usulan": "2024", "thn_usulan_kegiatan": "2024", "thn_pelaksanaan_kegiatan": "2024", "lama_kegiatan": "1", "bidang_fokus": "Teknologi Informasi dan Komunikasi", "nama_skema": "PENELITIAN KERJASAMA", "status_usulan": "Disetujui", "approved_funds": 1200000, "afiliasi_sinta_id": "123456789", "nama_institusi_penerima_dana": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "target_tkt": "8", "nama_program_hibah": "PENELITIAN KERJASAMA", "kategori_sumber_dana": "Perusahaan/Organisasi", "negara_sumber_dana": "ID", "sumber_dana": "PERUSAHAAN", "authors": {"0": 2, "1": 4, "2": 8} }
+     *             example={"nama_ketua": "Yustina", "nidn_ketua": "2342453", "afiliasi_ketua": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "kd_pt_ketua": "063040", "judul": "Pengabdian 1", "nama_singkat_skema": "PKS", "thn_pertama_usulan": "2024", "thn_usulan_kegiatan": "2024", "thn_pelaksanaan_kegiatan": "2024", "lama_kegiatan": "1", "bidang_fokus": "Teknologi Informasi dan Komunikasi", "nama_skema": "PENGABDIAN KERJASAMA", "status_usulan": "Disetujui", "approved_funds": 1200000, "afiliasi_sinta_id": "123456789", "nama_institusi_penerima_dana": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara", "target_tkt": "8", "nama_program_hibah": "PENGABDIAN KERJASAMA", "kategori_sumber_dana": "Perusahaan/Organisasi", "negara_sumber_dana": "ID", "sumber_dana": "PERUSAHAAN", "authors": {"0": 2, "1": 4, "2": 8} }
      *         )
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Research Updated",
+     *         description="Service Updated",
      *          @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Research updated successfully."),
+     *             @OA\Property(property="message", type="string", example="Service updated successfully."),
      *             @OA\Property(property="data", type="object",
      *                  @OA\Property(property="id", type="integer", example=1),
      *                  @OA\Property(property="nama_ketua", type="string", example="Yustina"),
      *                  @OA\Property(property="nidn_ketua", type="string", example="2342453"),
      *                  @OA\Property(property="afiliasi_ketua", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
      *                  @OA\Property(property="kd_pt_ketua", type="string", example="063040"),
-     *                  @OA\Property(property="judul", type="string", example="Penelitian 1"),
+     *                  @OA\Property(property="judul", type="string", example="Pengabdian 1"),
      *                  @OA\Property(property="nama_singkat_skema", type="string", example="PKS"),
      *                  @OA\Property(property="thn_pertama_usulan", type="string", example="2024"),
      *                  @OA\Property(property="thn_usulan_kegiatan", type="string", example="2024"),
      *                  @OA\Property(property="thn_pelaksanaan_kegiatan", type="string", example="2024"),
      *                  @OA\Property(property="lama_kegiatan", type="string", example="1"),
      *                  @OA\Property(property="bidang_fokus", type="string", example="Teknologi Informasi dan Komunikasi"),
-     *                  @OA\Property(property="nama_skema", type="string", example="PENELITIAN KERJASAMA"),
+     *                  @OA\Property(property="nama_skema", type="string", example="PENGABDIAN KERJASAMA"),
      *                  @OA\Property(property="status_usulan", type="string", example="Disetujui"),
      *                  @OA\Property(property="dana_disetujui", type="string", example="Rp 1.200.000,00"),
      *                  @OA\Property(property="afiliasi_sinta_id", type="string", example="123456789"),
      *                  @OA\Property(property="nama_institusi_penerima_dana", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
      *                  @OA\Property(property="target_tkt", type="string", example="8"),
-     *                  @OA\Property(property="nama_program_hibah", type="string", example="PENELITIAN KERJASAMA"),
+     *                  @OA\Property(property="nama_program_hibah", type="string", example="PENGABDIAN KERJASAMA"),
      *                  @OA\Property(property="kategori_sumber_dana", type="string", example="Perusahaan/Organisasi"),
      *                  @OA\Property(property="negara_sumber_dana", type="string", example="ID"),
      *                  @OA\Property(property="sumber_dana", type="string", example="PERUSAHAAN"),
@@ -466,9 +466,9 @@ class ResearchController extends Controller
             return $this->formatValidationErrors($validator);
         }
 
-        $research = Research::find($id);
-        if (!$research) {
-            return $this->errorResponse('Research not found.', 404);
+        $service = Service::find($id);
+        if (!$service) {
+            return $this->errorResponse('Service not found.', 404);
         }
 
         $author = Author::where('nidn', $request->input('nidn_ketua'))->first();
@@ -476,27 +476,27 @@ class ResearchController extends Controller
             return $this->errorResponse('Author with NIDN ' . $author->nidn_ketua . ' not found.', 404);
         }
 
-        $research->update($request->all());
-        $research->authors()->sync([$author->id]);
-        $research->authors()->syncWithoutDetaching($request->author_members);
-        $research->save();
+        $service->update($request->all());
+        $service->authors()->sync([$author->id]);
+        $service->authors()->syncWithoutDetaching($request->author_members);
+        $service->save();
 
-        $research->load('authors');
+        $service->load('authors');
 
-        return $this->successResponse($research, 'Research updated successfully.', 200);
+        return $this->successResponse($service, 'Service updated successfully.', 200);
     }
 
     /**
      * @OA\Get(
-     *     path="/api/researches",
-     *     summary="Get paginated list of researches",
-     *     description="Returns paginated researches with optional search functionality",
+     *     path="/api/services",
+     *     summary="Get paginated list of services",
+     *     description="Returns paginated services with optional search functionality",
      *     security={{"bearer_token": {}}},
-     *     tags={"Researches"},
+     *     tags={"Services"},
      *     @OA\Parameter(
      *         name="q",
      *         in="query",
-     *         description="Search term for filtering researches by title, leaders nidn or leader name",
+     *         description="Search term for filtering services by title, leaders nidn or leader name",
      *         required=false,
      *         @OA\Schema(type="string")
      *     ),
@@ -505,7 +505,7 @@ class ResearchController extends Controller
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Researches data retrieved successfully."),
+     *             @OA\Property(property="message", type="string", example="Services data retrieved successfully."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -520,20 +520,20 @@ class ResearchController extends Controller
      *                         @OA\Property(property="nidn_ketua", type="string", example="2342453"),
      *                         @OA\Property(property="afiliasi_ketua", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
      *                         @OA\Property(property="kd_pt_ketua", type="string", example="063040"),
-     *                         @OA\Property(property="judul", type="string", example="Penelitian 1"),
+     *                         @OA\Property(property="judul", type="string", example="Pengabdian 1"),
      *                         @OA\Property(property="nama_singkat_skema", type="string", example="PKS"),
      *                         @OA\Property(property="thn_pertama_usulan", type="string", example="2024"),
      *                         @OA\Property(property="thn_usulan_kegiatan", type="string", example="2024"),
      *                         @OA\Property(property="thn_pelaksanaan_kegiatan", type="string", example="2024"),
      *                         @OA\Property(property="lama_kegiatan", type="string", example="1"),
      *                         @OA\Property(property="bidang_fokus", type="string", example="Teknologi Informasi dan Komunikasi"),
-     *                         @OA\Property(property="nama_skema", type="string", example="PENELITIAN KERJASAMA"),
+     *                         @OA\Property(property="nama_skema", type="string", example="PENGABDIAN KERJASAMA"),
      *                         @OA\Property(property="status_usulan", type="string", example="Disetujui"),
      *                         @OA\Property(property="dana_disetujui", type="string", example="Rp 1.200.000,00"),
      *                         @OA\Property(property="afiliasi_sinta_id", type="string", example="123456789"),
      *                         @OA\Property(property="nama_institusi_penerima_dana", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
      *                         @OA\Property(property="target_tkt", type="string", example="8"),
-     *                         @OA\Property(property="nama_program_hibah", type="string", example="PENELITIAN KERJASAMA"),
+     *                         @OA\Property(property="nama_program_hibah", type="string", example="PENGABDIAN KERJASAMA"),
      *                         @OA\Property(property="kategori_sumber_dana", type="string", example="Perusahaan/Organisasi"),
      *                         @OA\Property(property="negara_sumber_dana", type="string", example="ID"),
      *                         @OA\Property(property="sumber_dana", type="string", example="PERUSAHAAN"),
@@ -576,36 +576,31 @@ class ResearchController extends Controller
      *     )
      * )
      */
-    public function getResearches()
+    public function getServices()
     {
-        $query = Research::query();
+        $query = Service::query();
 
         if (request()->has('q')) {
             $search_term = request()->input('q');
-            $query->whereAny(['nama_ketua', 'nidn_ketua', 'judul'], 'like', "%$search_term%");
+            $query->whereAny(['nama_ketua', 'nidn_ketua'], 'like', "%$search_term%");
         }
 
-        $researches = $query->with('authors')->paginate(10);
+        $services = $query->with('authors')->paginate(10);
 
-        $researches->getCollection()->transform(function ($research) {
-            $research->dana_disetujui = $this->currencyFormat($research->dana_disetujui);
-            return $research;
-        });
-
-        return $this->paginatedResponse($researches, 'Researches data retrieved successfully.', 200);
+        return $this->paginatedResponse($services, 'Services data retrieved successfully.', 200);
     }
 
     /**
      * @OA\Get(
-     *     path="/api/researches/{id}",
-     *     summary="Get research by ID",
-     *     description="Returns a specific research by its ID with related authors",
+     *     path="/api/services/{id}",
+     *     summary="Get service by ID",
+     *     description="Returns a specific service by its ID with related authors",
      *     security={{"bearer_token": {}}},
-     *     tags={"Researches"},
+     *     tags={"Services"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="ID of research to return",
+     *         description="ID of service to return",
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
@@ -614,7 +609,7 @@ class ResearchController extends Controller
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Research data retrieved successfully."),
+     *             @OA\Property(property="message", type="string", example="Service data retrieved successfully."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -623,20 +618,20 @@ class ResearchController extends Controller
      *                 @OA\Property(property="nidn_ketua", type="string", example="2342453"),
      *                 @OA\Property(property="afiliasi_ketua", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
      *                 @OA\Property(property="kd_pt_ketua", type="string", example="063040"),
-     *                 @OA\Property(property="judul", type="string", example="Penelitian 1"),
+     *                 @OA\Property(property="judul", type="string", example="Pengabdian 1"),
      *                 @OA\Property(property="nama_singkat_skema", type="string", example="PKS"),
      *                 @OA\Property(property="thn_pertama_usulan", type="string", example="2024"),
      *                 @OA\Property(property="thn_usulan_kegiatan", type="string", example="2024"),
      *                 @OA\Property(property="thn_pelaksanaan_kegiatan", type="string", example="2024"),
      *                 @OA\Property(property="lama_kegiatan", type="string", example="1"),
      *                 @OA\Property(property="bidang_fokus", type="string", example="Teknologi Informasi dan Komunikasi"),
-     *                 @OA\Property(property="nama_skema", type="string", example="PENELITIAN KERJASAMA"),
+     *                 @OA\Property(property="nama_skema", type="string", example="PENGABDIAN KERJASAMA"),
      *                 @OA\Property(property="status_usulan", type="string", example="Disetujui"),
      *                 @OA\Property(property="dana_disetujui", type="string", example="Rp 1.200.000,00"),
      *                 @OA\Property(property="afiliasi_sinta_id", type="string", example="123456789"),
      *                 @OA\Property(property="nama_institusi_penerima_dana", type="string", example="Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"),
      *                 @OA\Property(property="target_tkt", type="string", example="8"),
-     *                 @OA\Property(property="nama_program_hibah", type="string", example="PENELITIAN KERJASAMA"),
+     *                 @OA\Property(property="nama_program_hibah", type="string", example="PENGABDIAN KERJASAMA"),
      *                 @OA\Property(property="kategori_sumber_dana", type="string", example="Perusahaan/Organisasi"),
      *                 @OA\Property(property="negara_sumber_dana", type="string", example="ID"),
      *                 @OA\Property(property="sumber_dana", type="string", example="PERUSAHAAN"),
@@ -662,10 +657,10 @@ class ResearchController extends Controller
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Research not found",
+     *         description="Service not found",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Research data not found.")
+     *             @OA\Property(property="message", type="string", example="Service data not found.")
      *         )
      *     ),
      *     @OA\Response(
@@ -677,39 +672,37 @@ class ResearchController extends Controller
      *     )
      * )
      */
-    public function getResearchByID($id)
+    public function getServiceByID($id)
     {
-        $research = Research::with('authors')->find($id);
-        if (!$research) {
-            return $this->errorResponse('Research not found.', 404);
+        $service = Service::with('authors')->find($id);
+        if (!$service) {
+            return $this->errorResponse('Service not found.', 404);
         }
 
-        $research->dana_disetujui = $this->currencyFormat($research->dana_disetujui);
-
-        return $this->successResponse($research, 'Research data retrieved successfully.', 200);
+        return $this->successResponse($service, 'Service data retrieved successfully.', 200);
     }
 
     /**
      * @OA\Get(
-     *     path="/api/researches/grouped-by-scheme",
-     *     summary="Get researches grouped by scheme",
+     *     path="/api/services/grouped-by-scheme",
+     *     summary="Get services grouped by scheme",
      *     security={{"bearer_token": {}}},
-     *     description="Retrieves researches data grouped by `nama_singkat_skema`, with an optional filter by `study_program_id`.",
-     *     tags={"Researches"},
+     *     description="Retrieves services data grouped by `nama_singkat_skema`, with an optional filter by `study_program_id`.",
+     *     tags={"Services"},
      *     @OA\Parameter(
      *         name="study_program_id",
      *         in="query",
-     *         description="Filter researches by study program ID",
+     *         description="Filter services by study program ID",
      *         required=false,
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Successful retrieval of research data",
+     *         description="Successful retrieval of services data",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Researches data retrieved successfully."),
+     *             @OA\Property(property="message", type="string", example="Services data retrieved successfully."),
      *             @OA\Property(property="data", type="object",
      *                 @OA\Property(property="PI", type="object",
      *                     @OA\Property(property="count", type="integer", example=2),
@@ -727,9 +720,9 @@ class ResearchController extends Controller
      *     )
      * )
      */
-    public function getResearchesGroupedByScheme()
+    public function getServicesGroupedByScheme()
     {
-        $query = Research::with('authors');
+        $query = Service::with('authors');
 
         if (request()->has('study_program_id')) {
             $study_program_id = request()->input('study_program_id');
@@ -738,24 +731,24 @@ class ResearchController extends Controller
             });
         }
 
-        $researches = $query->get();
-        $grouped_data = $researches->groupBy('nama_singkat_skema')->map(function ($group) {
+        $services = $query->get();
+        $grouped_data = $services->groupBy('nama_singkat_skema')->map(function ($group) {
             return [
                 'count' => $group->count(),
-                'total_funds' => $this->currencyFormat($group->sum('dana_disetujui'))
+                'total_funds' => Number::currency($group->sum('dana_disetujui'), 'IDR', 'id'),
             ];
         });
 
-        return $this->successResponse($grouped_data, 'Researches data retrieved successfully.', 200);
+        return $this->successResponse($grouped_data, 'Services data retrieved successfully.', 200);
     }
 
     /**
      * @OA\Get(
-     *     path="/api/researches/chart-data",
-     *     summary="Get research statistics chart data",
+     *     path="/api/services/chart-data",
+     *     summary="Get services statistics chart data",
      *     security={{"bearer_token": {}}},
-     *     description="Retrieves research statistics grouped by study programs for chart visualization",
-     *     tags={"Researches"},
+     *     description="Retrieves services statistics grouped by study programs for chart visualization",
+     *     tags={"Services"},
      *     @OA\Parameter(
      *         name="year",
      *         in="query",
@@ -768,7 +761,7 @@ class ResearchController extends Controller
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Researches chart data retrieved successfully."),
+     *             @OA\Property(property="message", type="string", example="Services chart data retrieved successfully."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -801,7 +794,7 @@ class ResearchController extends Controller
      *                         @OA\Property(property="percentage", type="number", format="float", example=25.5)
      *                     )
      *                 ),
-     *                 @OA\Property(property="total_researches", type="integer", example=40)
+     *                 @OA\Property(property="total_services", type="integer", example=40)
      *             )
      *         )
      *     ),
@@ -814,69 +807,69 @@ class ResearchController extends Controller
      *     )
      * )
      */
-    public function getResearchesChartData()
+    public function getServicesChartData()
     {
         // Base query starting with study programs
-        $researches_by_program = StudyProgram::select(
+        $services_by_program = StudyProgram::select(
             'study_programs.name as study_program',
-            DB::raw('COALESCE(COUNT(DISTINCT researches.id), 0) as total_researches')
+            DB::raw('COALESCE(COUNT(DISTINCT services.id), 0) as total_services')
         )
             ->leftJoin('authors', 'study_programs.id', '=', 'authors.study_program_id')
-            ->leftJoin('author_research', 'authors.id', '=', 'author_research.author_id')
-            ->leftJoin('researches', 'author_research.research_id', '=', 'researches.id');
+            ->leftJoin('author_service', 'authors.id', '=', 'author_service.author_id')
+            ->leftJoin('services', 'author_service.service_id', '=', 'services.id');
 
         // Apply year filter if provided
         if (request()->has('year')) {
             $year = request()->input('year');
-            $researches_by_program->where('researches.thn_pelaksanaan_kegiatan', $year);
+            $services_by_program->where('services.thn_pelaksanaan_kegiatan', $year);
         }
 
         // Complete the query
-        $researches_by_program = $researches_by_program
+        $services_by_program = $services_by_program
             ->groupBy('study_programs.id', 'study_programs.name')
             ->orderBy('study_programs.name')
             ->get();
 
-        // Calculate total researches
-        $total_researches = $researches_by_program->sum('total_researches');
+        // Calculate total services
+        $total_services = $services_by_program->sum('total_services');
 
         // Prepare chart data
         $chart_data = [
-            'labels' => $researches_by_program->pluck('study_program')->toArray(),
+            'labels' => $services_by_program->pluck('study_program')->toArray(),
             'datasets' => [
-                'data' => $researches_by_program->pluck('total_researches')->toArray(),
-                'background_color' => $this->generateColors(count($researches_by_program))
+                'data' => $services_by_program->pluck('total_services')->toArray(),
+                'background_color' => $this->generateColors(count($services_by_program))
             ],
-            'study_programs' => $researches_by_program->map(function ($item) use ($total_researches) {
+            'study_programs' => $services_by_program->map(function ($item) use ($total_services) {
                 return [
                     'name' => $item->study_program,
-                    'total' => $item->total_researches,
-                    'percentage' => $total_researches > 0 ? round(($item->total_researches / $total_researches) * 100, 2) : 0,
+                    'total' => $item->total_services,
+                    'percentage' => $total_services > 0 ? round(($item->total_services / $total_services) * 100, 2) : 0,
                 ];
             }),
-            'total_researches' => $total_researches
+            'total_services' => $total_services
         ];
 
-        return $this->successResponse($chart_data, 'Researches chart data retrieved successfully.', 200);
+        return $this->successResponse($chart_data, 'Services chart data retrieved successfully.', 200);
     }
 
     /**
      * @OA\Delete(
-     *     path="/api/researches/{id}",
-     *     summary="Delete a research",
-     *     description="Deletes a research record by ID",
+     *     path="/api/services/{id}",
+     *     summary="Delete a service",
+     *     description="Deletes a service record by ID",
      *     security={{"bearer_token": {}}},
-     *     tags={"Researches"},
+     *     tags={"Services"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="ID of research to delete",
+     *         description="ID of service to delete",
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Research deleted successfully",
+     *         description="Service deleted successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Service data deleted successfully.")
@@ -884,10 +877,10 @@ class ResearchController extends Controller
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Research not found",
+     *         description="Service not found",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Research data not found.")
+     *             @OA\Property(property="message", type="string", example="Service data not found.")
      *         )
      *     ),
      *     @OA\Response(
@@ -901,13 +894,13 @@ class ResearchController extends Controller
      */
     public function delete($id)
     {
-        $research = Research::find($id);
-        if (!$research) {
-            return $this->errorResponse('Research data not found.', 404);
+        $service = Service::find($id);
+        if (!$service) {
+            return $this->errorResponse('Service not found.', 404);
         }
 
-        $research->delete();
+        $service->delete();
 
-        return $this->successResponse(null, 'Research data deleted successfully.', 200);
+        return $this->successResponse(null, 'Service deleted successfully.', 200);
     }
 }

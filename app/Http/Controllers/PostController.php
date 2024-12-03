@@ -373,7 +373,7 @@ class PostController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/posts/{page_slug}",
+     *     path="/api/posts/by_page/{page_slug}",
      *     tags={"Posts"},
      *     summary="Get a posts by page slug",
      *     @OA\Parameter(
