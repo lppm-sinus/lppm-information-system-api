@@ -7,7 +7,7 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class GoogleImport implements ToModel, WithHeadingRow, WithValidation
+class ScopusImport implements ToModel, WithHeadingRow, WithValidation
 {
     /**
      * @param array $row
@@ -16,16 +16,17 @@ class GoogleImport implements ToModel, WithHeadingRow, WithValidation
      */
     public function model(array $row)
     {
-        $accreditation = $row['accreditation'] !== '-' ? $row['accreditation'] : 'Jurnal Nasional';
+        $quartile = $row['quartile'] !== '-' ? $row['quartile'] : 'Jurnal Nasional';
 
         return new Publication([
-            'accreditation' => $accreditation,
+            'identifier' => $row['identifier'],
+            'quartile' => $quartile,
             'title' => $row['title'],
-            'journal' => $row['journal'],
-            'creators' => $row['authors'],
+            'publication_name' => $row['publication_name'],
+            'creators' => $row['creator'],
             'year' => $row['year'],
             'citation' => $row['citation'],
-            'category' => 'google',
+            'category' => 'scopus',
         ]);
     }
 

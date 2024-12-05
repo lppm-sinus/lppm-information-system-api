@@ -10,14 +10,18 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('google_publications', function (Blueprint $table) {
+        Schema::create('publications', function (Blueprint $table) {
             $table->id();
             $table->string('accreditation', 50)->nullable();
+            $table->string('identifier', 50)->nullable();
+            $table->string('quartile', 50)->nullable();
             $table->string('title', 255)->nullable();
             $table->string('journal', 255)->nullable();
+            $table->string('publication_name', 255)->nullable();
             $table->text('creators')->nullable();
             $table->year('year');
             $table->string('citation', 10);
+            $table->enum('category', ['google', 'scopus'])->default('google');
             $table->timestamps();
         });
     }
@@ -27,6 +31,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('google_publications');
+        Schema::dropIfExists('publications');
     }
 };

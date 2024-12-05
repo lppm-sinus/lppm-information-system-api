@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GooglePublication extends Model
+class Publication extends Model
 {
     use HasFactory;
 
-    protected $table = 'google_publications';
+    protected $table = 'publications';
     protected $primaryKey = 'id';
     protected $keyType = 'int';
     public $timestamps = true;
@@ -17,15 +17,19 @@ class GooglePublication extends Model
 
     protected $fillable = [
         'accreditation',
+        'identifier',
+        'quartile',
         'title',
         'journal',
+        'publication_name',
         'creators',
         'year',
         'citation',
+        'category',
     ];
 
     public function authors()
     {
-        return $this->belongsToMany(Author::class, 'author_google_publication', 'google_publication_id', 'author_id');
+        return $this->belongsToMany(Author::class, 'author_publication', 'publication_id', 'author_id');
     }
 }
