@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\GooglePublicationController;
+use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ResearchController;
@@ -20,6 +20,9 @@ Route::get('/pages/menu', [PageController::class, 'getPagesMenu']);
 
 // POSTS
 Route::get('/posts/by-page/{page_slug}', [PostController::class, 'getPostsByPageSlug']);
+
+// CATEGORIES
+Route::get('/categories/list', [CategoryController::class, 'getCategoriesList']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // AUTH
@@ -87,13 +90,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/services/{id}', [ServiceController::class, 'delete'])->where('id', '[0-9]+');
     Route::get('/services/chart-data', [ServiceController::class, 'getServicesChartData']);
 
-    // GOOGLE PUBLICATION
-    Route::post('/google-publications/import', [GooglePublicationController::class, 'import']);
-    Route::post('/google-publications', [GooglePublicationController::class, 'create']);
-    Route::patch('/google-publications/{id}', [GooglePublicationController::class, 'update'])->where('id', '[0-9]+');
-    Route::get('/google-publications', [GooglePublicationController::class, 'getGooglePublications']);
-    Route::get('/google-publications/{id}', [GooglePublicationController::class, 'getGooglePublicationByID'])->where('id', '[0-9]+');
-    Route::get('/google-publications/grouped-by-accreditation', [GooglePublicationController::class, 'getDataGroupedByAccreditation']);
-    Route::get('/google-publications/chart-data', [GooglePublicationController::class, 'getChartsData']);
+    // PUBLICATION
+    Route::post('/publications/import', [PublicationController::class, 'import']);
+    Route::post('/publications', [PublicationController::class, 'create']);
+    Route::patch('/publications/{id}', [PublicationController::class, 'update'])->where('id', '[0-9]+');
+    Route::get('/publications', [PublicationController::class, 'getPublications']);
+    Route::get('/publications/{id}', [PublicationController::class, 'getPublicationByID'])->where('id', '[0-9]+');
+    Route::get('/publications/grouped', [PublicationController::class, 'getDataGroupedByAccreditationAndQuartile']);
+    Route::get('/publications/chart-data', [PublicationController::class, 'getChartsData']);
 });
 

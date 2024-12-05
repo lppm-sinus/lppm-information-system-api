@@ -35,8 +35,8 @@ class Author extends Model
         return $this->belongsToMany(Service::class);
     }
 
-    public function googlePublications()
+    public function publications()
     {
-        return $this->belongsToMany(GooglePublication::class);
+        return $this->belongsToMany(Publication::class);
     }
 }

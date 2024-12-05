@@ -90,6 +90,7 @@ class ServiceImport implements ToModel, WithHeadingRow, WithValidation
         return [
             'nama_ketua' => 'required',
             'nidn_ketua' => 'required',
+            'judul' => 'required|unique:services,judul',
         ];
     }
 }

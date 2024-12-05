@@ -10,14 +10,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('author_google_publication', function (Blueprint $table) {
+        Schema::create('author_publication', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('author_id');
-            $table->unsignedBigInteger('google_publication_id');
+            $table->unsignedBigInteger('publication_id');
             $table->timestamps();
 
             $table->foreign('author_id')->references('id')->on('authors')->onDelete('cascade');
-            $table->foreign('google_publication_id')->references('id')->on('google_publications')->onDelete('cascade');
+            $table->foreign('publication_id')->references('id')->on('publications')->onDelete('cascade');
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('author_google_publication');
+        Schema::dropIfExists('author_publication');
     }
 };

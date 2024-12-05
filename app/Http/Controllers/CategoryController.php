@@ -16,7 +16,7 @@ class CategoryController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['role:superadmin']);
+        $this->middleware(['role:superadmin'])->except(['getCategoriesList']);
     }
 
     /**
@@ -366,6 +366,13 @@ class CategoryController extends Controller
         $categories = Category::paginate(10);
 
         return $this->successResponse($categories, 'Categories data retrieved successfully.', 200);
+    }
+
+    public function getCategoriesList()
+    {
+        $categories = Category::select('id', 'name')->get();
+
+        return $this->successResponse($categories, 'Categories list retrieved successfully.', 200);
     }
 
     /**

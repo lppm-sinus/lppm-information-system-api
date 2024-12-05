@@ -585,7 +585,7 @@ class ServiceController extends Controller
             $query->whereAny(['nama_ketua', 'nidn_ketua'], 'like', "%$search_term%");
         }
 
-        $services = $query->with('authors')->paginate(10);
+        $services = $query->with('authors')->latest()->paginate(10);
 
         return $this->paginatedResponse($services, 'Services data retrieved successfully.', 200);
     }
