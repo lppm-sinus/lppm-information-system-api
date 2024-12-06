@@ -1547,13 +1547,61 @@
                 ]
             }
         },
-        "/api/google-publications/import": {
+        "/api/categories/list": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Get list of categories",
+                "description": "Retrieves a list of all categories with their IDs and names",
+                "operationId": "f3bb2870ea6e66acb9e154be6fb83d88",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Categories list retrieved successfully."
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Category Name"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/hki/import": {
             "post": {
                 "tags": [
-                    "Google Publications"
+                    "HKI"
                 ],
-                "summary": "Import google publications data from Excel/CSV file",
-                "operationId": "2319ffb1cb950fa24964ff380ea582d0",
+                "summary": "Import hki data from Excel/CSV file",
+                "operationId": "2b3524475b3aaaa9fb4c7b513d7bd7e9",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1561,7 +1609,7 @@
                             "schema": {
                                 "properties": {
                                     "file": {
-                                        "description": "Excel/CSV file containing google publications data",
+                                        "description": "Excel/CSV file containing hki data",
                                         "type": "file"
                                     },
                                     "reset_table": {
@@ -1577,7 +1625,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Google Publications imported successfully",
+                        "description": "HKI imported successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1588,7 +1636,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Google Publications data imported successfully."
+                                            "example": "HKI data imported successfully."
                                         }
                                     },
                                     "type": "object"
@@ -1643,19 +1691,19 @@
                 ]
             }
         },
-        "/api/google-publications": {
+        "/api/hki": {
             "get": {
                 "tags": [
-                    "Google Publications"
+                    "HKI"
                 ],
-                "summary": "Get paginated list of google publications",
-                "description": "Returns paginated google publications with optional search functionality",
-                "operationId": "385412647e306360dcda9c4a28f285d8",
+                "summary": "Get paginated list of hki",
+                "description": "Returns paginated hki with optional search functionality",
+                "operationId": "8e051925847be5969f8036ac209bcbd2",
                 "parameters": [
                     {
                         "name": "q",
                         "in": "query",
-                        "description": "Search term for filtering data by title, journal or creators",
+                        "description": "Search term for filtering data by nomor permohonan, journal or title",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1675,7 +1723,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Google publication data retrieved successfully."
+                                            "example": "HKI data retrieved successfully."
                                         },
                                         "data": {
                                             "properties": {
@@ -1691,25 +1739,57 @@
                                                                 "type": "integer",
                                                                 "example": 1
                                                             },
-                                                            "accreditation": {
+                                                            "tahun_permohonan": {
                                                                 "type": "string",
-                                                                "example": "S3"
+                                                                "example": "2023"
+                                                            },
+                                                            "nomor_permohonan": {
+                                                                "type": "string",
+                                                                "example": "2342453"
+                                                            },
+                                                            "kategori": {
+                                                                "type": "string",
+                                                                "example": "hak cipta"
                                                             },
                                                             "title": {
                                                                 "type": "string",
-                                                                "example": "Publikasi 1"
+                                                                "example": "SISTEM INFORMASI"
                                                             },
-                                                            "journal": {
+                                                            "pemegang_paten": {
                                                                 "type": "string",
-                                                                "example": "Journal of information"
+                                                                "example": "Budi, Joko"
                                                             },
-                                                            "year": {
+                                                            "inventor": {
                                                                 "type": "string",
-                                                                "example": "2024"
+                                                                "example": "Iwan Ady"
                                                             },
-                                                            "citation": {
+                                                            "status": {
                                                                 "type": "string",
-                                                                "example": "1"
+                                                                "example": "Graded"
+                                                            },
+                                                            "nomor_publikasi": {
+                                                                "type": "string",
+                                                                "example": "00034523"
+                                                            },
+                                                            "tanggal_publikasi": {
+                                                                "type": "string",
+                                                                "example": "2023-09-10"
+                                                            },
+                                                            "filing_date": {
+                                                                "type": "string",
+                                                                "example": "2023-09-11"
+                                                            },
+                                                            "reception_date": {
+                                                                "type": "string",
+                                                                "example": "2023-09-13"
+                                                            },
+                                                            "nomor_registrasi": {
+                                                                "type": "string",
+                                                                "example": "003458359"
+                                                            },
+                                                            "tanggal_registrasi": {
+                                                                "type": "string",
+                                                                "example": "2023-09-18"
                                                             },
                                                             "authors": {
                                                                 "type": "array",
@@ -1818,29 +1898,53 @@
             },
             "post": {
                 "tags": [
-                    "Google Publications"
+                    "HKI"
                 ],
-                "summary": "Create new google publication",
-                "operationId": "4d13587f38529639ac5251950546f723",
+                "summary": "Create new hki",
+                "operationId": "3d780c0ce6e27f2e8a2df068b2b2c6db",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "accreditation": {
+                                    "tahun_permohonan": {
+                                        "type": "string"
+                                    },
+                                    "nomor_permohonan": {
+                                        "type": "string"
+                                    },
+                                    "kategori": {
                                         "type": "string"
                                     },
                                     "title": {
                                         "type": "string"
                                     },
-                                    "journal": {
+                                    "pemegang_paten": {
                                         "type": "string"
                                     },
-                                    "year": {
+                                    "inventor": {
                                         "type": "string"
                                     },
-                                    "citation": {
+                                    "status": {
+                                        "type": "string"
+                                    },
+                                    "nomor_publikasi": {
+                                        "type": "string"
+                                    },
+                                    "tanggal_publikasi": {
+                                        "type": "string"
+                                    },
+                                    "filing_date": {
+                                        "type": "string"
+                                    },
+                                    "reception_date": {
+                                        "type": "string"
+                                    },
+                                    "nomor_registrasi": {
+                                        "type": "string"
+                                    },
+                                    "tanggal_registrasi": {
                                         "type": "string"
                                     },
                                     "authors": {
@@ -1853,11 +1957,19 @@
                                 },
                                 "type": "object",
                                 "example": {
-                                    "accreditation": "S3",
-                                    "title": "Publikasi 1",
-                                    "journal": "Journal of information",
-                                    "year": "2024",
-                                    "citation": "1",
+                                    "tahun_permohonan": "2023",
+                                    "nomor_permohonan": "2342453",
+                                    "kategori": "hak cipta",
+                                    "title": "SISTEM INFORMASI",
+                                    "pemegang_paten": "Budi, Joko",
+                                    "inventor": "Iwan Ady",
+                                    "status": "Graded",
+                                    "nomor_publikasi": "00034523",
+                                    "tanggal_publikasi": "2023-09-10",
+                                    "filing_date": "2023-09-11",
+                                    "reception_date": "2023-09-13",
+                                    "nomor_registrasi": "003458359",
+                                    "tanggal_registrasi": "2023-09-18",
                                     "authors": [
                                         2,
                                         4,
@@ -1870,7 +1982,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Google Publication Created",
+                        "description": "HKI Created",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1881,7 +1993,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Google publication data created successfully."
+                                            "example": "HKI created successfully."
                                         },
                                         "data": {
                                             "properties": {
@@ -1889,25 +2001,57 @@
                                                     "type": "integer",
                                                     "example": 1
                                                 },
-                                                "accreditation": {
+                                                "tahun_permohonan": {
                                                     "type": "string",
-                                                    "example": "S3"
+                                                    "example": "2023"
+                                                },
+                                                "nomor_permohonan": {
+                                                    "type": "string",
+                                                    "example": "2342453"
+                                                },
+                                                "kategori": {
+                                                    "type": "string",
+                                                    "example": "hak cipta"
                                                 },
                                                 "title": {
                                                     "type": "string",
-                                                    "example": "Publikasi 1"
+                                                    "example": "SISTEM INFORMASI"
                                                 },
-                                                "journal": {
+                                                "pemegang_paten": {
                                                     "type": "string",
-                                                    "example": "Journal of information"
+                                                    "example": "Budi, Joko"
                                                 },
-                                                "year": {
+                                                "inventor": {
                                                     "type": "string",
-                                                    "example": "2024"
+                                                    "example": "Iwan Ady"
                                                 },
-                                                "citation": {
+                                                "status": {
                                                     "type": "string",
-                                                    "example": "1"
+                                                    "example": "Graded"
+                                                },
+                                                "nomor_publikasi": {
+                                                    "type": "string",
+                                                    "example": "00034523"
+                                                },
+                                                "tanggal_publikasi": {
+                                                    "type": "string",
+                                                    "example": "2023-09-10"
+                                                },
+                                                "filing_date": {
+                                                    "type": "string",
+                                                    "example": "2023-09-11"
+                                                },
+                                                "reception_date": {
+                                                    "type": "string",
+                                                    "example": "2023-09-13"
+                                                },
+                                                "nomor_registrasi": {
+                                                    "type": "string",
+                                                    "example": "003458359"
+                                                },
+                                                "tanggal_registrasi": {
+                                                    "type": "string",
+                                                    "example": "2023-09-18"
                                                 }
                                             },
                                             "type": "object"
@@ -1942,19 +2086,19 @@
                 ]
             }
         },
-        "/api/google-publications/{id}": {
+        "/api/hki/{id}": {
             "get": {
                 "tags": [
-                    "Google Publications"
+                    "HKI"
                 ],
-                "summary": "Get google publication by ID",
-                "description": "Returns a specific google publication by its ID with related authors",
-                "operationId": "4a8267a2019d3ffc2f554e7268feda20",
+                "summary": "Get hki by ID",
+                "description": "Returns a specific hki by its ID with related authors",
+                "operationId": "537cb4677e25303ff9d53647f11999a8",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID of google publication to return",
+                        "description": "ID of hki to return",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -1974,7 +2118,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Google publication data retrieved successfully."
+                                            "example": "HKI data retrieved successfully."
                                         },
                                         "data": {
                                             "properties": {
@@ -1982,25 +2126,57 @@
                                                     "type": "integer",
                                                     "example": 1
                                                 },
-                                                "accreditation": {
+                                                "tahun_permohonan": {
                                                     "type": "string",
-                                                    "example": "S3"
+                                                    "example": "2023"
+                                                },
+                                                "nomor_permohonan": {
+                                                    "type": "string",
+                                                    "example": "2342453"
+                                                },
+                                                "kategori": {
+                                                    "type": "string",
+                                                    "example": "hak cipta"
                                                 },
                                                 "title": {
                                                     "type": "string",
-                                                    "example": "Publikasi 1"
+                                                    "example": "SISTEM INFORMASI"
                                                 },
-                                                "journal": {
+                                                "pemegang_paten": {
                                                     "type": "string",
-                                                    "example": "Journal of information"
+                                                    "example": "Budi, Joko"
                                                 },
-                                                "year": {
+                                                "inventor": {
                                                     "type": "string",
-                                                    "example": "2024"
+                                                    "example": "Iwan Ady"
                                                 },
-                                                "citation": {
+                                                "status": {
                                                     "type": "string",
-                                                    "example": "1"
+                                                    "example": "Graded"
+                                                },
+                                                "nomor_publikasi": {
+                                                    "type": "string",
+                                                    "example": "00034523"
+                                                },
+                                                "tanggal_publikasi": {
+                                                    "type": "string",
+                                                    "example": "2023-09-10"
+                                                },
+                                                "filing_date": {
+                                                    "type": "string",
+                                                    "example": "2023-09-11"
+                                                },
+                                                "reception_date": {
+                                                    "type": "string",
+                                                    "example": "2023-09-13"
+                                                },
+                                                "nomor_registrasi": {
+                                                    "type": "string",
+                                                    "example": "003458359"
+                                                },
+                                                "tanggal_registrasi": {
+                                                    "type": "string",
+                                                    "example": "2023-09-18"
                                                 },
                                                 "authors": {
                                                     "type": "array",
@@ -2104,16 +2280,16 @@
             },
             "delete": {
                 "tags": [
-                    "Google Publications"
+                    "HKI"
                 ],
-                "summary": "Delete a google publication",
-                "description": "Deletes a google publication record by ID",
-                "operationId": "b3babd6c6cfec4abd317076c4c1a6e6a",
+                "summary": "Delete a hki",
+                "description": "Deletes a hki record by ID",
+                "operationId": "cae27f35408189a62211590bbcc7b7d6",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID of google publication to delete",
+                        "description": "ID of hki to delete",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -2122,7 +2298,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Google publication deleted successfully",
+                        "description": "HKI deleted successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2133,7 +2309,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Google publication data deleted successfully."
+                                            "example": "HKI data deleted successfully."
                                         }
                                     },
                                     "type": "object"
@@ -2142,7 +2318,7 @@
                         }
                     },
                     "404": {
-                        "description": "Google publication not found",
+                        "description": "HKI not found",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2153,7 +2329,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Google publication data not found."
+                                            "example": "HKI data not found."
                                         }
                                     },
                                     "type": "object"
@@ -2186,15 +2362,15 @@
             },
             "patch": {
                 "tags": [
-                    "Google Publications"
+                    "HKI"
                 ],
-                "summary": "Update an google publication by ID",
-                "operationId": "4aa5d18323623c3f71027099e647c502",
+                "summary": "Update an hki by ID",
+                "operationId": "6ab3f568721141c092c19ac0283e748b",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID of the google publication",
+                        "description": "ID of the hki",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -2206,19 +2382,43 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "accreditation": {
+                                    "tahun_permohonan": {
+                                        "type": "string"
+                                    },
+                                    "nomor_permohonan": {
+                                        "type": "string"
+                                    },
+                                    "kategori": {
                                         "type": "string"
                                     },
                                     "title": {
                                         "type": "string"
                                     },
-                                    "journal": {
+                                    "pemegang_paten": {
                                         "type": "string"
                                     },
-                                    "year": {
+                                    "inventor": {
                                         "type": "string"
                                     },
-                                    "citation": {
+                                    "status": {
+                                        "type": "string"
+                                    },
+                                    "nomor_publikasi": {
+                                        "type": "string"
+                                    },
+                                    "tanggal_publikasi": {
+                                        "type": "string"
+                                    },
+                                    "filing_date": {
+                                        "type": "string"
+                                    },
+                                    "reception_date": {
+                                        "type": "string"
+                                    },
+                                    "nomor_registrasi": {
+                                        "type": "string"
+                                    },
+                                    "tanggal_registrasi": {
                                         "type": "string"
                                     },
                                     "authors": {
@@ -2231,11 +2431,19 @@
                                 },
                                 "type": "object",
                                 "example": {
-                                    "accreditation": "S3",
-                                    "title": "Publikasi 1",
-                                    "journal": "Journal of information",
-                                    "year": "2024",
-                                    "citation": "1",
+                                    "tahun_permohonan": "2023",
+                                    "nomor_permohonan": "2342453",
+                                    "kategori": "hak cipta",
+                                    "title": "SISTEM INFORMASI",
+                                    "pemegang_paten": "Budi, Joko",
+                                    "inventor": "Iwan Ady",
+                                    "status": "Graded",
+                                    "nomor_publikasi": "00034523",
+                                    "tanggal_publikasi": "2023-09-10",
+                                    "filing_date": "2023-09-11",
+                                    "reception_date": "2023-09-13",
+                                    "nomor_registrasi": "003458359",
+                                    "tanggal_registrasi": "2023-09-18",
                                     "authors": [
                                         2,
                                         4,
@@ -2248,7 +2456,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Google Publication Created",
+                        "description": "HKI Updated",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2259,7 +2467,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Google publication data created successfully."
+                                            "example": "HKI data updated successfully."
                                         },
                                         "data": {
                                             "properties": {
@@ -2267,25 +2475,57 @@
                                                     "type": "integer",
                                                     "example": 1
                                                 },
-                                                "accreditation": {
+                                                "tahun_permohonan": {
                                                     "type": "string",
-                                                    "example": "S3"
+                                                    "example": "2023"
+                                                },
+                                                "nomor_permohonan": {
+                                                    "type": "string",
+                                                    "example": "2342453"
+                                                },
+                                                "kategori": {
+                                                    "type": "string",
+                                                    "example": "hak cipta"
                                                 },
                                                 "title": {
                                                     "type": "string",
-                                                    "example": "Publikasi 1"
+                                                    "example": "SISTEM INFORMASI"
                                                 },
-                                                "journal": {
+                                                "pemegang_paten": {
                                                     "type": "string",
-                                                    "example": "Journal of information"
+                                                    "example": "Budi, Joko"
                                                 },
-                                                "year": {
+                                                "inventor": {
                                                     "type": "string",
-                                                    "example": "2024"
+                                                    "example": "Iwan Ady"
                                                 },
-                                                "citation": {
+                                                "status": {
                                                     "type": "string",
-                                                    "example": "1"
+                                                    "example": "Graded"
+                                                },
+                                                "nomor_publikasi": {
+                                                    "type": "string",
+                                                    "example": "00034523"
+                                                },
+                                                "tanggal_publikasi": {
+                                                    "type": "string",
+                                                    "example": "2023-09-10"
+                                                },
+                                                "filing_date": {
+                                                    "type": "string",
+                                                    "example": "2023-09-11"
+                                                },
+                                                "reception_date": {
+                                                    "type": "string",
+                                                    "example": "2023-09-13"
+                                                },
+                                                "nomor_registrasi": {
+                                                    "type": "string",
+                                                    "example": "003458359"
+                                                },
+                                                "tanggal_registrasi": {
+                                                    "type": "string",
+                                                    "example": "2023-09-18"
                                                 }
                                             },
                                             "type": "object"
@@ -2320,19 +2560,19 @@
                 ]
             }
         },
-        "/api/google-publications/grouped-by-scheme": {
+        "/api/hki/grouped-by-category": {
             "get": {
                 "tags": [
-                    "Google Publications"
+                    "HKI"
                 ],
-                "summary": "Get google publications grouped by scheme",
-                "description": "Retrieves google publications data grouped by `accreditation`, with an optional filter by `study_program_id`.",
-                "operationId": "d7bad04fe3ce3b06e4ac89cbda1f88f0",
+                "summary": "Get hki grouped by category",
+                "description": "Retrieves hki data grouped by `kategori`, with an optional filter by `study_program_id`.",
+                "operationId": "9dcae4694cecc99f3f68f830403116bb",
                 "parameters": [
                     {
                         "name": "study_program_id",
                         "in": "query",
-                        "description": "Filter google publications by study program ID",
+                        "description": "Filter hki by study program ID",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -2341,7 +2581,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful retrieval of google publications data",
+                        "description": "Successful retrieval of hki data",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2352,11 +2592,11 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Google publications data retrieved successfully."
+                                            "example": "HKI data retrieved successfully."
                                         },
                                         "data": {
                                             "properties": {
-                                                "S3": {
+                                                "hak cipta": {
                                                     "properties": {
                                                         "count": {
                                                             "type": "integer",
@@ -2398,14 +2638,14 @@
                 ]
             }
         },
-        "/api/google-publications/chart-data": {
+        "/api/hki/chart-data": {
             "get": {
                 "tags": [
-                    "Google Publications"
+                    "HKI"
                 ],
-                "summary": "Get google publications statistics chart data",
-                "description": "Retrieves google publications statistics grouped by study programs for chart visualization",
-                "operationId": "5e0e92093411d8ccf7f17c7ea47aa829",
+                "summary": "Get hki statistics chart data",
+                "description": "Retrieves hki statistics grouped by study programs for chart visualization",
+                "operationId": "3aef277e8dc880269332bed47fed7517",
                 "parameters": [
                     {
                         "name": "year",
@@ -2431,7 +2671,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Google publications chart data retrieved successfully."
+                                            "example": "HKI chart data retrieved successfully."
                                         },
                                         "data": {
                                             "properties": {
@@ -2482,7 +2722,7 @@
                                                         "type": "object"
                                                     }
                                                 },
-                                                "total_data": {
+                                                "total_hkis": {
                                                     "type": "integer",
                                                     "example": 40
                                                 }
@@ -4264,6 +4504,1067 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Post not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/publications/import": {
+            "post": {
+                "tags": [
+                    "Publications"
+                ],
+                "summary": "Import publications data from Excel/CSV file",
+                "operationId": "a57850cbc588b17124e52e6b1410638f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "file": {
+                                        "description": "Excel/CSV file containing publications data",
+                                        "type": "file"
+                                    },
+                                    "reset_table": {
+                                        "description": "Whether to reset the tables before import",
+                                        "type": "boolean",
+                                        "example": false
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Publications imported successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Publications data imported successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error or import failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/publications": {
+            "get": {
+                "tags": [
+                    "Publications"
+                ],
+                "summary": "Get paginated list of publications",
+                "description": "Returns paginated publications with optional search functionality",
+                "operationId": "3311b53bf3fe5aed4ba5cada73483f1f",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "description": "Search term for filtering data by google or scopus",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search term for filtering data by title, journal or creators",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "publication data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "accreditation": {
+                                                                "type": "string",
+                                                                "example": "S3"
+                                                            },
+                                                            "identifier": {
+                                                                "type": "string",
+                                                                "example": "34576"
+                                                            },
+                                                            "quartile": {
+                                                                "type": "string",
+                                                                "example": "Q1"
+                                                            },
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "Publikasi 1"
+                                                            },
+                                                            "journal": {
+                                                                "type": "string",
+                                                                "example": "Journal of information"
+                                                            },
+                                                            "publication_name": {
+                                                                "type": "string",
+                                                                "example": "Journal of technology"
+                                                            },
+                                                            "year": {
+                                                                "type": "string",
+                                                                "example": "2024"
+                                                            },
+                                                            "citation": {
+                                                                "type": "string",
+                                                                "example": "1"
+                                                            },
+                                                            "category": {
+                                                                "type": "string",
+                                                                "example": "google"
+                                                            },
+                                                            "authors": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "integer",
+                                                                            "example": 1
+                                                                        },
+                                                                        "sinta_id": {
+                                                                            "type": "string",
+                                                                            "example": "66889756"
+                                                                        },
+                                                                        "nidn": {
+                                                                            "type": "string",
+                                                                            "example": "2342453"
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "Yustina"
+                                                                        },
+                                                                        "affiliation": {
+                                                                            "type": "string",
+                                                                            "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                                        },
+                                                                        "study_program_id": {
+                                                                            "type": "integer",
+                                                                            "example": "2"
+                                                                        },
+                                                                        "last_education": {
+                                                                            "type": "string",
+                                                                            "example": "S2"
+                                                                        },
+                                                                        "functional_position": {
+                                                                            "type": "string",
+                                                                            "example": "Asisten Ahli"
+                                                                        },
+                                                                        "title_prefix": {
+                                                                            "type": "string",
+                                                                            "example": null
+                                                                        },
+                                                                        "title_suffix": {
+                                                                            "type": "string",
+                                                                            "example": "S.Kom, M.Kom"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "meta": {
+                                                    "properties": {
+                                                        "total": {
+                                                            "type": "integer",
+                                                            "example": 100
+                                                        },
+                                                        "per_page": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        },
+                                                        "current_page": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "last_page": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Publications"
+                ],
+                "summary": "Create new publication",
+                "operationId": "db6ab015c83d3b556635354bfcfe8159",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "category": {
+                                        "type": "string",
+                                        "enum": [
+                                            "google",
+                                            "scopus"
+                                        ]
+                                    },
+                                    "accreditation": {
+                                        "type": "string"
+                                    },
+                                    "identifier": {
+                                        "type": "string"
+                                    },
+                                    "quartile": {
+                                        "type": "string"
+                                    },
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "journal": {
+                                        "type": "string"
+                                    },
+                                    "publication_name": {
+                                        "type": "string"
+                                    },
+                                    "year": {
+                                        "type": "string"
+                                    },
+                                    "citation": {
+                                        "type": "string"
+                                    },
+                                    "authors": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 2
+                                        }
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "category": "google",
+                                    "identifier": null,
+                                    "quartile": null,
+                                    "accreditation": "S3",
+                                    "title": "Publikasi 1",
+                                    "journal": "Journal of information",
+                                    "publication_name": null,
+                                    "year": "2024",
+                                    "citation": "1",
+                                    "authors": [
+                                        2,
+                                        4,
+                                        8
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Publication Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Publication data created successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "category": {
+                                                    "type": "string",
+                                                    "example": "google"
+                                                },
+                                                "accreditation": {
+                                                    "type": "string",
+                                                    "example": "S3"
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Publikasi 1"
+                                                },
+                                                "journal": {
+                                                    "type": "string",
+                                                    "example": "Journal of information"
+                                                },
+                                                "year": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "citation": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/publications/{id}": {
+            "get": {
+                "tags": [
+                    "Publications"
+                ],
+                "summary": "Get publication by ID",
+                "description": "Returns a specific publication by its ID with related authors",
+                "operationId": "9a7911a745f0a303f62dfa4f941a54a9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of publication to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "publication data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "accreditation": {
+                                                    "type": "string",
+                                                    "example": "S3"
+                                                },
+                                                "identifier": {
+                                                    "type": "string",
+                                                    "example": "34576"
+                                                },
+                                                "quartile": {
+                                                    "type": "string",
+                                                    "example": "Q1"
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Publikasi 1"
+                                                },
+                                                "journal": {
+                                                    "type": "string",
+                                                    "example": "Journal of information"
+                                                },
+                                                "publication_name": {
+                                                    "type": "string",
+                                                    "example": "Journal of technology"
+                                                },
+                                                "year": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "citation": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                },
+                                                "category": {
+                                                    "type": "string",
+                                                    "example": "scopus"
+                                                },
+                                                "authors": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "sinta_id": {
+                                                                "type": "string",
+                                                                "example": "34514545"
+                                                            },
+                                                            "nidn": {
+                                                                "type": "string",
+                                                                "example": "2342453"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Yustina"
+                                                            },
+                                                            "affiliation": {
+                                                                "type": "string",
+                                                                "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                            },
+                                                            "study_program_id": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "last_education": {
+                                                                "type": "string",
+                                                                "example": "S1"
+                                                            },
+                                                            "functional_position": {
+                                                                "type": "string",
+                                                                "example": "Lektor"
+                                                            },
+                                                            "title_prefix": {
+                                                                "type": "string",
+                                                                "example": "Prof."
+                                                            },
+                                                            "title_suffix": {
+                                                                "type": "string",
+                                                                "example": "S.T."
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data data not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Publications"
+                ],
+                "summary": "Delete a publication",
+                "description": "Deletes a publication record by ID",
+                "operationId": "5724937bba2928878255c4d048e34df6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of publication to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Publication deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Publication data deleted successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Publication not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Publication data not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Publications"
+                ],
+                "summary": "Update an publication by ID",
+                "operationId": "f3182a4d314946d57946fc52079ada13",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the publication",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "category": {
+                                        "type": "string",
+                                        "enum": [
+                                            "google",
+                                            "scopus"
+                                        ]
+                                    },
+                                    "accreditation": {
+                                        "type": "string"
+                                    },
+                                    "identifier": {
+                                        "type": "string"
+                                    },
+                                    "quartile": {
+                                        "type": "string"
+                                    },
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "journal": {
+                                        "type": "string"
+                                    },
+                                    "publication_name": {
+                                        "type": "string"
+                                    },
+                                    "year": {
+                                        "type": "string"
+                                    },
+                                    "citation": {
+                                        "type": "string"
+                                    },
+                                    "authors": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 2
+                                        }
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "category": "google",
+                                    "identifier": null,
+                                    "quartile": null,
+                                    "accreditation": "S3",
+                                    "title": "Publikasi 1",
+                                    "journal": "Journal of information",
+                                    "publication_name": null,
+                                    "year": "2024",
+                                    "citation": "1",
+                                    "authors": [
+                                        2,
+                                        4,
+                                        8
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Publication Updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Publication data updated successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "category": {
+                                                    "type": "string",
+                                                    "example": "google"
+                                                },
+                                                "accreditation": {
+                                                    "type": "string",
+                                                    "example": "S3"
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Publikasi 1"
+                                                },
+                                                "journal": {
+                                                    "type": "string",
+                                                    "example": "Journal of information"
+                                                },
+                                                "year": {
+                                                    "type": "string",
+                                                    "example": "2024"
+                                                },
+                                                "citation": {
+                                                    "type": "string",
+                                                    "example": "1"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/publications/grouped": {
+            "get": {
+                "tags": [
+                    "Publications"
+                ],
+                "summary": "Get publications grouped by scheme",
+                "description": "Retrieves publications data grouped by `accreditation`, with an optional filter by `study_program_id`.",
+                "operationId": "99b37ecf7ab36f2b6c7295362f0db98c",
+                "parameters": [
+                    {
+                        "name": "study_program_id",
+                        "in": "query",
+                        "description": "Filter publications by study program ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful retrieval of publications data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Publications data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "S3": {
+                                                    "properties": {
+                                                        "count": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/publications/chart-data": {
+            "get": {
+                "tags": [
+                    "Publications"
+                ],
+                "summary": "Get Publications statistics chart data",
+                "description": "Retrieves Publications statistics grouped by study programs for chart visualization",
+                "operationId": "6c9194f9b925ba8ef67793b1c7260f94",
+                "parameters": [
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "description": "Filter statistics by year",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2024"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Publications chart data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "labels": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "S1-Informatika"
+                                                    }
+                                                },
+                                                "datasets": {
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "integer",
+                                                                "example": 10
+                                                            }
+                                                        },
+                                                        "background_color": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "string",
+                                                                "example": "#FF5733"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "study_programs": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "S1-Informatika"
+                                                            },
+                                                            "total": {
+                                                                "type": "integer",
+                                                                "example": 10
+                                                            },
+                                                            "percentage": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 25.5
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "total_data": {
+                                                    "type": "integer",
+                                                    "example": 40
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
                                         }
                                     },
                                     "type": "object"
@@ -8742,8 +10043,8 @@
             "description": "Categories"
         },
         {
-            "name": "Google Publications",
-            "description": "Google Publications"
+            "name": "HKI",
+            "description": "HKI"
         },
         {
             "name": "Pages",
@@ -8752,6 +10053,10 @@
         {
             "name": "Posts",
             "description": "Posts"
+        },
+        {
+            "name": "Publications",
+            "description": "Publications"
         },
         {
             "name": "Researches",

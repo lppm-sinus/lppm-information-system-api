@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Imports\GoogleImport;
+use App\Imports\ScopusImport;
 use App\Models\Author;
-use App\Models\GooglePublication;
+use App\Models\Publication;
 use App\Models\StudyProgram;
 use App\Traits\ApiResponse;
 use App\Traits\FunctionalMethod;
@@ -14,7 +15,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 
-class GooglePublicationController extends Controller
+class PublicationController extends Controller
 {
     use ApiResponse, FunctionalMethod;
 
@@ -26,9 +27,9 @@ class GooglePublicationController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/google-publications/import",
-     *     summary="Import google publications data from Excel/CSV file",
-     *     tags={"Google Publications"},
+     *     path="/api/publications/import",
+     *     summary="Import publications data from Excel/CSV file",
+     *     tags={"Publications"},
      *     security={{ "bearer": {} }},
      *     @OA\RequestBody(
      *         required=true,
@@ -39,7 +40,7 @@ class GooglePublicationController extends Controller
      *                 @OA\Property(
      *                     property="file",
      *                     type="file",
-     *                     description="Excel/CSV file containing google publications data"
+     *                     description="Excel/CSV file containing publications data"
      *                 ),
      *                 @OA\Property(
      *                     property="reset_table",
@@ -52,10 +53,10 @@ class GooglePublicationController extends Controller
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Google Publications imported successfully",
+     *         description="Publications imported successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Google Publications data imported successfully."),
+     *             @OA\Property(property="message", type="string", example="Publications data imported successfully."),
      *         )
      *     ),
      *     @OA\Response(
@@ -80,6 +81,7 @@ class GooglePublicationController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'file' => 'required|mimes:xlsx,xls,csv',
+            'category' => 'required|string|in:google,scopus',
         ]);
 
         if ($validator->fails()) {
@@ -87,9 +89,22 @@ class GooglePublicationController extends Controller
         }
 
         try {
-            Excel::import(new GoogleImport(), $request->file('file'));
+            $import = null;
 
-            return $this->successResponse(null, 'Google Publication data imported successfully.', 201);
+            if ($request->boolean('reset_table')) {
+                DB::table('author_publication')->delete();
+                DB::table('publications')->delete();
+            }
+
+            if ($request->category == 'scopus') {
+                $import = new ScopusImport();
+            } elseif ($request->category == 'google') {
+                $import = new GoogleImport();
+            }
+
+            Excel::import($import, $request->file('file'));
+
+            return $this->successResponse(null, 'Publication data imported successfully.', 201);
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), 500);
         }
@@ -97,9 +112,9 @@ class GooglePublicationController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/google-publications",
-     *     tags={"Google Publications"},
-     *     summary="Create new google publication",
+     *     path="/api/publications",
+     *     tags={"Publications"},
+     *     summary="Create new publication",
      *     security={{"bearer_token":{}}},
      *  @OA\RequestBody(
      *     required=true,
@@ -107,7 +122,20 @@ class GooglePublicationController extends Controller
      *         mediaType="application/json",
      *         @OA\Schema(
      *             @OA\Property(
+     *                 property="category",
+     *                 type="string",
+     *                 enum={"google", "scopus"},
+     *             ),
+     *             @OA\Property(
      *                 property="accreditation",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="identifier",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="quartile",
      *                 type="string"
      *             ),
      *             @OA\Property(
@@ -119,12 +147,16 @@ class GooglePublicationController extends Controller
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="year",
+     *                 property="publication_name",
      *                 type="string"
      *             ),
      *             @OA\Property(
+     *                 property="year",
+     *                 type="string",
+     *             ),
+     *             @OA\Property(
      *                 property="citation",
-     *                 type="string"
+     *                 type="string",
      *             ),
      *             @OA\Property(
      *                 property="authors",
@@ -134,18 +166,19 @@ class GooglePublicationController extends Controller
      *                     example=2
      *                 )
      *             ),
-     *             example={"accreditation": "S3", "title": "Publikasi 1", "journal": "Journal of information", "year": "2024", "citation": "1", "authors": {"0": 2, "1": 4, "2": 8} }
+     *             example={"category": "google", "identifier": null, "quartile": null, "accreditation": "S3", "title": "Publikasi 1", "journal": "Journal of information", "publication_name": null, "year": "2024", "citation": "1", "authors": {"0": 2, "1": 4, "2": 8} }
      *         )
      *     )
      * ),
      *     @OA\Response(
      *         response=201,
-     *         description="Google Publication Created",
+     *         description="Publication Created",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Google publication data created successfully."),
+     *             @OA\Property(property="message", type="string", example="Publication data created successfully."),
      *             @OA\Property(property="data", type="object",
      *                  @OA\Property(property="id", type="integer", example=1),
+     *                  @OA\Property(property="category", type="string", example="google"),
      *                  @OA\Property(property="accreditation", type="string", example="S3"),
      *                  @OA\Property(property="title", type="string", example="Publikasi 1"),
      *                  @OA\Property(property="journal", type="string", example="Journal of information"),
@@ -166,9 +199,13 @@ class GooglePublicationController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'accreditation' => 'required|string|max:50',
-            'title' => 'required|string|max:255|unique:google_publications,title',
-            'journal' => 'required|string|max:255',
+            'category' => 'required|in:google,scopus',
+            'accreditation' => 'required_if:category,google|string|max:50',
+            'identifier' => 'required_if:category,scopus|string|max:50',
+            'quartile' => 'required_if:category,scopus|string|max:50',
+            'title' => 'required_if:category,google|string|max:255|unique:publications,title',
+            'journal' => 'required_if:category,google|string|max:255',
+            'publication_name' => 'required_if:category,scopus|string|max:255',
             'year' => 'required|max:4',
             'citation' => 'required|string|max:10',
             'authors' => 'nullable|array',
@@ -187,26 +224,26 @@ class GooglePublicationController extends Controller
 
         $request->merge(['creators' => $creators]);
 
-        $data = GooglePublication::create($request->all());
+        $data = Publication::create($request->all());
         $data->authors()->attach($request->authors);
         $data->save();
 
         $data->load('authors');
 
-        return $this->successResponse($data, 'Google Publication created successfully.', 201);
+        return $this->successResponse($data, 'Publication created successfully.', 201);
     }
 
     /**
      * @OA\Patch(
-     *     path="/api/google-publications/{id}",
-     *     tags={"Google Publications"},
-     *     summary="Update an google publication by ID",
+     *     path="/api/publications/{id}",
+     *     tags={"Publications"},
+     *     summary="Update an publication by ID",
      *     security={{"bearer_token":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="ID of the google publication",
+     *         description="ID of the publication",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\RequestBody(
@@ -214,7 +251,20 @@ class GooglePublicationController extends Controller
      *             mediaType="application/json",
      *             @OA\Schema(
      *             @OA\Property(
+     *                 property="category",
+     *                 type="string",
+     *                 enum={"google", "scopus"},
+     *             ),
+     *             @OA\Property(
      *                 property="accreditation",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="identifier",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="quartile",
      *                 type="string"
      *             ),
      *             @OA\Property(
@@ -226,33 +276,38 @@ class GooglePublicationController extends Controller
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="year",
+     *                 property="publication_name",
      *                 type="string"
      *             ),
      *             @OA\Property(
+     *                 property="year",
+     *                 type="string",
+     *             ),
+     *             @OA\Property(
      *                 property="citation",
-     *                 type="string"
+     *                 type="string",
      *             ),
      *             @OA\Property(
      *                 property="authors",
      *                 type="array",
-     *                     @OA\Items(
+     *                 @OA\Items(
      *                     type="integer",
      *                     example=2
      *                 )
      *             ),
-     *             example={"accreditation": "S3", "title": "Publikasi 1", "journal": "Journal of information", "year": "2024", "citation": "1", "authors": {"0": 2, "1": 4, "2": 8} }
+     *             example={"category": "google", "identifier": null, "quartile": null, "accreditation": "S3", "title": "Publikasi 1", "journal": "Journal of information", "publication_name": null, "year": "2024", "citation": "1", "authors": {"0": 2, "1": 4, "2": 8} }
      *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Google Publication Created",
+     *         description="Publication Updated",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Google publication data created successfully."),
+     *             @OA\Property(property="message", type="string", example="Publication data updated successfully."),
      *             @OA\Property(property="data", type="object",
      *                  @OA\Property(property="id", type="integer", example=1),
+     *                  @OA\Property(property="category", type="string", example="google"),
      *                  @OA\Property(property="accreditation", type="string", example="S3"),
      *                  @OA\Property(property="title", type="string", example="Publikasi 1"),
      *                  @OA\Property(property="journal", type="string", example="Journal of information"),
@@ -273,9 +328,13 @@ class GooglePublicationController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'accreditation' => 'required|string|max:50',
-            'title' => 'required|string|max:255|unique:google_publications,title,' . $id,
-            'journal' => 'required|string|max:255',
+            'category' => 'required|in:google,scopus',
+            'accreditation' => 'required_if:category,google|string|max:50',
+            'identifier' => 'required_if:category,scopus|string|max:50',
+            'quartile' => 'required_if:category,scopus|string|max:50',
+            'title' => 'required_if:category,google|string|max:255|unique:publications,title,' . $id,
+            'journal' => 'required_if:category,google|string|max:255',
+            'publication_name' => 'required_if:category,scopus|string|max:255',
             'year' => 'required|max:4',
             'citation' => 'required|string|max:10',
             'authors' => 'nullable|array',
@@ -286,9 +345,9 @@ class GooglePublicationController extends Controller
             return $this->errorResponse($validator->errors(), 422);
         }
 
-        $data = GooglePublication::find($id);
+        $data = Publication::find($id);
         if (!$data) {
-            return $this->errorResponse('Google Publication not found.', 404);
+            return $this->errorResponse('Publication not found.', 404);
         }
 
         $authors = $request->authors;
@@ -299,23 +358,57 @@ class GooglePublicationController extends Controller
 
         $request->merge(['creators' => $creators]);
 
-        $data->update($request->all());
+        if ($request->category == 'google') {
+            $data->update([
+                'category' => $request->category,
+                'accreditation' => $request->accreditation,
+                'identifier' => null,
+                'quartile' => null,
+                'title' => $request->title,
+                'journal' => $request->journal,
+                'publication_name' => null,
+                'year' => $request->year,
+                'citation' => $request->citation,
+                'creators' => $creators,
+            ]);
+        } else {
+            $data->update([
+                'category' => $request->category,
+                'accreditation' => null,
+                'identifier' => $request->identifier,
+                'quartile' => $request->quartile,
+                'title' => $request->title,
+                'journal' => null,
+                'publication_name' => $request->publication_name,
+                'year' => $request->year,
+                'citation' => $request->citation,
+                'creators' => $creators,
+            ]);
+        }
 
+        $data->update($request->all());
         $data->authors()->sync($request->authors);
         $data->save();
 
         $data->load('authors');
 
-        return $this->successResponse($data, 'Google Publication updated successfully.', 200);
+        return $this->successResponse($data, 'Publication updated successfully.', 200);
     }
 
     /**
      * @OA\Get(
-     *     path="/api/google-publications",
-     *     summary="Get paginated list of google publications",
-     *     description="Returns paginated google publications with optional search functionality",
+     *     path="/api/publications",
+     *     summary="Get paginated list of publications",
+     *     description="Returns paginated publications with optional search functionality",
      *     security={{"bearer_token": {}}},
-     *     tags={"Google Publications"},
+     *     tags={"Publications"},
+     *     @OA\Parameter(
+     *         name="category",
+     *         in="query",
+     *         description="Search term for filtering data by google or scopus",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
      *     @OA\Parameter(
      *         name="q",
      *         in="query",
@@ -328,7 +421,7 @@ class GooglePublicationController extends Controller
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Google publication data retrieved successfully."),
+     *             @OA\Property(property="message", type="string", example="publication data retrieved successfully."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -340,10 +433,14 @@ class GooglePublicationController extends Controller
      *                         type="object",
      *                        @OA\Property(property="id", type="integer", example=1),
      *                        @OA\Property(property="accreditation", type="string", example="S3"),
+     *                        @OA\Property(property="identifier", type="string", example="34576"),
+     *                        @OA\Property(property="quartile", type="string", example="Q1"),
      *                        @OA\Property(property="title", type="string", example="Publikasi 1"),
      *                        @OA\Property(property="journal", type="string", example="Journal of information"),
+     *                        @OA\Property(property="publication_name", type="string", example="Journal of technology"),
      *                        @OA\Property(property="year", type="string", example="2024"),
      *                        @OA\Property(property="citation", type="string", example="1"),
+     *                        @OA\Property(property="category", type="string", example="google"),
      *                         @OA\Property(
      *                             property="authors",
      *                             type="array",
@@ -383,31 +480,46 @@ class GooglePublicationController extends Controller
      *     )
      * )
      */
-    public function getGooglePublications()
+    public function getPublications()
     {
-        $query = GooglePublication::query();
+        $query = Publication::query();
 
-        if (request()->has('q')) {
-            $search_term = request()->input('q');
-            $query->whereAny(['title', 'journal', 'creators'], 'like', "%$search_term%");
+        // Get the category from the request
+        $category = request()->input('category', '');
+        $search_term = request()->input('q');
+
+        /// Apply category filter if provided
+        if ($category) {
+            $query->where('category', $category);
         }
 
-        $data = $query->with('authors')->paginate(10);
+        // Apply search term filter if provided
+        if ($search_term) {
+            // Define searchable fields based on the category
+            $searchableFields = $this->getSearchableFields($category);
+            $query->whereAny($searchableFields, 'like', "%$search_term%");
+        }
 
-        return $this->paginatedResponse($data, 'Google Publications retrieved successfully.', 200);
+        // Get selectable fields based on the category
+        $selectable_fields = $this->getSelectableFields($category);
+        $query->select($selectable_fields);
+
+        $data = $query->with('authors')->latest()->paginate(10);
+
+        return $this->paginatedResponse($data, 'Publications retrieved successfully.', 200);
     }
 
     /**
      * @OA\Get(
-     *     path="/api/google-publications/{id}",
-     *     summary="Get google publication by ID",
-     *     description="Returns a specific google publication by its ID with related authors",
+     *     path="/api/publications/{id}",
+     *     summary="Get publication by ID",
+     *     description="Returns a specific publication by its ID with related authors",
      *     security={{"bearer_token": {}}},
-     *     tags={"Google Publications"},
+     *     tags={"Publications"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="ID of google publication to return",
+     *         description="ID of publication to return",
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
@@ -416,16 +528,20 @@ class GooglePublicationController extends Controller
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Google publication data retrieved successfully."),
+     *             @OA\Property(property="message", type="string", example="publication data retrieved successfully."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
      *                 @OA\Property(property="id", type="integer", example=1),
      *                 @OA\Property(property="accreditation", type="string", example="S3"),
+     *                 @OA\Property(property="identifier", type="string", example="34576"),
+     *                 @OA\Property(property="quartile", type="string", example="Q1"),
      *                 @OA\Property(property="title", type="string", example="Publikasi 1"),
      *                 @OA\Property(property="journal", type="string", example="Journal of information"),
+     *                 @OA\Property(property="publication_name", type="string", example="Journal of technology"),
      *                 @OA\Property(property="year", type="string", example="2024"),
      *                 @OA\Property(property="citation", type="string", example="1"),
+     *                 @OA\Property(property="category", type="string", example="scopus"),
      *                 @OA\Property(
      *                     property="authors",
      *                     type="array",
@@ -463,37 +579,41 @@ class GooglePublicationController extends Controller
      *     )
      * )
      */
-    public function getGooglePublicationByID($id)
+    public function getPublicationByID($id)
     {
-        $data = GooglePublication::with('authors')->find($id);
+        $data = Publication::find($id);
         if (!$data) {
-            return $this->errorResponse('Google Publication not found.', 404);
+            return $this->errorResponse('Publication not found.', 404);
         }
 
-        return $this->successResponse($data, 'Google Publication retrieved successfully.', 200);
+        // Get selectable fields based on the category
+        $selectable_fields = $this->getSelectableFields($data->category);
+        $publication = Publication::select($selectable_fields)->with('authors')->find($id);
+
+        return $this->successResponse($publication, 'Publication retrieved successfully.', 200);
     }
 
     /**
      * @OA\Get(
-     *     path="/api/google-publications/grouped-by-scheme",
-     *     summary="Get google publications grouped by scheme",
+     *     path="/api/publications/grouped",
+     *     summary="Get publications grouped by scheme",
      *     security={{"bearer_token": {}}},
-     *     description="Retrieves google publications data grouped by `accreditation`, with an optional filter by `study_program_id`.",
-     *     tags={"Google Publications"},
+     *     description="Retrieves publications data grouped by `accreditation`, with an optional filter by `study_program_id`.",
+     *     tags={"Publications"},
      *     @OA\Parameter(
      *         name="study_program_id",
      *         in="query",
-     *         description="Filter google publications by study program ID",
+     *         description="Filter publications by study program ID",
      *         required=false,
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Successful retrieval of google publications data",
+     *         description="Successful retrieval of publications data",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Google publications data retrieved successfully."),
+     *             @OA\Property(property="message", type="string", example="Publications data retrieved successfully."),
      *             @OA\Property(property="data", type="object",
      *                 @OA\Property(property="S3", type="object",
      *                     @OA\Property(property="count", type="integer", example=2),
@@ -510,9 +630,9 @@ class GooglePublicationController extends Controller
      *     )
      * )
      */
-    public function getDataGroupedByAccreditation()
+    public function getDataGroupedByAccreditationAndQuartile()
     {
-        $query = GooglePublication::with('authors');
+        $query = Publication::with('authors');
 
         if (request()->has('study_program_id')) {
             $study_program_id = request()->input('study_program_id');
@@ -523,22 +643,33 @@ class GooglePublicationController extends Controller
 
         $data = $query->get();
 
-        $grouped_data = $data->groupBy('accreditation')->map(function ($group) {
-            return [
-                'count' => $group->count(),
-            ];
-        });
+        $grouped_data = $data
+            ->filter(function ($item) {
+                // Ensure at least one key is filled and not empty
+                return !empty($item['accreditation']) || !empty($item['quartile']);
+            })
+            ->groupBy(function ($item) {
+                // Group by the filled key: 'accreditation' or 'quartile'
+                return !empty($item['accreditation']) ? $item['accreditation'] : $item['quartile'];
+            })
+            ->map(function ($group) {
+                return [
+                    'count' => $group->count(), // Count the items in each group
+                ];
+            });
 
-        return $this->successResponse($grouped_data, 'Google Publications grouped by accreditation retrieved successfully.', 200);
+
+
+        return $this->successResponse($grouped_data, 'Publications grouped by accreditation and quartile retrieved successfully.', 200);
     }
 
     /**
      * @OA\Get(
-     *     path="/api/google-publications/chart-data",
-     *     summary="Get google publications statistics chart data",
+     *     path="/api/publications/chart-data",
+     *     summary="Get Publications statistics chart data",
      *     security={{"bearer_token": {}}},
-     *     description="Retrieves google publications statistics grouped by study programs for chart visualization",
-     *     tags={"Google Publications"},
+     *     description="Retrieves Publications statistics grouped by study programs for chart visualization",
+     *     tags={"Publications"},
      *     @OA\Parameter(
      *         name="year",
      *         in="query",
@@ -551,7 +682,7 @@ class GooglePublicationController extends Controller
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Google publications chart data retrieved successfully."),
+     *             @OA\Property(property="message", type="string", example="Publications chart data retrieved successfully."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -600,44 +731,44 @@ class GooglePublicationController extends Controller
     public function getChartsData()
     {
         // Base query starting with study programs
-        $data_by_program = StudyProgram::select(
+        $publications_by_program = StudyProgram::select(
             'study_programs.name as study_program',
-            DB::raw('COALESCE(COUNT(DISTINCT google_publications.id), 0) as total_publications')
+            DB::raw('COALESCE(COUNT(DISTINCT publications.id), 0) as total_publications')
         )
             ->leftJoin('authors', 'study_programs.id', '=', 'authors.study_program_id')
-            ->leftJoin('author_google_publication', 'authors.id', '=', 'author_google_publication.author_id')
-            ->leftJoin('google_publications', 'author_google_publication.google_publication_id', '=', 'google_publications.id');
+            ->leftJoin('author_publication', 'authors.id', '=', 'author_publication.author_id')
+            ->leftJoin('publications', 'author_publication.publication_id', '=', 'publications.id');
 
         // Apply year filter if provided
         if (request()->has('year')) {
             $year = request()->input('year');
-            $data_by_program->where('year', $year);
+            $publications_by_program->where('publications.thn_pelaksanaan_kegiatan', $year);
         }
 
-        // Complete the query and fetch the data
-        $data_by_program = $data_by_program
+        // Complete the query
+        $publications_by_program = $publications_by_program
             ->groupBy('study_programs.id', 'study_programs.name')
             ->orderBy('study_programs.name')
             ->get();
 
-        // Calculate total data
-        $total_data = $data_by_program->sum('total_publications');
+        // Calculate total publications
+        $total_publications = $publications_by_program->sum('total_publications');
 
         // Prepare chart data
         $chart_data = [
-            'labels' => $data_by_program->pluck('study_program')->toArray(),
+            'labels' => $publications_by_program->pluck('study_program')->toArray(),
             'datasets' => [
-                'data' => $data_by_program->pluck('total_publications')->toArray(),
-                'background_color' => $this->generateColors(count($data_by_program)),
+                'data' => $publications_by_program->pluck('total_publications')->toArray(),
+                'background_color' => $this->generateColors(count($publications_by_program))
             ],
-            'study_programs' => $data_by_program->map(function ($item) use ($total_data) {
+            'study_programs' => $publications_by_program->map(function ($item) use ($total_publications) {
                 return [
                     'name' => $item->study_program,
                     'total' => $item->total_publications,
-                    'percentage' => $total_data > 0 ? round(($item->total_publications / $total_data) * 100, 2) : 0,
+                    'percentage' => $total_publications > 0 ? round(($item->total_publications / $total_publications) * 100, 2) : 0,
                 ];
             }),
-            'total_data' => $total_data,
+            'total_publications' => $total_publications
         ];
 
         return $this->successResponse($chart_data, 'Chart data retrieved successfully.', 200);
@@ -645,32 +776,32 @@ class GooglePublicationController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/google-publications/{id}",
-     *     summary="Delete a google publication",
-     *     description="Deletes a google publication record by ID",
+     *     path="/api/publications/{id}",
+     *     summary="Delete a publication",
+     *     description="Deletes a publication record by ID",
      *     security={{"bearer_token": {}}},
-     *     tags={"Google Publications"},
+     *     tags={"Publications"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="ID of google publication to delete",
+     *         description="ID of publication to delete",
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Google publication deleted successfully",
+     *         description="Publication deleted successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Google publication data deleted successfully.")
+     *             @OA\Property(property="message", type="string", example="Publication data deleted successfully.")
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Google publication not found",
+     *         description="Publication not found",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Google publication data not found.")
+     *             @OA\Property(property="message", type="string", example="Publication data not found.")
      *         )
      *     ),
      *     @OA\Response(
@@ -684,13 +815,13 @@ class GooglePublicationController extends Controller
      */
     public function delete($id)
     {
-        $data = GooglePublication::find($id);
+        $data = Publication::find($id);
         if (!$data) {
-            return $this->errorResponse('Google Publication not found.', 404);
+            return $this->errorResponse('Publication not found.', 404);
         }
 
         $data->delete();
 
-        return $this->successResponse(null, 'Google Publication deleted successfully.', 200);
+        return $this->successResponse(null, 'Publication deleted successfully.', 200);
     }
 }

@@ -16,7 +16,7 @@ class CategoryController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['role:superadmin']);
+        $this->middleware(['role:superadmin'])->except(['getCategoriesList']);
     }
 
     /**
@@ -366,6 +366,38 @@ class CategoryController extends Controller
         $categories = Category::paginate(10);
 
         return $this->successResponse($categories, 'Categories data retrieved successfully.', 200);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/categories/list",
+     *     summary="Get list of categories",
+     *     description="Retrieves a list of all categories with their IDs and names",
+     *     tags={"Categories"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Categories list retrieved successfully."),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="Category Name")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     * )
+     */
+    public function getCategoriesList()
+    {
+        $categories = Category::select('id', 'name')->get();
+
+        return $this->successResponse($categories, 'Categories list retrieved successfully.', 200);
     }
 
     /**
