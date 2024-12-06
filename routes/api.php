@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\HKIController;
 use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PostController;
@@ -98,5 +99,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/publications/{id}', [PublicationController::class, 'getPublicationByID'])->where('id', '[0-9]+');
     Route::get('/publications/grouped', [PublicationController::class, 'getDataGroupedByAccreditationAndQuartile']);
     Route::get('/publications/chart-data', [PublicationController::class, 'getChartsData']);
+
+    // HKI
+    Route::post('/hki/import', [HKIController::class, 'import']);
+    Route::post('/hki', [HKIController::class, 'create']);
+    Route::patch('/hki/{id}', [HKIController::class, 'update'])->where('id', '[0-9]+');
+    Route::get('/hki', [HKIController::class, 'getHKIData']);
+    Route::get('/hki/{id}', [HKIController::class, 'getHKIDataByID'])->where('id', '[0-9]+');
+    Route::get('/hki/grouped-by-category', [HKIController::class, 'getHKIDataGroupedByCategory']);
+    Route::get('/hki/chart-data', [HKIController::class, 'getHKIChartData']);
+    Route::delete('/hki/{id}', [HKIController::class, 'delete'])->where('id', '[0-9]+');
 });
 

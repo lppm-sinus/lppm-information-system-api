@@ -39,4 +39,9 @@ class Author extends Model
     {
         return $this->belongsToMany(Publication::class);
     }
+
+    public function hkis()
+    {
+        return $this->belongsToMany(HKI::class);
+    }
 }

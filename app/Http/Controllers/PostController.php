@@ -342,6 +342,7 @@ class PostController extends Controller
                 'image_url',
                 'file_url',
                 'link_url',
+                'status',
                 'created_at',
                 'updated_at'
             ])
@@ -363,6 +364,7 @@ class PostController extends Controller
                 'image_url' => $post['image_url'] ? Storage::url($post['image_url']) : null,
                 'file_url' => $post['file_url'] ? Storage::url($post['file_url']) : null,
                 'link_url' => $post['link_url'],
+                'status' => $post['status'],
                 'created_at' => $post['created_at'],
                 'updated_at' => $post['updated_at']
             ];

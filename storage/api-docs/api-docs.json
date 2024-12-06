@@ -1547,6 +1547,1218 @@
                 ]
             }
         },
+        "/api/categories/list": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Get list of categories",
+                "description": "Retrieves a list of all categories with their IDs and names",
+                "operationId": "f3bb2870ea6e66acb9e154be6fb83d88",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Categories list retrieved successfully."
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Category Name"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/hki/import": {
+            "post": {
+                "tags": [
+                    "HKI"
+                ],
+                "summary": "Import hki data from Excel/CSV file",
+                "operationId": "2b3524475b3aaaa9fb4c7b513d7bd7e9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "file": {
+                                        "description": "Excel/CSV file containing hki data",
+                                        "type": "file"
+                                    },
+                                    "reset_table": {
+                                        "description": "Whether to reset the tables before import",
+                                        "type": "boolean",
+                                        "example": false
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "HKI imported successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "HKI data imported successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error or import failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/hki": {
+            "get": {
+                "tags": [
+                    "HKI"
+                ],
+                "summary": "Get paginated list of hki",
+                "description": "Returns paginated hki with optional search functionality",
+                "operationId": "8e051925847be5969f8036ac209bcbd2",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search term for filtering data by nomor permohonan, journal or title",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "HKI data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "tahun_permohonan": {
+                                                                "type": "string",
+                                                                "example": "2023"
+                                                            },
+                                                            "nomor_permohonan": {
+                                                                "type": "string",
+                                                                "example": "2342453"
+                                                            },
+                                                            "kategori": {
+                                                                "type": "string",
+                                                                "example": "hak cipta"
+                                                            },
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "SISTEM INFORMASI"
+                                                            },
+                                                            "pemegang_paten": {
+                                                                "type": "string",
+                                                                "example": "Budi, Joko"
+                                                            },
+                                                            "inventor": {
+                                                                "type": "string",
+                                                                "example": "Iwan Ady"
+                                                            },
+                                                            "status": {
+                                                                "type": "string",
+                                                                "example": "Graded"
+                                                            },
+                                                            "nomor_publikasi": {
+                                                                "type": "string",
+                                                                "example": "00034523"
+                                                            },
+                                                            "tanggal_publikasi": {
+                                                                "type": "string",
+                                                                "example": "2023-09-10"
+                                                            },
+                                                            "filing_date": {
+                                                                "type": "string",
+                                                                "example": "2023-09-11"
+                                                            },
+                                                            "reception_date": {
+                                                                "type": "string",
+                                                                "example": "2023-09-13"
+                                                            },
+                                                            "nomor_registrasi": {
+                                                                "type": "string",
+                                                                "example": "003458359"
+                                                            },
+                                                            "tanggal_registrasi": {
+                                                                "type": "string",
+                                                                "example": "2023-09-18"
+                                                            },
+                                                            "authors": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "integer",
+                                                                            "example": 1
+                                                                        },
+                                                                        "sinta_id": {
+                                                                            "type": "string",
+                                                                            "example": "66889756"
+                                                                        },
+                                                                        "nidn": {
+                                                                            "type": "string",
+                                                                            "example": "2342453"
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "Yustina"
+                                                                        },
+                                                                        "affiliation": {
+                                                                            "type": "string",
+                                                                            "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                                        },
+                                                                        "study_program_id": {
+                                                                            "type": "integer",
+                                                                            "example": "2"
+                                                                        },
+                                                                        "last_education": {
+                                                                            "type": "string",
+                                                                            "example": "S2"
+                                                                        },
+                                                                        "functional_position": {
+                                                                            "type": "string",
+                                                                            "example": "Asisten Ahli"
+                                                                        },
+                                                                        "title_prefix": {
+                                                                            "type": "string",
+                                                                            "example": null
+                                                                        },
+                                                                        "title_suffix": {
+                                                                            "type": "string",
+                                                                            "example": "S.Kom, M.Kom"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "meta": {
+                                                    "properties": {
+                                                        "total": {
+                                                            "type": "integer",
+                                                            "example": 100
+                                                        },
+                                                        "per_page": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        },
+                                                        "current_page": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "last_page": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "HKI"
+                ],
+                "summary": "Create new hki",
+                "operationId": "3d780c0ce6e27f2e8a2df068b2b2c6db",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "tahun_permohonan": {
+                                        "type": "string"
+                                    },
+                                    "nomor_permohonan": {
+                                        "type": "string"
+                                    },
+                                    "kategori": {
+                                        "type": "string"
+                                    },
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "pemegang_paten": {
+                                        "type": "string"
+                                    },
+                                    "inventor": {
+                                        "type": "string"
+                                    },
+                                    "status": {
+                                        "type": "string"
+                                    },
+                                    "nomor_publikasi": {
+                                        "type": "string"
+                                    },
+                                    "tanggal_publikasi": {
+                                        "type": "string"
+                                    },
+                                    "filing_date": {
+                                        "type": "string"
+                                    },
+                                    "reception_date": {
+                                        "type": "string"
+                                    },
+                                    "nomor_registrasi": {
+                                        "type": "string"
+                                    },
+                                    "tanggal_registrasi": {
+                                        "type": "string"
+                                    },
+                                    "authors": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 2
+                                        }
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "tahun_permohonan": "2023",
+                                    "nomor_permohonan": "2342453",
+                                    "kategori": "hak cipta",
+                                    "title": "SISTEM INFORMASI",
+                                    "pemegang_paten": "Budi, Joko",
+                                    "inventor": "Iwan Ady",
+                                    "status": "Graded",
+                                    "nomor_publikasi": "00034523",
+                                    "tanggal_publikasi": "2023-09-10",
+                                    "filing_date": "2023-09-11",
+                                    "reception_date": "2023-09-13",
+                                    "nomor_registrasi": "003458359",
+                                    "tanggal_registrasi": "2023-09-18",
+                                    "authors": [
+                                        2,
+                                        4,
+                                        8
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "HKI Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "HKI created successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "tahun_permohonan": {
+                                                    "type": "string",
+                                                    "example": "2023"
+                                                },
+                                                "nomor_permohonan": {
+                                                    "type": "string",
+                                                    "example": "2342453"
+                                                },
+                                                "kategori": {
+                                                    "type": "string",
+                                                    "example": "hak cipta"
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "SISTEM INFORMASI"
+                                                },
+                                                "pemegang_paten": {
+                                                    "type": "string",
+                                                    "example": "Budi, Joko"
+                                                },
+                                                "inventor": {
+                                                    "type": "string",
+                                                    "example": "Iwan Ady"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "Graded"
+                                                },
+                                                "nomor_publikasi": {
+                                                    "type": "string",
+                                                    "example": "00034523"
+                                                },
+                                                "tanggal_publikasi": {
+                                                    "type": "string",
+                                                    "example": "2023-09-10"
+                                                },
+                                                "filing_date": {
+                                                    "type": "string",
+                                                    "example": "2023-09-11"
+                                                },
+                                                "reception_date": {
+                                                    "type": "string",
+                                                    "example": "2023-09-13"
+                                                },
+                                                "nomor_registrasi": {
+                                                    "type": "string",
+                                                    "example": "003458359"
+                                                },
+                                                "tanggal_registrasi": {
+                                                    "type": "string",
+                                                    "example": "2023-09-18"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/hki/{id}": {
+            "get": {
+                "tags": [
+                    "HKI"
+                ],
+                "summary": "Get hki by ID",
+                "description": "Returns a specific hki by its ID with related authors",
+                "operationId": "537cb4677e25303ff9d53647f11999a8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of hki to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "HKI data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "tahun_permohonan": {
+                                                    "type": "string",
+                                                    "example": "2023"
+                                                },
+                                                "nomor_permohonan": {
+                                                    "type": "string",
+                                                    "example": "2342453"
+                                                },
+                                                "kategori": {
+                                                    "type": "string",
+                                                    "example": "hak cipta"
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "SISTEM INFORMASI"
+                                                },
+                                                "pemegang_paten": {
+                                                    "type": "string",
+                                                    "example": "Budi, Joko"
+                                                },
+                                                "inventor": {
+                                                    "type": "string",
+                                                    "example": "Iwan Ady"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "Graded"
+                                                },
+                                                "nomor_publikasi": {
+                                                    "type": "string",
+                                                    "example": "00034523"
+                                                },
+                                                "tanggal_publikasi": {
+                                                    "type": "string",
+                                                    "example": "2023-09-10"
+                                                },
+                                                "filing_date": {
+                                                    "type": "string",
+                                                    "example": "2023-09-11"
+                                                },
+                                                "reception_date": {
+                                                    "type": "string",
+                                                    "example": "2023-09-13"
+                                                },
+                                                "nomor_registrasi": {
+                                                    "type": "string",
+                                                    "example": "003458359"
+                                                },
+                                                "tanggal_registrasi": {
+                                                    "type": "string",
+                                                    "example": "2023-09-18"
+                                                },
+                                                "authors": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "sinta_id": {
+                                                                "type": "string",
+                                                                "example": "34514545"
+                                                            },
+                                                            "nidn": {
+                                                                "type": "string",
+                                                                "example": "2342453"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Yustina"
+                                                            },
+                                                            "affiliation": {
+                                                                "type": "string",
+                                                                "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                            },
+                                                            "study_program_id": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "last_education": {
+                                                                "type": "string",
+                                                                "example": "S1"
+                                                            },
+                                                            "functional_position": {
+                                                                "type": "string",
+                                                                "example": "Lektor"
+                                                            },
+                                                            "title_prefix": {
+                                                                "type": "string",
+                                                                "example": "Prof."
+                                                            },
+                                                            "title_suffix": {
+                                                                "type": "string",
+                                                                "example": "S.T."
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data data not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "HKI"
+                ],
+                "summary": "Delete a hki",
+                "description": "Deletes a hki record by ID",
+                "operationId": "cae27f35408189a62211590bbcc7b7d6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of hki to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "HKI deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "HKI data deleted successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "HKI not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "HKI data not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "HKI"
+                ],
+                "summary": "Update an hki by ID",
+                "operationId": "6ab3f568721141c092c19ac0283e748b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the hki",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "tahun_permohonan": {
+                                        "type": "string"
+                                    },
+                                    "nomor_permohonan": {
+                                        "type": "string"
+                                    },
+                                    "kategori": {
+                                        "type": "string"
+                                    },
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "pemegang_paten": {
+                                        "type": "string"
+                                    },
+                                    "inventor": {
+                                        "type": "string"
+                                    },
+                                    "status": {
+                                        "type": "string"
+                                    },
+                                    "nomor_publikasi": {
+                                        "type": "string"
+                                    },
+                                    "tanggal_publikasi": {
+                                        "type": "string"
+                                    },
+                                    "filing_date": {
+                                        "type": "string"
+                                    },
+                                    "reception_date": {
+                                        "type": "string"
+                                    },
+                                    "nomor_registrasi": {
+                                        "type": "string"
+                                    },
+                                    "tanggal_registrasi": {
+                                        "type": "string"
+                                    },
+                                    "authors": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 2
+                                        }
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "tahun_permohonan": "2023",
+                                    "nomor_permohonan": "2342453",
+                                    "kategori": "hak cipta",
+                                    "title": "SISTEM INFORMASI",
+                                    "pemegang_paten": "Budi, Joko",
+                                    "inventor": "Iwan Ady",
+                                    "status": "Graded",
+                                    "nomor_publikasi": "00034523",
+                                    "tanggal_publikasi": "2023-09-10",
+                                    "filing_date": "2023-09-11",
+                                    "reception_date": "2023-09-13",
+                                    "nomor_registrasi": "003458359",
+                                    "tanggal_registrasi": "2023-09-18",
+                                    "authors": [
+                                        2,
+                                        4,
+                                        8
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "HKI Updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "HKI data updated successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "tahun_permohonan": {
+                                                    "type": "string",
+                                                    "example": "2023"
+                                                },
+                                                "nomor_permohonan": {
+                                                    "type": "string",
+                                                    "example": "2342453"
+                                                },
+                                                "kategori": {
+                                                    "type": "string",
+                                                    "example": "hak cipta"
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "SISTEM INFORMASI"
+                                                },
+                                                "pemegang_paten": {
+                                                    "type": "string",
+                                                    "example": "Budi, Joko"
+                                                },
+                                                "inventor": {
+                                                    "type": "string",
+                                                    "example": "Iwan Ady"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "Graded"
+                                                },
+                                                "nomor_publikasi": {
+                                                    "type": "string",
+                                                    "example": "00034523"
+                                                },
+                                                "tanggal_publikasi": {
+                                                    "type": "string",
+                                                    "example": "2023-09-10"
+                                                },
+                                                "filing_date": {
+                                                    "type": "string",
+                                                    "example": "2023-09-11"
+                                                },
+                                                "reception_date": {
+                                                    "type": "string",
+                                                    "example": "2023-09-13"
+                                                },
+                                                "nomor_registrasi": {
+                                                    "type": "string",
+                                                    "example": "003458359"
+                                                },
+                                                "tanggal_registrasi": {
+                                                    "type": "string",
+                                                    "example": "2023-09-18"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/hki/grouped-by-category": {
+            "get": {
+                "tags": [
+                    "HKI"
+                ],
+                "summary": "Get hki grouped by category",
+                "description": "Retrieves hki data grouped by `kategori`, with an optional filter by `study_program_id`.",
+                "operationId": "9dcae4694cecc99f3f68f830403116bb",
+                "parameters": [
+                    {
+                        "name": "study_program_id",
+                        "in": "query",
+                        "description": "Filter hki by study program ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful retrieval of hki data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "HKI data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "hak cipta": {
+                                                    "properties": {
+                                                        "count": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/hki/chart-data": {
+            "get": {
+                "tags": [
+                    "HKI"
+                ],
+                "summary": "Get hki statistics chart data",
+                "description": "Retrieves hki statistics grouped by study programs for chart visualization",
+                "operationId": "3aef277e8dc880269332bed47fed7517",
+                "parameters": [
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "description": "Filter statistics by year",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2024"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "HKI chart data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "labels": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "S1-Informatika"
+                                                    }
+                                                },
+                                                "datasets": {
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "integer",
+                                                                "example": 10
+                                                            }
+                                                        },
+                                                        "background_color": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "string",
+                                                                "example": "#FF5733"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "study_programs": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "S1-Informatika"
+                                                            },
+                                                            "total": {
+                                                                "type": "integer",
+                                                                "example": 10
+                                                            },
+                                                            "percentage": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 25.5
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "total_hkis": {
+                                                    "type": "integer",
+                                                    "example": 40
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
         "/api/pages": {
             "get": {
                 "tags": [
@@ -8829,6 +10041,10 @@
         {
             "name": "Categories",
             "description": "Categories"
+        },
+        {
+            "name": "HKI",
+            "description": "HKI"
         },
         {
             "name": "Pages",
