@@ -2,34 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Imports\GoogleImport;
-use App\Imports\ScopusImport;
+use App\Imports\BookImport;
 use App\Models\Author;
-use App\Models\Publication;
+use App\Models\Book;
 use App\Models\StudyProgram;
 use App\Traits\ApiResponse;
 use App\Traits\FunctionalMethod;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
-class PublicationController extends Controller
+class BookController extends Controller
 {
     use ApiResponse, FunctionalMethod;
 
-
     public function __construct()
     {
-        $this->middleware('role:superadmin|admin')->except(['getDataGroupedByAccreditationAndQuartile', 'getChartsData']);
+        $this->middleware('role:superadmin|admin')->except(['getBooksGroupedByCategory', 'getBooksChartData']);
     }
 
     /**
      * @OA\Post(
-     *     path="/api/publications/import",
-     *     summary="Import publications data from Excel/CSV file",
-     *     tags={"Publications"},
+     *     path="/api/books/import",
+     *     summary="Import books data from Excel/CSV file",
+     *     tags={"Books"},
      *     security={{ "bearer": {} }},
      *     @OA\RequestBody(
      *         required=true,
@@ -40,7 +38,7 @@ class PublicationController extends Controller
      *                 @OA\Property(
      *                     property="file",
      *                     type="file",
-     *                     description="Excel/CSV file containing publications data"
+     *                     description="Excel/CSV file containing books data"
      *                 ),
      *                 @OA\Property(
      *                     property="reset_table",
@@ -53,10 +51,10 @@ class PublicationController extends Controller
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Publications imported successfully",
+     *         description="Books imported successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Publications data imported successfully."),
+     *             @OA\Property(property="message", type="string", example="Books data imported successfully."),
      *         )
      *     ),
      *     @OA\Response(
@@ -80,8 +78,7 @@ class PublicationController extends Controller
     public function import(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'file' => 'required|mimes:xlsx,xls,csv',
-            'category' => 'required|string|in:google,scopus',
+            'file' => 'required|mimes:csv,xls,xlsx',
         ]);
 
         if ($validator->fails()) {
@@ -89,22 +86,15 @@ class PublicationController extends Controller
         }
 
         try {
-            $import = null;
+            $import = new BookImport();
 
             if ($request->boolean('reset_table')) {
-                DB::table('author_publication')->delete();
-                DB::table('publications')->delete();
-            }
-
-            if ($request->category == 'scopus') {
-                $import = new ScopusImport();
-            } elseif ($request->category == 'google') {
-                $import = new GoogleImport();
+                DB::table('books')->delete();
             }
 
             Excel::import($import, $request->file('file'));
 
-            return $this->successResponse(null, 'Publication data imported successfully.', 201);
+            return $this->successResponse(null, 'Books data imported successfully.', 201);
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), 500);
         }
@@ -112,9 +102,9 @@ class PublicationController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/publications",
-     *     tags={"Publications"},
-     *     summary="Create new publication",
+     *     path="/api/books",
+     *     tags={"Books"},
+     *     summary="Create new book",
      *     security={{"bearer_token":{}}},
      *  @OA\RequestBody(
      *     required=true,
@@ -122,20 +112,15 @@ class PublicationController extends Controller
      *         mediaType="application/json",
      *         @OA\Schema(
      *             @OA\Property(
-     *                 property="category",
-     *                 type="string",
-     *                 enum={"google", "scopus"},
-     *             ),
-     *             @OA\Property(
-     *                 property="accreditation",
+     *                 property="tahun_terbit",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="identifier",
+     *                 property="isbn",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="quartile",
+     *                 property="kategori",
      *                 type="string"
      *             ),
      *             @OA\Property(
@@ -143,20 +128,16 @@ class PublicationController extends Controller
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="journal",
+     *                 property="tempat_terbit",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="publication_name",
+     *                 property="penerbit",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="year",
-     *                 type="string",
-     *             ),
-     *             @OA\Property(
-     *                 property="citation",
-     *                 type="string",
+     *                 property="page",
+     *                 type="string"
      *             ),
      *             @OA\Property(
      *                 property="authors",
@@ -166,24 +147,25 @@ class PublicationController extends Controller
      *                     example=2
      *                 )
      *             ),
-     *             example={"category": "google", "identifier": null, "quartile": null, "accreditation": "S3", "title": "Publikasi 1", "journal": "Journal of information", "publication_name": null, "year": "2024", "citation": "1", "authors": {"0": 2, "1": 4, "2": 8} }
+     *             example={"tahun_terbit": "2023", "isbn": "2342453", "kategori": "buku ajar", "title": "Book Title", "tempat_terbit": "Yogyakarta", "penerbit": "Airlangga", "page": "223", "authors": {"0": 2, "1": 4, "2": 8} }
      *         )
      *     )
      * ),
      *     @OA\Response(
      *         response=201,
-     *         description="Publication Created",
+     *         description="Book Created",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Publication data created successfully."),
+     *             @OA\Property(property="message", type="string", example="Book created successfully."),
      *             @OA\Property(property="data", type="object",
      *                  @OA\Property(property="id", type="integer", example=1),
-     *                  @OA\Property(property="category", type="string", example="google"),
-     *                  @OA\Property(property="accreditation", type="string", example="S3"),
-     *                  @OA\Property(property="title", type="string", example="Publikasi 1"),
-     *                  @OA\Property(property="journal", type="string", example="Journal of information"),
-     *                  @OA\Property(property="year", type="string", example="2024"),
-     *                  @OA\Property(property="citation", type="string", example="1"),
+     *                  @OA\Property(property="tahun_terbit", type="string", example="2023"),
+     *                  @OA\Property(property="isbn", type="string", example="2342453"),
+     *                  @OA\Property(property="kategori", type="string", example="buku ajar"),
+     *                  @OA\Property(property="title", type="string", example="Book Title"),
+     *                  @OA\Property(property="tempat_terbit", type="string", example="Yogyakarta"),
+     *                  @OA\Property(property="penerbit", type="string", example="Airlangga"),
+     *                  @OA\Property(property="page", type="string", example="223"),
      *             )
      *         )
      *     ),
@@ -199,17 +181,15 @@ class PublicationController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'category' => 'required|in:google,scopus',
-            'accreditation' => 'required_if:category,google|string|max:50',
-            'identifier' => 'required_if:category,scopus|string|max:50',
-            'quartile' => 'required_if:category,scopus|string|max:50',
-            'title' => 'required_if:category,google|string|max:255|unique:publications,title',
-            'journal' => 'required_if:category,google|string|max:255',
-            'publication_name' => 'required_if:category,scopus|string|max:255',
-            'year' => 'required|max:4',
-            'citation' => 'required|string|max:10',
+            'tahun_terbit' => 'required|max:4',
+            'isbn' => 'required|max:50',
+            'kategori' => 'required|max:50',
+            'title' => 'required|max:255|unique:books,title',
+            'tempat_terbit' => 'required|max:100',
+            'penerbit' => 'required|max:255',
+            'page' => 'required|max:20',
             'authors' => 'nullable|array',
-            'authors.*' => 'nullable|exists:authors,id',
+            'authors.*' => 'nullable|exists:authors,id'
         ]);
 
         if ($validator->fails()) {
@@ -225,26 +205,26 @@ class PublicationController extends Controller
             $request->merge(['creators' => $creators]);
         }
 
-        $data = Publication::create($request->all());
-        $data->authors()->attach($request->authors);
-        $data->save();
+        $book = Book::create($request->all());
+        $book->authors()->attach($request->authors);
+        $book->save();
 
-        $data->load('authors');
+        $book->load('authors');
 
-        return $this->successResponse($data, 'Publication created successfully.', 201);
+        return $this->successResponse($book, 'Book data created successfully.', 201);
     }
 
     /**
      * @OA\Patch(
-     *     path="/api/publications/{id}",
-     *     tags={"Publications"},
-     *     summary="Update an publication by ID",
+     *     path="/api/books/{id}",
+     *     tags={"Books"},
+     *     summary="Update an book by ID",
      *     security={{"bearer_token":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         description="ID of the publication",
+     *         description="ID of the book",
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\RequestBody(
@@ -252,20 +232,15 @@ class PublicationController extends Controller
      *             mediaType="application/json",
      *             @OA\Schema(
      *             @OA\Property(
-     *                 property="category",
-     *                 type="string",
-     *                 enum={"google", "scopus"},
-     *             ),
-     *             @OA\Property(
-     *                 property="accreditation",
+     *                 property="tahun_terbit",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="identifier",
+     *                 property="isbn",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="quartile",
+     *                 property="kategori",
      *                 type="string"
      *             ),
      *             @OA\Property(
@@ -273,20 +248,16 @@ class PublicationController extends Controller
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="journal",
+     *                 property="tempat_terbit",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="publication_name",
+     *                 property="penerbit",
      *                 type="string"
      *             ),
      *             @OA\Property(
-     *                 property="year",
-     *                 type="string",
-     *             ),
-     *             @OA\Property(
-     *                 property="citation",
-     *                 type="string",
+     *                 property="page",
+     *                 type="string"
      *             ),
      *             @OA\Property(
      *                 property="authors",
@@ -296,24 +267,25 @@ class PublicationController extends Controller
      *                     example=2
      *                 )
      *             ),
-     *             example={"category": "google", "identifier": null, "quartile": null, "accreditation": "S3", "title": "Publikasi 1", "journal": "Journal of information", "publication_name": null, "year": "2024", "citation": "1", "authors": {"0": 2, "1": 4, "2": 8} }
+     *             example={"tahun_terbit": "2023", "isbn": "2342453", "kategori": "buku ajar", "title": "Book Title", "tempat_terbit": "Yogyakarta", "penerbit": "Airlangga", "page": "223", "authors": {"0": 2, "1": 4, "2": 8} }
      *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Publication Updated",
+     *         description="Book Updated",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Publication data updated successfully."),
+     *             @OA\Property(property="message", type="string", example="Book data updated successfully."),
      *             @OA\Property(property="data", type="object",
      *                  @OA\Property(property="id", type="integer", example=1),
-     *                  @OA\Property(property="category", type="string", example="google"),
-     *                  @OA\Property(property="accreditation", type="string", example="S3"),
-     *                  @OA\Property(property="title", type="string", example="Publikasi 1"),
-     *                  @OA\Property(property="journal", type="string", example="Journal of information"),
-     *                  @OA\Property(property="year", type="string", example="2024"),
-     *                  @OA\Property(property="citation", type="string", example="1"),
+     *                  @OA\Property(property="tahun_terbit", type="string", example="2023"),
+     *                  @OA\Property(property="isbn", type="string", example="2342453"),
+     *                  @OA\Property(property="kategori", type="string", example="buku ajar"),
+     *                  @OA\Property(property="title", type="string", example="Book Title"),
+     *                  @OA\Property(property="tempat_terbit", type="string", example="Yogyakarta"),
+     *                  @OA\Property(property="penerbit", type="string", example="Airlangga"),
+     *                  @OA\Property(property="page", type="string", example="223"),
      *             )
      *         )
      *     ),
@@ -329,91 +301,55 @@ class PublicationController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'category' => 'required|in:google,scopus',
-            'accreditation' => 'required_if:category,google|string|max:50',
-            'identifier' => 'required_if:category,scopus|string|max:50',
-            'quartile' => 'required_if:category,scopus|string|max:50',
-            'title' => 'required_if:category,google|string|max:255|unique:publications,title,' . $id,
-            'journal' => 'required_if:category,google|string|max:255',
-            'publication_name' => 'required_if:category,scopus|string|max:255',
-            'year' => 'required|max:4',
-            'citation' => 'required|string|max:10',
+            'tahun_terbit' => 'required|max:4',
+            'isbn' => 'required|max:50',
+            'kategori' => 'required|max:50',
+            'title' => 'required|max:255|unique:books,title,' . $id,
+            'tempat_terbit' => 'required|max:100',
+            'penerbit' => 'required|max:255',
+            'page' => 'required|max:20',
             'authors' => 'nullable|array',
-            'authors.*' => 'nullable|exists:authors,id',
+            'authors.*' => 'nullable|exists:authors,id'
         ]);
 
         if ($validator->fails()) {
             return $this->formatValidationErrors($validator);
         }
 
-        $data = Publication::find($id);
-        if (!$data) {
-            return $this->errorResponse('Publication not found.', 404);
+        $book = Book::find($id);
+        if (!$book) {
+            return $this->errorResponse('Book not found.', 404);
         }
 
-        $authors = $request->authors;
+        if ($request->authors) {
+            $authors = $request->authors;
+            $creators = Author::whereIn('id', $authors)
+                ->pluck('name')
+                ->implode(', ');
 
-        $creators = Author::whereIn('id', $authors)
-            ->pluck('name')
-            ->implode(', ');
-
-        $request->merge(['creators' => $creators]);
-
-        if ($request->category == 'google') {
-            $data->update([
-                'category' => $request->category,
-                'accreditation' => $request->accreditation,
-                'identifier' => null,
-                'quartile' => null,
-                'title' => $request->title,
-                'journal' => $request->journal,
-                'publication_name' => null,
-                'year' => $request->year,
-                'citation' => $request->citation,
-                'creators' => $creators,
-            ]);
-        } else {
-            $data->update([
-                'category' => $request->category,
-                'accreditation' => null,
-                'identifier' => $request->identifier,
-                'quartile' => $request->quartile,
-                'title' => $request->title,
-                'journal' => null,
-                'publication_name' => $request->publication_name,
-                'year' => $request->year,
-                'citation' => $request->citation,
-                'creators' => $creators,
-            ]);
+            $request->merge(['creators' => $creators]);
         }
 
-        $data->update($request->all());
-        $data->authors()->sync($request->authors);
-        $data->save();
+        $book->update($request->all());
+        $book->authors()->sync($request->authors);
+        $book->save();
 
-        $data->load('authors');
+        $book->load('authors');
 
-        return $this->successResponse($data, 'Publication updated successfully.', 200);
+        return $this->successResponse($book, 'Book data successfully updated.', 200);
     }
 
     /**
      * @OA\Get(
-     *     path="/api/publications",
-     *     summary="Get paginated list of publications",
-     *     description="Returns paginated publications with optional search functionality",
+     *     path="/api/books",
+     *     summary="Get paginated list of books",
+     *     description="Returns paginated books with optional search functionality",
      *     security={{"bearer_token": {}}},
-     *     tags={"Publications"},
-     *     @OA\Parameter(
-     *         name="category",
-     *         in="query",
-     *         description="Search term for filtering data by google or scopus",
-     *         required=false,
-     *         @OA\Schema(type="string")
-     *     ),
+     *     tags={"Books"},
      *     @OA\Parameter(
      *         name="q",
      *         in="query",
-     *         description="Search term for filtering data by title, journal or creators",
+     *         description="Search term for filtering data by title or creators name",
      *         required=false,
      *         @OA\Schema(type="string")
      *     ),
@@ -422,7 +358,7 @@ class PublicationController extends Controller
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="publication data retrieved successfully."),
+     *             @OA\Property(property="message", type="string", example="Books data retrieved successfully."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -433,15 +369,13 @@ class PublicationController extends Controller
      *                     @OA\Items(
      *                         type="object",
      *                        @OA\Property(property="id", type="integer", example=1),
-     *                        @OA\Property(property="accreditation", type="string", example="S3"),
-     *                        @OA\Property(property="identifier", type="string", example="34576"),
-     *                        @OA\Property(property="quartile", type="string", example="Q1"),
-     *                        @OA\Property(property="title", type="string", example="Publikasi 1"),
-     *                        @OA\Property(property="journal", type="string", example="Journal of information"),
-     *                        @OA\Property(property="publication_name", type="string", example="Journal of technology"),
-     *                        @OA\Property(property="year", type="string", example="2024"),
-     *                        @OA\Property(property="citation", type="string", example="1"),
-     *                        @OA\Property(property="category", type="string", example="google"),
+     *                        @OA\Property(property="tahun_terbit", type="string", example="2023"),
+     *                        @OA\Property(property="isbn", type="string", example="2342453"),
+     *                        @OA\Property(property="kategori", type="string", example="buku ajar"),
+     *                        @OA\Property(property="title", type="string", example="Book Title"),
+     *                        @OA\Property(property="tempat_terbit", type="string", example="Yogyakarta"),
+     *                        @OA\Property(property="penerbit", type="string", example="Airlangga"),
+     *                        @OA\Property(property="page", type="string", example="223"),
      *                         @OA\Property(
      *                             property="authors",
      *                             type="array",
@@ -481,46 +415,31 @@ class PublicationController extends Controller
      *     )
      * )
      */
-    public function getPublications()
+    public function getBooks()
     {
-        $query = Publication::query();
+        $query = Book::query();
 
-        // Get the category from the request
-        $category = request()->input('category', '');
-        $search_term = request()->input('q');
-
-        /// Apply category filter if provided
-        if ($category) {
-            $query->where('category', $category);
+        if (request()->has('q')) {
+            $search_term = request()->input('q');
+            $query->whereAny(['title', 'creators'], 'like', "%$search_term%");
         }
 
-        // Apply search term filter if provided
-        if ($search_term) {
-            // Define searchable fields based on the category
-            $searchableFields = $this->getSearchableFields($category);
-            $query->whereAny($searchableFields, 'like', "%$search_term%");
-        }
+        $books = $query->with('authors')->latest()->paginate(10);
 
-        // Get selectable fields based on the category
-        $selectable_fields = $this->getSelectableFields($category);
-        $query->select($selectable_fields);
-
-        $data = $query->with('authors')->latest()->paginate(10);
-
-        return $this->paginatedResponse($data, 'Publications retrieved successfully.', 200);
+        return $this->paginatedResponse($books, 'Books data retrieved successfully.', 200);
     }
 
     /**
      * @OA\Get(
-     *     path="/api/publications/{id}",
-     *     summary="Get publication by ID",
-     *     description="Returns a specific publication by its ID with related authors",
+     *     path="/api/books/{id}",
+     *     summary="Get book by ID",
+     *     description="Returns a specific book by its ID with related authors",
      *     security={{"bearer_token": {}}},
-     *     tags={"Publications"},
+     *     tags={"Books"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="ID of publication to return",
+     *         description="ID of book to return",
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
@@ -529,20 +448,18 @@ class PublicationController extends Controller
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="publication data retrieved successfully."),
+     *             @OA\Property(property="message", type="string", example="Book data retrieved successfully."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
      *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="accreditation", type="string", example="S3"),
-     *                 @OA\Property(property="identifier", type="string", example="34576"),
-     *                 @OA\Property(property="quartile", type="string", example="Q1"),
-     *                 @OA\Property(property="title", type="string", example="Publikasi 1"),
-     *                 @OA\Property(property="journal", type="string", example="Journal of information"),
-     *                 @OA\Property(property="publication_name", type="string", example="Journal of technology"),
-     *                 @OA\Property(property="year", type="string", example="2024"),
-     *                 @OA\Property(property="citation", type="string", example="1"),
-     *                 @OA\Property(property="category", type="string", example="scopus"),
+     *                 @OA\Property(property="tahun_terbit", type="string", example="2023"),
+     *                 @OA\Property(property="isbn", type="string", example="2342453"),
+     *                 @OA\Property(property="kategori", type="string", example="buku ajar"),
+     *                 @OA\Property(property="title", type="string", example="Book Title"),
+     *                 @OA\Property(property="tempat_terbit", type="string", example="Yogyakarta"),
+     *                 @OA\Property(property="penerbit", type="string", example="Airlangga"),
+     *                 @OA\Property(property="page", type="string", example="223"),
      *                 @OA\Property(
      *                     property="authors",
      *                     type="array",
@@ -580,42 +497,38 @@ class PublicationController extends Controller
      *     )
      * )
      */
-    public function getPublicationByID($id)
+    public function getBookByID($id)
     {
-        $data = Publication::find($id);
-        if (!$data) {
-            return $this->errorResponse('Publication not found.', 404);
+        $book = Book::with('authors')->find($id);
+        if (!$book) {
+            return $this->errorResponse('Book not found.', 404);
         }
 
-        // Get selectable fields based on the category
-        $selectable_fields = $this->getSelectableFields($data->category);
-        $publication = Publication::select($selectable_fields)->with('authors')->find($id);
-
-        return $this->successResponse($publication, 'Publication retrieved successfully.', 200);
+        return $this->successResponse($book, 'Book data retrieved successfully.', 200);
     }
 
     /**
      * @OA\Get(
-     *     path="/api/publications/grouped",
-     *     summary="Get publications grouped by scheme",
-     *     description="Retrieves publications data grouped by `accreditation`, with an optional filter by `study_program_id`.",
-     *     tags={"Publications"},
+     *     path="/api/books/grouped-by-category",
+     *     summary="Get books grouped by category",
+     *     description="Retrieves books data grouped by `kategori`, with an optional filter by `study_program_id`.",
+     *     tags={"Books"},
      *     @OA\Parameter(
      *         name="study_program_id",
      *         in="query",
-     *         description="Filter publications by study program ID",
+     *         description="Filter books by study program ID",
      *         required=false,
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Successful retrieval of publications data",
+     *         description="Successful retrieval of books data",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Publications data retrieved successfully."),
+     *             @OA\Property(property="message", type="string", example="Books data retrieved successfully."),
      *             @OA\Property(property="data", type="object",
-     *                 @OA\Property(property="S3", type="object",
+     *                 @OA\Property(property="hak cipta", type="object",
      *                     @OA\Property(property="count", type="integer", example=2),
      *                 )
      *             )
@@ -630,9 +543,9 @@ class PublicationController extends Controller
      *     )
      * )
      */
-    public function getDataGroupedByAccreditationAndQuartile()
+    public function getBooksGroupedByCategory()
     {
-        $query = Publication::with('authors');
+        $query = Book::with('authors');
 
         if (request()->has('study_program_id')) {
             $study_program_id = request()->input('study_program_id');
@@ -641,34 +554,22 @@ class PublicationController extends Controller
             });
         }
 
-        $data = $query->get();
+        $books = $query->get();
+        $grouped_data = $books->groupBy('kategori')->map(function ($group) {
+            return [
+                'count' => $group->count()
+            ];
+        });
 
-        $grouped_data = $data
-            ->filter(function ($item) {
-                // Ensure at least one key is filled and not empty
-                return !empty($item['accreditation']) || !empty($item['quartile']);
-            })
-            ->groupBy(function ($item) {
-                // Group by the filled key: 'accreditation' or 'quartile'
-                return !empty($item['accreditation']) ? $item['accreditation'] : $item['quartile'];
-            })
-            ->map(function ($group) {
-                return [
-                    'count' => $group->count(), // Count the items in each group
-                ];
-            });
-
-
-
-        return $this->successResponse($grouped_data, 'Publications grouped by accreditation and quartile retrieved successfully.', 200);
+        return $this->successResponse($grouped_data, 'Books data retrieved successfully', 200);
     }
 
     /**
      * @OA\Get(
-     *     path="/api/publications/chart-data",
-     *     summary="Get Publications statistics chart data",
-     *     description="Retrieves Publications statistics grouped by study programs for chart visualization",
-     *     tags={"Publications"},
+     *     path="/api/books/chart-data",
+     *     summary="Get books statistics chart data",
+     *     description="Retrieves books statistics grouped by study programs for chart visualization",
+     *     tags={"Books"},
      *     @OA\Parameter(
      *         name="year",
      *         in="query",
@@ -681,7 +582,7 @@ class PublicationController extends Controller
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Publications chart data retrieved successfully."),
+     *             @OA\Property(property="message", type="string", example="Books chart data retrieved successfully."),
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
@@ -714,7 +615,7 @@ class PublicationController extends Controller
      *                         @OA\Property(property="percentage", type="number", format="float", example=25.5)
      *                     )
      *                 ),
-     *                 @OA\Property(property="total_data", type="integer", example=40)
+     *                 @OA\Property(property="total_books", type="integer", example=40)
      *             )
      *         )
      *     ),
@@ -727,80 +628,80 @@ class PublicationController extends Controller
      *     )
      * )
      */
-    public function getChartsData()
+    public function getBooksChartData()
     {
         // Base query starting with study programs
-        $publications_by_program = StudyProgram::select(
+        $books_by_program = StudyProgram::select(
             'study_programs.name as study_program',
-            DB::raw('COALESCE(COUNT(DISTINCT publications.id), 0) as total_publications')
+            DB::raw('COALESCE(COUNT(DISTINCT books.id), 0) as total_books')
         )
             ->leftJoin('authors', 'study_programs.id', '=', 'authors.study_program_id')
-            ->leftJoin('author_publication', 'authors.id', '=', 'author_publication.author_id')
-            ->leftJoin('publications', 'author_publication.publication_id', '=', 'publications.id');
+            ->leftJoin('author_book', 'authors.id', '=', 'author_book.author_id')
+            ->leftJoin('books', 'author_book.book_id', '=', 'books.id');
 
         // Apply year filter if provided
         if (request()->has('year')) {
             $year = request()->input('year');
-            $publications_by_program->where('publications.thn_pelaksanaan_kegiatan', $year);
+            $books_by_program->where('books.thn_pelaksanaan_kegiatan', $year);
         }
 
         // Complete the query
-        $publications_by_program = $publications_by_program
+        $books_by_program = $books_by_program
             ->groupBy('study_programs.id', 'study_programs.name')
             ->orderBy('study_programs.name')
             ->get();
 
-        // Calculate total publications
-        $total_publications = $publications_by_program->sum('total_publications');
+        // Calculate total books
+        $total_books = $books_by_program->sum('total_books');
 
         // Prepare chart data
         $chart_data = [
-            'labels' => $publications_by_program->pluck('study_program')->toArray(),
+            'labels' => $books_by_program->pluck('study_program')->toArray(),
             'datasets' => [
-                'data' => $publications_by_program->pluck('total_publications')->toArray(),
-                'background_color' => $this->generateColors(count($publications_by_program))
+                'data' => $books_by_program->pluck('total_books')->toArray(),
+                'background_color' => $this->generateColors(count($books_by_program))
             ],
-            'study_programs' => $publications_by_program->map(function ($item) use ($total_publications) {
+            'study_programs' => $books_by_program->map(function ($item) use ($total_books) {
                 return [
                     'name' => $item->study_program,
-                    'total' => $item->total_publications,
-                    'percentage' => $total_publications > 0 ? round(($item->total_publications / $total_publications) * 100, 2) : 0,
+                    'total' => $item->total_books,
+                    'percentage' => $total_books > 0 ? round(($item->total_books / $total_books) * 100, 2) : 0,
                 ];
             }),
-            'total_publications' => $total_publications
+            'total_books' => $total_books
         ];
 
-        return $this->successResponse($chart_data, 'Chart data retrieved successfully.', 200);
+        return $this->successResponse($chart_data, 'Books chart data retrieved successfully.', 200);
     }
 
     /**
      * @OA\Delete(
-     *     path="/api/publications/{id}",
-     *     summary="Delete a publication",
-     *     description="Deletes a publication record by ID",
+     *     path="/api/books/{id}",
+     *     summary="Delete a book",
+     *     description="Deletes a book record by ID",
      *     security={{"bearer_token": {}}},
-     *     tags={"Publications"},
+     *     tags={"Books"},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="ID of publication to delete",
+     *         description="ID of book to delete",
      *         required=true,
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Publication deleted successfully",
+     *         description="Book deleted successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Publication data deleted successfully.")
+     *             @OA\Property(property="message", type="string", example="Book data deleted successfully.")
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Publication not found",
+     *         description="Book not found",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Publication data not found.")
+     *             @OA\Property(property="message", type="string", example="Book data not found.")
      *         )
      *     ),
      *     @OA\Response(
@@ -814,13 +715,13 @@ class PublicationController extends Controller
      */
     public function delete($id)
     {
-        $data = Publication::find($id);
-        if (!$data) {
-            return $this->errorResponse('Publication not found.', 404);
+        $book = Book::find($id);
+        if (!$book) {
+            return $this->errorResponse('Book not found.', 404);
         }
 
-        $data->delete();
+        $book->delete();
 
-        return $this->successResponse(null, 'Publication deleted successfully.', 200);
+        return $this->successResponse(null, 'Book deleted successfully.', 200);
     }
 }
