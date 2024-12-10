@@ -19,7 +19,7 @@ class HKIController extends Controller
 
     public function __construct()
     {
-        $this->middleware('role:superadmin|admin');
+        $this->middleware('role:superadmin|admin')->except(['getHKIDataGroupedByCategory', 'getHKIChartData']);
     }
 
     /**
@@ -81,7 +81,7 @@ class HKIController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->error($validator->errors(), 'Validation Error', 422);
+            return $this->formatValidationErrors($validator);
         }
 
         try {
@@ -578,7 +578,6 @@ class HKIController extends Controller
      * @OA\Get(
      *     path="/api/hki/grouped-by-category",
      *     summary="Get hki grouped by category",
-     *     security={{"bearer_token": {}}},
      *     description="Retrieves hki data grouped by `kategori`, with an optional filter by `study_program_id`.",
      *     tags={"HKI"},
      *     @OA\Parameter(
@@ -636,7 +635,6 @@ class HKIController extends Controller
      * @OA\Get(
      *     path="/api/hki/chart-data",
      *     summary="Get hki statistics chart data",
-     *     security={{"bearer_token": {}}},
      *     description="Retrieves hki statistics grouped by study programs for chart visualization",
      *     tags={"HKI"},
      *     @OA\Parameter(

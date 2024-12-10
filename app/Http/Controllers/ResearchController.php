@@ -47,7 +47,7 @@ class ResearchController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['role:superadmin|admin']);
+        $this->middleware(['role:superadmin|admin'])->except(['getResearchesGroupedByScheme', 'getResearchesChartData']);
     }
 
     /**
@@ -129,7 +129,7 @@ class ResearchController extends Controller
 
             return $this->importValidationErrorsResponse($failures, 422);
         } catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage(), 422);
+            return $this->errorResponse($e->getMessage(), 500);
         }
     }
 
@@ -693,7 +693,6 @@ class ResearchController extends Controller
      * @OA\Get(
      *     path="/api/researches/grouped-by-scheme",
      *     summary="Get researches grouped by scheme",
-     *     security={{"bearer_token": {}}},
      *     description="Retrieves researches data grouped by `nama_singkat_skema`, with an optional filter by `study_program_id`.",
      *     tags={"Researches"},
      *     @OA\Parameter(
@@ -753,7 +752,6 @@ class ResearchController extends Controller
      * @OA\Get(
      *     path="/api/researches/chart-data",
      *     summary="Get research statistics chart data",
-     *     security={{"bearer_token": {}}},
      *     description="Retrieves research statistics grouped by study programs for chart visualization",
      *     tags={"Researches"},
      *     @OA\Parameter(

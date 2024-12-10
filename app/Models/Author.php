@@ -44,4 +44,9 @@ class Author extends Model
     {
         return $this->belongsToMany(HKI::class);
     }
+
+    public function book()
+    {
+        return $this->belongsToMany(Book::class);
+    }
 }
