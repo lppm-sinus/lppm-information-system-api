@@ -879,6 +879,1016 @@
                 ]
             }
         },
+        "/api/books/import": {
+            "post": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Import books data from Excel/CSV file",
+                "operationId": "5b25112a1dcf561045dfdb2089a99a3e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "file": {
+                                        "description": "Excel/CSV file containing books data",
+                                        "type": "file"
+                                    },
+                                    "reset_table": {
+                                        "description": "Whether to reset the tables before import",
+                                        "type": "boolean",
+                                        "example": false
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Books imported successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Books data imported successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error or import failure",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/books": {
+            "get": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Get paginated list of books",
+                "description": "Returns paginated books with optional search functionality",
+                "operationId": "09f5ef41a7ebf7124a40046111a5a50e",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search term for filtering data by title or creators name",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Books data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "tahun_terbit": {
+                                                                "type": "string",
+                                                                "example": "2023"
+                                                            },
+                                                            "isbn": {
+                                                                "type": "string",
+                                                                "example": "2342453"
+                                                            },
+                                                            "kategori": {
+                                                                "type": "string",
+                                                                "example": "buku ajar"
+                                                            },
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "Book Title"
+                                                            },
+                                                            "tempat_terbit": {
+                                                                "type": "string",
+                                                                "example": "Yogyakarta"
+                                                            },
+                                                            "penerbit": {
+                                                                "type": "string",
+                                                                "example": "Airlangga"
+                                                            },
+                                                            "page": {
+                                                                "type": "string",
+                                                                "example": "223"
+                                                            },
+                                                            "authors": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "integer",
+                                                                            "example": 1
+                                                                        },
+                                                                        "sinta_id": {
+                                                                            "type": "string",
+                                                                            "example": "66889756"
+                                                                        },
+                                                                        "nidn": {
+                                                                            "type": "string",
+                                                                            "example": "2342453"
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "Yustina"
+                                                                        },
+                                                                        "affiliation": {
+                                                                            "type": "string",
+                                                                            "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                                        },
+                                                                        "study_program_id": {
+                                                                            "type": "integer",
+                                                                            "example": "2"
+                                                                        },
+                                                                        "last_education": {
+                                                                            "type": "string",
+                                                                            "example": "S2"
+                                                                        },
+                                                                        "functional_position": {
+                                                                            "type": "string",
+                                                                            "example": "Asisten Ahli"
+                                                                        },
+                                                                        "title_prefix": {
+                                                                            "type": "string",
+                                                                            "example": null
+                                                                        },
+                                                                        "title_suffix": {
+                                                                            "type": "string",
+                                                                            "example": "S.Kom, M.Kom"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "meta": {
+                                                    "properties": {
+                                                        "total": {
+                                                            "type": "integer",
+                                                            "example": 100
+                                                        },
+                                                        "per_page": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        },
+                                                        "current_page": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "last_page": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Create new book",
+                "operationId": "ee195f5779f5c36648b4fa1eefa4e7ee",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "tahun_terbit": {
+                                        "type": "string"
+                                    },
+                                    "isbn": {
+                                        "type": "string"
+                                    },
+                                    "kategori": {
+                                        "type": "string"
+                                    },
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "tempat_terbit": {
+                                        "type": "string"
+                                    },
+                                    "penerbit": {
+                                        "type": "string"
+                                    },
+                                    "page": {
+                                        "type": "string"
+                                    },
+                                    "authors": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 2
+                                        }
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "tahun_terbit": "2023",
+                                    "isbn": "2342453",
+                                    "kategori": "buku ajar",
+                                    "title": "Book Title",
+                                    "tempat_terbit": "Yogyakarta",
+                                    "penerbit": "Airlangga",
+                                    "page": "223",
+                                    "authors": [
+                                        2,
+                                        4,
+                                        8
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Book Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Book created successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "tahun_terbit": {
+                                                    "type": "string",
+                                                    "example": "2023"
+                                                },
+                                                "isbn": {
+                                                    "type": "string",
+                                                    "example": "2342453"
+                                                },
+                                                "kategori": {
+                                                    "type": "string",
+                                                    "example": "buku ajar"
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Book Title"
+                                                },
+                                                "tempat_terbit": {
+                                                    "type": "string",
+                                                    "example": "Yogyakarta"
+                                                },
+                                                "penerbit": {
+                                                    "type": "string",
+                                                    "example": "Airlangga"
+                                                },
+                                                "page": {
+                                                    "type": "string",
+                                                    "example": "223"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/books/{id}": {
+            "get": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Get book by ID",
+                "description": "Returns a specific book by its ID with related authors",
+                "operationId": "56a4806d7ea903ab4ecd0758acc81bad",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of book to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Book data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "tahun_terbit": {
+                                                    "type": "string",
+                                                    "example": "2023"
+                                                },
+                                                "isbn": {
+                                                    "type": "string",
+                                                    "example": "2342453"
+                                                },
+                                                "kategori": {
+                                                    "type": "string",
+                                                    "example": "buku ajar"
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Book Title"
+                                                },
+                                                "tempat_terbit": {
+                                                    "type": "string",
+                                                    "example": "Yogyakarta"
+                                                },
+                                                "penerbit": {
+                                                    "type": "string",
+                                                    "example": "Airlangga"
+                                                },
+                                                "page": {
+                                                    "type": "string",
+                                                    "example": "223"
+                                                },
+                                                "authors": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "sinta_id": {
+                                                                "type": "string",
+                                                                "example": "34514545"
+                                                            },
+                                                            "nidn": {
+                                                                "type": "string",
+                                                                "example": "2342453"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Yustina"
+                                                            },
+                                                            "affiliation": {
+                                                                "type": "string",
+                                                                "example": "Sekolah Tinggi Manajemen Informatika dan Komputer Sinar Nusantara"
+                                                            },
+                                                            "study_program_id": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "last_education": {
+                                                                "type": "string",
+                                                                "example": "S1"
+                                                            },
+                                                            "functional_position": {
+                                                                "type": "string",
+                                                                "example": "Lektor"
+                                                            },
+                                                            "title_prefix": {
+                                                                "type": "string",
+                                                                "example": "Prof."
+                                                            },
+                                                            "title_suffix": {
+                                                                "type": "string",
+                                                                "example": "S.T."
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Data data not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Delete a book",
+                "description": "Deletes a book record by ID",
+                "operationId": "805481502e5ec86d4dfe461c9b9e44c2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of book to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Book deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Book data deleted successfully."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Book not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Book data not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Update an book by ID",
+                "operationId": "1799670f5fc20728e6f2cf616b26507f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the book",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "tahun_terbit": {
+                                        "type": "string"
+                                    },
+                                    "isbn": {
+                                        "type": "string"
+                                    },
+                                    "kategori": {
+                                        "type": "string"
+                                    },
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "tempat_terbit": {
+                                        "type": "string"
+                                    },
+                                    "penerbit": {
+                                        "type": "string"
+                                    },
+                                    "page": {
+                                        "type": "string"
+                                    },
+                                    "authors": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 2
+                                        }
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "tahun_terbit": "2023",
+                                    "isbn": "2342453",
+                                    "kategori": "buku ajar",
+                                    "title": "Book Title",
+                                    "tempat_terbit": "Yogyakarta",
+                                    "penerbit": "Airlangga",
+                                    "page": "223",
+                                    "authors": [
+                                        2,
+                                        4,
+                                        8
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Book Updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Book data updated successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "tahun_terbit": {
+                                                    "type": "string",
+                                                    "example": "2023"
+                                                },
+                                                "isbn": {
+                                                    "type": "string",
+                                                    "example": "2342453"
+                                                },
+                                                "kategori": {
+                                                    "type": "string",
+                                                    "example": "buku ajar"
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Book Title"
+                                                },
+                                                "tempat_terbit": {
+                                                    "type": "string",
+                                                    "example": "Yogyakarta"
+                                                },
+                                                "penerbit": {
+                                                    "type": "string",
+                                                    "example": "Airlangga"
+                                                },
+                                                "page": {
+                                                    "type": "string",
+                                                    "example": "223"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/books/grouped-by-category": {
+            "get": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Get books grouped by category",
+                "description": "Retrieves books data grouped by `kategori`, with an optional filter by `study_program_id`.",
+                "operationId": "4dae2467e58b63b0ba4e89fb4764c2a3",
+                "parameters": [
+                    {
+                        "name": "study_program_id",
+                        "in": "query",
+                        "description": "Filter books by study program ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful retrieval of books data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Books data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "hak cipta": {
+                                                    "properties": {
+                                                        "count": {
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/books/chart-data": {
+            "get": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Get books statistics chart data",
+                "description": "Retrieves books statistics grouped by study programs for chart visualization",
+                "operationId": "17025648de1aa63a7b01307a702f3723",
+                "parameters": [
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "description": "Filter statistics by year",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2024"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Books chart data retrieved successfully."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "labels": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "S1-Informatika"
+                                                    }
+                                                },
+                                                "datasets": {
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "integer",
+                                                                "example": 10
+                                                            }
+                                                        },
+                                                        "background_color": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "string",
+                                                                "example": "#FF5733"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "study_programs": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "S1-Informatika"
+                                                            },
+                                                            "total": {
+                                                                "type": "integer",
+                                                                "example": 10
+                                                            },
+                                                            "percentage": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 25.5
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "total_books": {
+                                                    "type": "integer",
+                                                    "example": 40
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/categories": {
             "get": {
                 "tags": [
@@ -2630,12 +3640,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
+                }
             }
         },
         "/api/hki/chart-data": {
@@ -2751,12 +3756,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
+                }
             }
         },
         "/api/pages": {
@@ -5451,12 +6451,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
+                }
             }
         },
         "/api/publications/chart-data": {
@@ -5572,12 +6567,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
+                }
             }
         },
         "/api/researches/import": {
@@ -6811,12 +7801,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
+                }
             }
         },
         "/api/researches/chart-data": {
@@ -6932,12 +7917,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
+                }
             }
         },
         "/api/services/import": {
@@ -8171,12 +9151,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
+                }
             }
         },
         "/api/services/chart-data": {
@@ -8292,12 +9267,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearer_token": []
-                    }
-                ]
+                }
             }
         },
         "/api/study-programs": {
@@ -10037,6 +11007,10 @@
         {
             "name": "Authors",
             "description": "Authors"
+        },
+        {
+            "name": "Books",
+            "description": "Books"
         },
         {
             "name": "Categories",
